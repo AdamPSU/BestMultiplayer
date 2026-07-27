@@ -1,5 +1,10 @@
 Chronological record of ingests, queries, and maintenance passes.
 
+## [2026-07-27] ux | Locked death screen
+- While hard-locked out of boss lives, hide `Vanilla: Death Text` and draw “No lives left...”
+- No coins / countdown; clamp gameplay unchanged
+- `DeathScreenSystem` + `BossFightSystem.IsLocalHardLocked`
+
 ## [2026-07-27] feature | Boss fight lives
 - Replaced `NoBossFightRespawn` ban with configurable lives: `Off` / `PerPlayer` / `PerTeam`
 - Defaults: PerPlayer, 1 respawn, AutoTeamSize on (PerTeam pool = team size at fight start)

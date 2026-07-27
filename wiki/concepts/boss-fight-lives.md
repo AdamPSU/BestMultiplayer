@@ -1,11 +1,11 @@
 ---
 title: Boss Fight Lives
-description: Configurable per-player or per-team respawn budget during boss fights, then BM-style hard lock. No UX in v1.
+description: Configurable per-player or per-team respawn budget during boss fights, then BM-style hard lock. Locked death screen replaces the vanilla countdown.
 date: 2026-07-27
 tags: [feature, boss, respawn, multiplayer, server-config]
 ---
 
-Deaths during a boss fight cost **respawns** from a budget. Empty budget → hard-lock `respawnTimer` (Better Multiplayer style) until the fight ends. Outside boss fights → vanilla. No HUD or death messages in v1 — infer from whether the timer completes.[^1]
+Deaths during a boss fight cost **respawns** from a budget. Empty budget → hard-lock `respawnTimer` (Better Multiplayer style) until the fight ends. Outside boss fights → vanilla. While hard-locked, the death screen shows **“No lives left…”** instead of the stuck vanilla countdown (no coins line).[^1]
 
 ## Config
 
@@ -51,11 +51,12 @@ While locked, each `UpdateDead` sets `respawnTimer` to:
 |---|---|---|
 | Default | 1 respawn then lock | Always lock |
 | Modes | Off / PerPlayer / PerTeam | Ban only |
-| UX | None (timer only) | None |
+| UX | Locked death text | None |
 
 ## Code
 
 - `Common/Systems/BossFightSystem.cs` — detect, pools, death edges
+- `Common/Systems/DeathScreenSystem.cs` — replace death text while hard-locked
 - `Common/Players/BestMultiplayerPlayer.cs` — `UpdateDead` clamp
 - `Common/Configs/ServerConfig.cs`
 

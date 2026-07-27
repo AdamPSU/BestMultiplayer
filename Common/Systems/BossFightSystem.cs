@@ -76,6 +76,15 @@ public sealed class BossFightSystem : ModSystem
 		return player.GetModPlayer<BestMultiplayerPlayer>().RespawnAllowedThisDeath;
 	}
 
+	/// <summary>
+	/// Local player is dead and out of boss-fight lives (hard lock).
+	/// </summary>
+	internal static bool IsLocalHardLocked()
+	{
+		Player player = Main.LocalPlayer;
+		return player.active && player.dead && !MayRespawnThisDeath(player);
+	}
+
 	private static void InitPools()
 	{
 		TeamRespawnsLeft.Clear();

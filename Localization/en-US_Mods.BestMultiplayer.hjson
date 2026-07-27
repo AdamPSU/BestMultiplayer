@@ -13,9 +13,19 @@ Configs: {
 			Tooltip: Team assigned when a player joins the world. None disables auto-join. Players may change teams afterward.
 		}
 
-		NoBossFightRespawn: {
-			Label: Disable Respawning During Boss Fights
-			Tooltip: While a boss is alive, dead players cannot finish respawning until the fight ends or everyone is dead.
+		BossFightLivesMode: {
+			Label: Boss Fight Lives Mode
+			Tooltip: Off = vanilla infinite respawns. PerPlayer = personal respawn budget. PerTeam = shared budget per team. Empty budget hard-locks respawn until the boss ends (like Better Multiplayer).
+		}
+
+		BossFightRespawns: {
+			Label: Boss Fight Respawns
+			Tooltip: Respawn budget. PerPlayer = each player. PerTeam (when Auto Team Size is off) = shared pool size. 0 = lock on first death.
+		}
+
+		BossFightLivesAutoTeamSize: {
+			Label: Auto Team Size Lives
+			Tooltip: PerTeam only. When on, shared pool equals players on that team at fight start. Unteamed players get a solo pool of 1. When off, uses Boss Fight Respawns.
 		}
 
 		FreeTeamWormhole: {

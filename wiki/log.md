@@ -1,5 +1,14 @@
 Chronological record of ingests, queries, and maintenance passes.
 
+## [2026-07-27] feature | Boss fight lives
+- Replaced `NoBossFightRespawn` ban with configurable lives: `Off` / `PerPlayer` / `PerTeam`
+- Defaults: PerPlayer, 1 respawn, AutoTeamSize on (PerTeam pool = team size at fight start)
+- Spend on `dead` rising edge; `RespawnAllowedThisDeath` so last spend does not lock same death
+- Hard lock via BM `respawnTimer` clamp (1200/1800/3600); no HUD/death messages v1
+- Init when boss active && pools missing (mid-join safe); PerTeam no mid-join top-up
+- Created: [Boss fight lives](concepts/boss-fight-lives.md)
+- Updated: ServerConfig, loc, README, overview, multiplayer config rules, mod anatomy, mod entity
+
 ## [2026-07-27] feature | Free team wormhole
 - Replaced BM-style Witch Doctor shop config with virtual infinite wormhole
 - `On_Player.HasUnityPotion` / `TakeUnityPotion`: fake possession + skip consume

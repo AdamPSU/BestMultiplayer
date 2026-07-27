@@ -22,8 +22,17 @@ public sealed class ServerConfig : ModConfig
 	public string TeamToJoin;
 
 	[Header("BossFights")]
+	[DrawTicks]
+	[OptionStrings(new string[] { "Off", "PerPlayer", "PerTeam" })]
+	[DefaultValue("PerPlayer")]
+	public string BossFightLivesMode;
+
+	[Range(0, 99)]
+	[DefaultValue(1)]
+	public int BossFightRespawns;
+
 	[DefaultValue(true)]
-	public bool NoBossFightRespawn;
+	public bool BossFightLivesAutoTeamSize;
 
 	[Header("Wormholes")]
 	[DefaultValue(true)]

@@ -11,7 +11,7 @@ BestMultiplayer is one package (`side = Both`). It loads on host, joiners, and d
 
 | Layer | Scope | Who decides | Examples |
 |---|---|---|---|
-| Server policy | `ServerConfig` (`ServerSide`) | Host; synced to all | Team on join, free wormhole, boss respawn lock |
+| Server policy | `ServerConfig` (`ServerSide`) | Host; synced to all | Team on join, free wormhole, boss lives |
 | Client presentation | `ClientConfig` (`ClientSide`) | Each local player | Spectate on death, HUD prefs |
 | Runtime state | Players / Systems / packets | Server writes when shared | Respawn timers, team id |
 
@@ -34,8 +34,8 @@ Localization/en-US_Mods.BestMultiplayer.hjson
 |---|---|---|
 | `ServerConfig` | Host toggles | Fields + host `AcceptClientChanges` |
 | `ClientConfig` | Spectate prefs | Fields only |
-| `BestMultiplayerPlayer` | Team on enter; later respawn / spectate | TeamToJoin done |
-| `BossFightSystem` | Boss-active detection | `IsBossFightActive` done |
+| `BestMultiplayerPlayer` | Team on enter; boss lives lock; later spectate | TeamToJoin + lives done |
+| `BossFightSystem` | Boss detect + lives pools | Done |
 | `WormholeSystem` | Free team wormhole hooks | Done |
 | `ShopGlobalNPC` | Unused (shop path dropped) | Empty stub |
 | `Common/UI/` | Spectate menus | Not created yet |

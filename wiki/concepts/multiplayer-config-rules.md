@@ -28,7 +28,9 @@ flowchart LR
 | Field | Default | Status | Intent |
 |---|---|---|---|
 | `TeamToJoin` | `Red` | **Done** (join-once) | Assign team on world enter; `None` disables; no soft-lock — see [TeamToJoin](team-to-join.md) |
-| `NoBossFightRespawn` | `true` | Config only | Block respawn while boss/EoW active |
+| `BossFightLivesMode` | `PerPlayer` | **Done** | `Off` / `PerPlayer` / `PerTeam` — see [Boss fight lives](boss-fight-lives.md) |
+| `BossFightRespawns` | `1` | **Done** | Respawn budget; `0` = BM first-death lock |
+| `BossFightLivesAutoTeamSize` | `true` | **Done** | PerTeam: pool = team size at fight start |
 | `FreeTeamWormhole` | `true` | **Done** | Virtual wormhole for map team-TP — see [Free team wormhole](free-team-wormhole.md) |
 | `BlockFreeWormholeDuringBoss` | `false` | **Done** | When true, free rule off during boss/EoW |
 
@@ -42,6 +44,7 @@ flowchart LR
 ## Related
 
 - [TeamToJoin](team-to-join.md)
+- [Boss fight lives](boss-fight-lives.md)
 - [Free team wormhole](free-team-wormhole.md)
 - [Mod anatomy](mod-anatomy.md)
 - [Scaffold conventions](scaffold-conventions.md)

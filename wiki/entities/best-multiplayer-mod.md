@@ -34,7 +34,7 @@ Thin sealed `Mod` subclass. Features live under `Common/`.[^1]
 |---|---|
 | [TeamToJoin](../concepts/team-to-join.md) (join-once) | Done |
 | [Free team wormhole](../concepts/free-team-wormhole.md) | Done |
-| NoBossFightRespawn | Config only |
+| [Boss fight lives](../concepts/boss-fight-lives.md) | Done |
 | Spectate (client) | Config only |
 
 ## Scaffold surface

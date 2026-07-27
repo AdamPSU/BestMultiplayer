@@ -1,5 +1,12 @@
 Chronological record of ingests, queries, and maintenance passes.
 
+## [2026-07-27] research | Multiplayer catalog → roadmap + collection
+- Expansive Workshop/GitHub pass for MP-only features and add-ons
+- **Roadmap (in-mod, not coded yet):** boss-death respawn-at-teammate; boss spectate targets; smooth camera lerp; mid/end damage board; instant respawn when boss dies; Shared HP/DeathLink as optional mode
+- **Collection add-on:** Shared World Map (`2815010161`)
+- **Ack only:** Team Spectate, Boss Spectator, Boss-Fight Stats, Dtboss projectiles, Party UI, InfraSonic, Improved Respawning, map markers, etc. — see catalog-ack
+- Wiki only (no code): [roadmap](concepts/roadmap.md), [collection-addons](concepts/collection-addons.md), [catalog-ack](concepts/catalog-ack.md)
+
 ## [2026-07-27] fix | Boss fight active detection
 - Removed `HasValidTarget` from `IsBossFightActive` — dead players left boss with no target, pools cleared, PerTeam lives reset (infinite respawn)
 

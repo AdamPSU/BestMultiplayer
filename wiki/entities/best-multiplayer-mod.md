@@ -36,6 +36,8 @@ Thin sealed `Mod` subclass. Features live under `Common/`.[^1]
 | [Unlimited team teleport](../concepts/unlimited-team-teleport.md) | Done |
 | [Boss fight lives](../concepts/boss-fight-lives.md) | Done |
 | Spectate (client) | Death-only team camera + custom death UI |
+| Planned (boss/death/modes) | See [roadmap](../concepts/roadmap.md) |
+| Collection add-on | [Shared World Map](../concepts/collection-addons.md) |
 
 ## Scaffold surface
 
@@ -52,6 +54,7 @@ Thin sealed `Mod` subclass. Features live under `Common/`.[^1]
 ## Related
 
 - [Mod anatomy](../concepts/mod-anatomy.md)
+- [Roadmap](../concepts/roadmap.md) · [Collection](../concepts/collection-addons.md) · [Catalog ack](../concepts/catalog-ack.md)
 - [TeamToJoin](../concepts/team-to-join.md)
 - [Better Multiplayer baseline](better-multiplayer-baseline.md)
 - [Build pipeline](build-pipeline.md)

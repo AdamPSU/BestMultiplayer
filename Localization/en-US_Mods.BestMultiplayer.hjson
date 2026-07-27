@@ -11,6 +11,13 @@ UI: {
 		SpectatingIn: Spectating in {0}
 		RespawnIn: Respawn in {0}
 	}
+
+	Spectate: {
+		You: You
+		Dead: "{0} is dead"
+		OtherTeam: "{0} is on another team"
+		Unavailable: Unavailable
+	}
 }
 
 Configs: {

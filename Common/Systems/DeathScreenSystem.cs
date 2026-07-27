@@ -19,6 +19,9 @@ public sealed class DeathScreenSystem : ModSystem
 	private const float TitleScale = 0.8f;
 	private const float SmallScale = 0.45f;
 
+	/// <summary>Y of the bottom "Respawn in N" line; spectate grid sits above this.</summary>
+	internal static float RespawnTextY => Main.screenHeight - 140f;
+
 	public override void ModifyInterfaceLayers(List<GameInterfaceLayer> layers)
 	{
 		int idx = layers.FindIndex(layer => layer.Name == "Vanilla: Death Text");
@@ -65,7 +68,7 @@ public sealed class DeathScreenSystem : ModSystem
 
 		int seconds = (player.respawnTimer + 59) / 60;
 		string text = Language.GetTextValue("Mods.BestMultiplayer.UI.Death.RespawnIn", seconds);
-		DrawCentered(font, text, Main.screenHeight - 140f, color, SmallScale);
+		DrawCentered(font, text, RespawnTextY, color, SmallScale);
 	}
 
 	private static void DrawCentered(DynamicSpriteFont font, string text, float y, Color color, float scale)

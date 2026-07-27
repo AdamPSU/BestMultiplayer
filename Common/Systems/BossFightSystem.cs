@@ -18,10 +18,12 @@ public sealed class BossFightSystem : ModSystem
 
 	public static bool IsBossFightActive()
 	{
+		// Do NOT require HasValidTarget: when everyone is dead the boss often has no target,
+		// which would clear lives pools and allow infinite respawns.
 		for (int i = 0; i < Main.maxNPCs; i++)
 		{
 			NPC npc = Main.npc[i];
-			if (!npc.active || !npc.HasValidTarget)
+			if (!npc.active)
 				continue;
 
 			if (npc.boss)

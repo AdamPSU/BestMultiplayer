@@ -95,11 +95,7 @@ public sealed class SpectatePlayer : ModPlayer
 		if (keys.PrevPlayer.JustPressed)
 			Select(Step(Target ?? Main.myPlayer, -1));
 		if (keys.StopSpectating.JustPressed)
-		{
-			Target = null;
-			IntroTicks = 0;
-			_holdCorpse = true;
-		}
+			StopFollowing();
 	}
 
 	public override void OnRespawn()
@@ -114,6 +110,15 @@ public sealed class SpectatePlayer : ModPlayer
 			Clear();
 	}
 
+	internal static void SelectTarget(int whoAmI) => Select(whoAmI);
+
+	internal static void StopFollowing()
+	{
+		Target = null;
+		IntroTicks = 0;
+		_holdCorpse = true;
+	}
+
 	private static void Select(int? whoAmI)
 	{
 		IntroTicks = 0;
@@ -121,7 +126,7 @@ public sealed class SpectatePlayer : ModPlayer
 		Target = whoAmI is int i && IsValid(i) ? i : null;
 	}
 
-	private static bool IsValid(int whoAmI)
+	internal static bool IsValid(int whoAmI)
 	{
 		if (whoAmI < 0 || whoAmI >= Main.maxPlayers || whoAmI == Main.myPlayer)
 			return false;
@@ -164,8 +169,9 @@ public sealed class SpectateKeybinds : ModSystem
 
 	public override void Load()
 	{
-		PrevPlayer = KeybindLoader.RegisterKeybind(Mod, "PreviousPlayer", Keys.None);
-		NextPlayer = KeybindLoader.RegisterKeybind(Mod, "NextPlayer", Keys.None);
+		// Defaults: A/D (left/right). Rebindable in Controls; fine while dead.
+		PrevPlayer = KeybindLoader.RegisterKeybind(Mod, "PreviousPlayer", Keys.A);
+		NextPlayer = KeybindLoader.RegisterKeybind(Mod, "NextPlayer", Keys.D);
 		StopSpectating = KeybindLoader.RegisterKeybind(Mod, "StopSpectating", Keys.None);
 	}
 

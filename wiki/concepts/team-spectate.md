@@ -17,6 +17,8 @@ Local presentation only. Inspired by [Team Spectate](https://github.com/NotLe0n/
 
 Hotkeys (dead only): previous / next teammate, stop. Next/prev during intro skips remaining countdown.
 
+**Grid UI (dead, multiplayer):** top-right teammate head panel. Click living teammate to follow; click self or current target to stop. Dead heads greyed out.
+
 ## Rules
 
 | Rule | Behavior |
@@ -36,6 +38,7 @@ Hotkeys (dead only): previous / next teammate, stop. Next/prev during intro skip
 ## Code
 
 - `Common/Players/SpectatePlayer.cs` — state, camera, hotkeys, `UpdateDead` tick, packets; nested `SpectateKeybinds`
+- `Common/UI/SpectateUISystem.cs` + `SpectateGridState.cs` — dead head grid
 - `Common/Systems/DeathScreenSystem.cs` — draw only
 - `BestMultiplayer.HandlePacket` — section load
 

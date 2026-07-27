@@ -33,7 +33,7 @@ Spend on **death rising edge** (`dead` false→true) while boss active. If remai
 - Mid-join: PerPlayer gets full budget; PerTeam does **not** top up the shared pool.
 - Already dead at init/join: allowed to finish vanilla respawn without spending.
 
-Boss detect: `BossFightSystem.IsBossFightActive` — `npc.boss` + EoW segments + `HasValidTarget`.
+Boss detect: `BossFightSystem.IsBossFightActive` — `npc.boss` + EoW segments (no `HasValidTarget`; that cleared pools when everyone was dead).
 
 ## Lock values (BM)
 

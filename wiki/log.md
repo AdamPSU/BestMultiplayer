@@ -1,5 +1,12 @@
 Chronological record of ingests, queries, and maintenance passes.
 
+## [2026-07-27] fix | Boss fight active detection
+- Removed `HasValidTarget` from `IsBossFightActive` — dead players left boss with no target, pools cleared, PerTeam lives reset (infinite respawn)
+
+## [2026-07-27] ui | Spectate head grid
+- Dead multiplayer: top-right teammate head grid (TS-inspired, vanilla DrawPlayerHead, no custom assets)
+- Click to spectate / click self-or-current to stop
+
 ## [2026-07-27] fix | Spectate lifecycle + slim layout
 - Intro/auto-target now ticks in `UpdateDead` (PostUpdate skipped while dead — stuck timer / no camera)
 - Collapse to SpectatePlayer (+ nested keybinds) + DeathScreenSystem; deleted SpectateSession / KeybindSystem

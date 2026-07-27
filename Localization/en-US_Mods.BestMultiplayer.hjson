@@ -1,4 +1,17 @@
-UI.Death.OutOfLives: No lives left...
+Keybinds: {
+	PreviousPlayer.DisplayName: Spectate previous teammate
+	NextPlayer.DisplayName: Spectate next teammate
+	StopSpectating.DisplayName: Stop spectating
+}
+
+UI: {
+	Death: {
+		Slain: You were slain...
+		OutOfLives: No lives left...
+		SpectatingIn: Spectating in {0}
+		RespawnIn: Respawn in {0}
+	}
+}
 
 Configs: {
 	ServerConfig: {
@@ -42,12 +55,12 @@ Configs: {
 
 		SpectateOnDeath: {
 			Label: Spectate On Death
-			Tooltip: When you die in multiplayer, follow a living teammate (feature not implemented yet).
+			Tooltip: After a short death intro, automatically spectate the next living teammate (by player slot). Hotkeys still work when off.
 		}
 
 		StopSpectateOnRespawn: {
 			Label: Stop Spectate On Respawn
-			Tooltip: Leave spectate mode when you respawn (feature not implemented yet).
+			Tooltip: Clear spectate camera when you respawn.
 		}
 	}
 

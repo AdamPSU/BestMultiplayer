@@ -33,12 +33,13 @@ Localization/en-US_Mods.BestMultiplayer.hjson
 | Path | Role | Status |
 |---|---|---|
 | `ServerConfig` | Host toggles | Fields + host `AcceptClientChanges` |
-| `ClientConfig` | Spectate prefs | Fields only |
-| `BestMultiplayerPlayer` | Team on enter; boss lives lock; later spectate | TeamToJoin + lives done |
+| `ClientConfig` | Spectate prefs | Wired (auto + stop) |
+| `BestMultiplayerPlayer` | Team on enter; boss lives lock | TeamToJoin + lives done |
+| `SpectatePlayer` (+ nested keybinds) | Death camera, intro tick, hotkeys, packet | Done |
+| `DeathScreenSystem` | Custom death intro + bottom timer | Done |
 | `BossFightSystem` | Boss detect + lives pools | Done |
 | `WormholeSystem` | Unlimited team teleport hooks | Done |
 | `ShopGlobalNPC` | Unused (shop path dropped) | Empty stub |
-| `Common/UI/` | Spectate menus | Not created yet |
 | `Content/` | New game content | Not created yet |
 
 ## Runtime gates

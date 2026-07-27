@@ -50,7 +50,7 @@ Server config changes are host-only (`AcceptClientChanges`).
 | UnlimitedTeamTeleport (virtual potion) | Done |
 | BlockUnlimitedTeleportDuringBoss | Done (default off) |
 | Boss fight lives (PerPlayer / PerTeam) | Done |
-| Spectate logic | Not implemented |
+| Death UI + team spectate (dead only) | Done |
 
 ## First use
 

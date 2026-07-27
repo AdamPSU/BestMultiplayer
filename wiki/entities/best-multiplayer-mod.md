@@ -35,7 +35,7 @@ Thin sealed `Mod` subclass. Features live under `Common/`.[^1]
 | [TeamToJoin](../concepts/team-to-join.md) (join-once) | Done |
 | [Unlimited team teleport](../concepts/unlimited-team-teleport.md) | Done |
 | [Boss fight lives](../concepts/boss-fight-lives.md) | Done |
-| Spectate (client) | Config only |
+| Spectate (client) | Death-only team camera + custom death UI |
 
 ## Scaffold surface
 

@@ -5,7 +5,7 @@ date: 2026-07-27
 tags: [feature, boss, respawn, multiplayer, server-config]
 ---
 
-Deaths during a boss fight cost **respawns** from a budget. Empty budget → hard-lock `respawnTimer` (Better Multiplayer style) until the fight ends. Outside boss fights → vanilla. While hard-locked, the death screen shows **“No lives left…”** instead of the stuck vanilla countdown (no coins line).[^1]
+Deaths during a boss fight cost **respawns** from a budget. Empty budget → hard-lock `respawnTimer` (Better Multiplayer style) until the fight ends. Outside boss fights → vanilla. Death presentation is shared with [team spectate](team-spectate.md): hard-lock intro is **“No lives left…”** (no bottom respawn digits while locked).[^1]
 
 ## Config
 

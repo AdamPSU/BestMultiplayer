@@ -1,5 +1,18 @@
 Chronological record of ingests, queries, and maintenance passes.
 
+## [2026-07-27] fix | Spectate lifecycle + slim layout
+- Intro/auto-target now ticks in `UpdateDead` (PostUpdate skipped while dead — stuck timer / no camera)
+- Collapse to SpectatePlayer (+ nested keybinds) + DeathScreenSystem; deleted SpectateSession / KeybindSystem
+- Smaller death subtitle + bottom digits (scale 0.45); TS-style camera math; section packet from UpdateDead
+
+## [2026-07-27] feature | Team spectate + custom death UI
+- All deaths: hide vanilla death text; 3s intro then auto-spectate next living teammate by slot
+- Intro copy: slain vs “No lives left…” (hard lock); “spectating in N”
+- Spectate: clear chrome; bottom digits-only respawn timer (none when hard-locked)
+- Hotkeys next/prev/stop while dead; section packet for far chunks
+- Inspired by Team Spectate (NotLe0n), clean-room port
+- Created: [Team spectate](concepts/team-spectate.md)
+
 ## [2026-07-27] ux | Locked death screen
 - While hard-locked out of boss lives, hide `Vanilla: Death Text` and draw “No lives left...”
 - No coins / countdown; clamp gameplay unchanged

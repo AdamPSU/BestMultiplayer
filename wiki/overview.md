@@ -11,7 +11,7 @@ This wiki covers **only** the BestMultiplayer repository — a Terraria tModLoad
 
 - **Goal:** better multiplayer QoL than [Better Multiplayer](entities/better-multiplayer-baseline.md) (Workshop `2634682993`, [GitHub](https://github.com/kittenchilly/BetterMultiplayer)).
 - **Implemented:** [TeamToJoin](concepts/team-to-join.md); [Unlimited team teleport](concepts/unlimited-team-teleport.md); [Boss fight lives](concepts/boss-fight-lives.md).
-- **Scaffold / not built:** spectate.
+- **Spectate:** death-only team camera + custom death UI (see [team spectate](concepts/team-spectate.md)).
 - Baseline is tiny (v1.6.3 source): **exactly 3** ServerSide features — see [full inventory](entities/better-multiplayer-baseline.md).
 - Architecture: [mod anatomy](concepts/mod-anatomy.md). Target: tModLoader **1.4.4.9**, `side = Both`.
 

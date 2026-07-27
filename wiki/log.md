@@ -1,5 +1,13 @@
 Chronological record of ingests, queries, and maintenance passes.
 
+## [2026-07-27] feature | TeamToJoin join-once
+- Behavior: on `OnEnterWorld`, if `ServerConfig.TeamToJoin` is a color, set `Player.team` once and `MessageID.PlayerTeam` when not SP
+- Not BM soft-lock: no `CopyClientState` / `SendClientChanges`; players may change teams afterward
+- `None` skips; mid-session config applies on next enter only; default remains `Red`
+- Code: `Common/Players/BestMultiplayerPlayer.cs`
+- Created: [TeamToJoin](concepts/team-to-join.md)
+- Updated: overview, multiplayer config rules, mod anatomy, mod entity, README, localization tooltip
+
 ## [2026-07-27] scaffold | Dual-config Common layout
 - Added `Common/Configs/ServerConfig.cs` (TeamToJoin, NoBossFightRespawn, WitchDoctorWormhole; host-only AcceptClientChanges)
 - Added `Common/Configs/ClientConfig.cs` (SpectateOnDeath, StopSpectateOnRespawn)

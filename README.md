@@ -48,7 +48,8 @@ Server config changes are host-only (`AcceptClientChanges`).
 |---|---|
 | Folder + config scaffold | Done |
 | Config labels (en-US) | Done |
-| Team / respawn / shop logic | Not implemented |
+| TeamToJoin (join-once on enter) | Done |
+| Boss respawn / shop logic | Not implemented |
 | Spectate logic | Not implemented |
 
 ## First use

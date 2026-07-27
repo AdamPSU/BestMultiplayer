@@ -23,15 +23,13 @@ flowchart LR
   Server -->|"Custom packet only if needed"| Client
 ```
 
-## ServerConfig fields (scaffold)
+## ServerConfig fields
 
-| Field | Default | Intent |
-|---|---|---|
-| `TeamToJoin` | `Red` | Auto team; `None` disables |
-| `NoBossFightRespawn` | `true` | Block respawn while boss/EoW active |
-| `WitchDoctorWormhole` | `true` | Witch Doctor sells Wormhole Potion |
-
-Logic not wired yet — fields exist for UI and future hooks.[^1]
+| Field | Default | Status | Intent |
+|---|---|---|---|
+| `TeamToJoin` | `Red` | **Done** (join-once) | Assign team on world enter; `None` disables; no soft-lock — see [TeamToJoin](team-to-join.md) |
+| `NoBossFightRespawn` | `true` | Config only | Block respawn while boss/EoW active |
+| `WitchDoctorWormhole` | `true` | Config only | Witch Doctor sells Wormhole Potion |
 
 ## ClientConfig fields (scaffold)
 
@@ -42,9 +40,10 @@ Logic not wired yet — fields exist for UI and future hooks.[^1]
 
 ## Related
 
+- [TeamToJoin](team-to-join.md)
 - [Mod anatomy](mod-anatomy.md)
 - [Scaffold conventions](scaffold-conventions.md)
 - [Better Multiplayer baseline](../entities/better-multiplayer-baseline.md)
 
-[^1]: Common/Configs/ServerConfig.cs, Common/Configs/ClientConfig.cs
+[^1]: Common/Configs/ServerConfig.cs, Common/Configs/ClientConfig.cs, Common/Players/BestMultiplayerPlayer.cs
 [^2]: build.txt

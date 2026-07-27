@@ -1,6 +1,6 @@
 ---
 title: BestMultiplayer Mod
-description: Concrete mod identity — entry class, packaging metadata, and scaffold surface.
+description: Concrete mod identity — entry class, packaging metadata, and feature surface.
 date: 2026-07-27
 tags: [mod, entity, tmodloader, terraria]
 ---
@@ -16,7 +16,7 @@ namespace BestMultiplayer
 public sealed class BestMultiplayer : Mod { }
 ```
 
-Thin sealed `Mod` subclass. Features live under `Common/` (and later `Content/`).[^1]
+Thin sealed `Mod` subclass. Features live under `Common/`.[^1]
 
 ## Packaging
 
@@ -26,15 +26,16 @@ Thin sealed `Mod` subclass. Features live under `Common/` (and later `Content/`)
 | author | Your Name |
 | version | 0.1 |
 | side | Both |
-| description | Multiplayer QoL scaffold; configs present, logic pending.[^2][^3] |
+| description | Multiplayer QoL; TeamToJoin done, more pending.[^2][^3] |
 
-## Project identity
+## Feature status
 
-| Property | Value |
+| Feature | Status |
 |---|---|
-| AssemblyName | BestMultiplayer |
-| RootNamespace | BestMultiplayer |
-| Targets import | Steam-local `tMLMod.targets` (machine path)[^4] |
+| [TeamToJoin](../concepts/team-to-join.md) (join-once) | Done |
+| NoBossFightRespawn | Config only |
+| WitchDoctorWormhole | Config only |
+| Spectate (client) | Config only |
 
 ## Scaffold surface
 
@@ -50,10 +51,10 @@ Thin sealed `Mod` subclass. Features live under `Common/` (and later `Content/`)
 ## Related
 
 - [Mod anatomy](../concepts/mod-anatomy.md)
+- [TeamToJoin](../concepts/team-to-join.md)
 - [Better Multiplayer baseline](better-multiplayer-baseline.md)
 - [Build pipeline](build-pipeline.md)
 
 [^1]: BestMultiplayer.cs
 [^2]: build.txt
 [^3]: description.txt
-[^4]: BestMultiplayer.csproj

@@ -11,7 +11,7 @@ BestMultiplayer is one package (`side = Both`). It loads on host, joiners, and d
 
 | Layer | Scope | Who decides | Examples |
 |---|---|---|---|
-| Server policy | `ServerConfig` (`ServerSide`) | Host; synced to all | Team on join, boss respawn lock, shop rules |
+| Server policy | `ServerConfig` (`ServerSide`) | Host; synced to all | Team on join, free wormhole, boss respawn lock |
 | Client presentation | `ClientConfig` (`ClientSide`) | Each local player | Spectate on death, HUD prefs |
 | Runtime state | Players / Systems / packets | Server writes when shared | Respawn timers, team id |
 
@@ -25,17 +25,19 @@ Common/Configs/ServerConfig.cs
 Common/Configs/ClientConfig.cs
 Common/Players/BestMultiplayerPlayer.cs
 Common/Systems/BossFightSystem.cs
+Common/Systems/WormholeSystem.cs
 Common/GlobalNPCs/ShopGlobalNPC.cs
 Localization/en-US_Mods.BestMultiplayer.hjson
 ```
 
 | Path | Role | Status |
 |---|---|---|
-| `ServerConfig` | Host toggles for baseline features | Fields + host `AcceptClientChanges` |
+| `ServerConfig` | Host toggles | Fields + host `AcceptClientChanges` |
 | `ClientConfig` | Spectate prefs | Fields only |
 | `BestMultiplayerPlayer` | Team on enter; later respawn / spectate | TeamToJoin done |
-| `BossFightSystem` | Boss-active detection helper | Empty stub |
-| `ShopGlobalNPC` | Witch Doctor shop line | Empty stub |
+| `BossFightSystem` | Boss-active detection | `IsBossFightActive` done |
+| `WormholeSystem` | Free team wormhole hooks | Done |
+| `ShopGlobalNPC` | Unused (shop path dropped) | Empty stub |
 | `Common/UI/` | Spectate menus | Not created yet |
 | `Content/` | New game content | Not created yet |
 

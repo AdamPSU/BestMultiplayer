@@ -29,7 +29,8 @@ flowchart LR
 |---|---|---|---|
 | `TeamToJoin` | `Red` | **Done** (join-once) | Assign team on world enter; `None` disables; no soft-lock — see [TeamToJoin](team-to-join.md) |
 | `NoBossFightRespawn` | `true` | Config only | Block respawn while boss/EoW active |
-| `WitchDoctorWormhole` | `true` | Config only | Witch Doctor sells Wormhole Potion |
+| `FreeTeamWormhole` | `true` | **Done** | Virtual wormhole for map team-TP — see [Free team wormhole](free-team-wormhole.md) |
+| `BlockFreeWormholeDuringBoss` | `false` | **Done** | When true, free rule off during boss/EoW |
 
 ## ClientConfig fields (scaffold)
 
@@ -41,6 +42,7 @@ flowchart LR
 ## Related
 
 - [TeamToJoin](team-to-join.md)
+- [Free team wormhole](free-team-wormhole.md)
 - [Mod anatomy](mod-anatomy.md)
 - [Scaffold conventions](scaffold-conventions.md)
 - [Better Multiplayer baseline](../entities/better-multiplayer-baseline.md)

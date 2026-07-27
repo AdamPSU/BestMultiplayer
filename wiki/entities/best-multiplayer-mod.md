@@ -33,8 +33,8 @@ Thin sealed `Mod` subclass. Features live under `Common/`.[^1]
 | Feature | Status |
 |---|---|
 | [TeamToJoin](../concepts/team-to-join.md) (join-once) | Done |
+| [Free team wormhole](../concepts/free-team-wormhole.md) | Done |
 | NoBossFightRespawn | Config only |
-| WitchDoctorWormhole | Config only |
 | Spectate (client) | Config only |
 
 ## Scaffold surface
@@ -45,7 +45,8 @@ Thin sealed `Mod` subclass. Features live under `Common/`.[^1]
 | Client UX config | `Common/Configs/ClientConfig.cs` |
 | Player hooks | `Common/Players/BestMultiplayerPlayer.cs` |
 | Boss session helper | `Common/Systems/BossFightSystem.cs` |
-| Shop hooks | `Common/GlobalNPCs/ShopGlobalNPC.cs` |
+| Wormhole hooks | `Common/Systems/WormholeSystem.cs` |
+| Shop hooks (unused) | `Common/GlobalNPCs/ShopGlobalNPC.cs` |
 | Localization | `Localization/en-US_Mods.BestMultiplayer.hjson` |
 
 ## Related

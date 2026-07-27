@@ -11,11 +11,9 @@ Build a stronger multiplayer experience than [Better Multiplayer](https://steamc
 | Workshop | https://steamcommunity.com/sharedfiles/filedetails/?id=2634682993 |
 | Source | https://github.com/kittenchilly/BetterMultiplayer |
 
-Baseline (source v1.6.3 — full inventory in `wiki/entities/better-multiplayer-baseline.md`):
+Baseline BM (v1.6.3 — `wiki/entities/better-multiplayer-baseline.md`): TeamToJoin soft-lock, NoBossFightRespawn, Witch Doctor wormhole shop.
 
-1. **TeamToJoin** — force join team (`None`/`Red`/`Green`/`Blue`/`Yellow`/`Pink`, default Red)
-2. **NoBossFightRespawn** — while dead + boss/EoW active, keep resetting respawn timer (default on)
-3. **WitchDoctorWormhole** — Witch Doctor sells Wormhole Potions (default on)
+BestMultiplayer deltas: join-once team (not soft-lock); free team wormhole (not shop).
 
 ## Architecture
 
@@ -36,7 +34,7 @@ wiki/                              design notes and baseline inventory
 
 | Concern | Config | Runtime home |
 |---|---|---|
-| Auto team, boss respawn, shops | `ServerConfig` | Players / Systems / GlobalNPCs |
+| Auto team, boss respawn, free wormhole | `ServerConfig` | Players / Systems |
 | Spectate, HUD prefs | `ClientConfig` | Players / UI (local only) |
 | Custom packets | — | only if tML does not already sync the state |
 
@@ -49,7 +47,9 @@ Server config changes are host-only (`AcceptClientChanges`).
 | Folder + config scaffold | Done |
 | Config labels (en-US) | Done |
 | TeamToJoin (join-once on enter) | Done |
-| Boss respawn / shop logic | Not implemented |
+| FreeTeamWormhole (virtual potion) | Done |
+| BlockFreeWormholeDuringBoss | Done (default off) |
+| NoBossFightRespawn | Not implemented |
 | Spectate logic | Not implemented |
 
 ## First use

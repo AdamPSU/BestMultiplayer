@@ -1,5 +1,14 @@
 Chronological record of ingests, queries, and maintenance passes.
 
+## [2026-07-27] feature | Free team wormhole
+- Replaced BM-style Witch Doctor shop config with virtual infinite wormhole
+- `On_Player.HasUnityPotion` / `TakeUnityPotion`: fake possession + skip consume
+- Config: `FreeTeamWormhole` (default true), `BlockFreeWormholeDuringBoss` (default false)
+- `BossFightSystem.IsBossFightActive` — boss flag + EoW segments (shared later with respawn lock)
+- Real potions kept; not deleted from game
+- Created: [Free team wormhole](concepts/free-team-wormhole.md)
+- Updated: ServerConfig, loc, README, overview, multiplayer config rules, mod anatomy, mod entity
+
 ## [2026-07-27] feature | TeamToJoin join-once
 - Behavior: on `OnEnterWorld`, if `ServerConfig.TeamToJoin` is a color, set `Player.team` once and `MessageID.PlayerTeam` when not SP
 - Not BM soft-lock: no `CopyClientState` / `SendClientChanges`; players may change teams afterward

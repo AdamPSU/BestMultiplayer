@@ -5,7 +5,7 @@ Configs: {
 		Headers: {
 			Teams: Teams
 			BossFights: Boss Fights
-			Economy: Economy
+			Wormholes: Wormholes
 		}
 
 		TeamToJoin: {
@@ -18,9 +18,14 @@ Configs: {
 			Tooltip: While a boss is alive, dead players cannot finish respawning until the fight ends or everyone is dead.
 		}
 
-		WitchDoctorWormhole: {
-			Label: Witch Doctor Sells Wormhole Potions
-			Tooltip: Adds Wormhole Potions to the Witch Doctor shop.
+		FreeTeamWormhole: {
+			Label: Free Team Wormhole
+			Tooltip: Map-click teleport to teammates works without carrying Wormhole Potions. Real potions still exist and are not consumed while this is on.
+		}
+
+		BlockFreeWormholeDuringBoss: {
+			Label: Block Free Wormhole During Boss Fights
+			Tooltip: When enabled, free team wormholes are disabled while a boss is active. Real potions still work. Off by default.
 		}
 	}
 

@@ -25,9 +25,12 @@ public sealed class ServerConfig : ModConfig
 	[DefaultValue(true)]
 	public bool NoBossFightRespawn;
 
-	[Header("Economy")]
+	[Header("Wormholes")]
 	[DefaultValue(true)]
-	public bool WitchDoctorWormhole;
+	public bool FreeTeamWormhole;
+
+	[DefaultValue(false)]
+	public bool BlockFreeWormholeDuringBoss;
 
 	public override bool AcceptClientChanges(ModConfig pendingConfig, int whoAmI, ref NetworkText message)
 	{

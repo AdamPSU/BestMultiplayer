@@ -1,0 +1,9 @@
+<Project Sdk="Microsoft.NET.Sdk">
+  <PropertyGroup>
+    <AssemblyName>BestMultiplayer</AssemblyName>
+    <RootNamespace>BestMultiplayer</RootNamespace>
+  </PropertyGroup>
+
+  <!-- Regenerate this project with tModLoader's Create Mod UI when moving machines. -->
+  <Import Project="/Users/adam/Library/Application Support/Steam/steamapps/common/tModLoader/tMLMod.targets" />
+</Project>

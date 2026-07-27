@@ -1,0 +1,25 @@
+{
+  "version": "2.0.0",
+  "tasks": [
+    {
+      "label": "tModLoader: build mod",
+      "type": "process",
+      "command": "${workspaceFolder}/.dotnet/dotnet",
+      "args": [
+        "build",
+        "${workspaceFolder}/BestMultiplayer.csproj"
+      ],
+      "options": {
+        "cwd": "${workspaceFolder}",
+        "env": {
+          "PATH": "${workspaceFolder}/.dotnet:${env:PATH}"
+        }
+      },
+      "problemMatcher": "$msCompile",
+      "group": {
+        "kind": "build",
+        "isDefault": true
+      }
+    }
+  ]
+}

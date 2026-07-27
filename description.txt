@@ -1,0 +1,1 @@
+A feature-neutral tModLoader mod scaffold.

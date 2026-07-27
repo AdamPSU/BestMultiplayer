@@ -9,13 +9,23 @@ Chronological record of ingests, queries, and maintenance passes.
 - Created: [Boss fight lives](concepts/boss-fight-lives.md)
 - Updated: ServerConfig, loc, README, overview, multiplayer config rules, mod anatomy, mod entity
 
-## [2026-07-27] feature | Free team wormhole
+## [2026-07-27] simplify | PerTeam always uses team size
+- Removed `BossFightLivesAutoTeamSize` toggle
+- PerTeam pool = players on team at fight start; unteamed solo = 1
+- `BossFightRespawns` is PerPlayer-only
+
+## [2026-07-27] rename | Unlimited team teleport
+- Renamed FreeTeamWormhole → UnlimitedTeamTeleport (config + loc + docs)
+- BlockFreeWormholeDuringBoss → BlockUnlimitedTeleportDuringBoss
+- Wiki: free-team-wormhole.md → unlimited-team-teleport.md
+
+## [2026-07-27] feature | Unlimited team teleport (was Free team wormhole)
 - Replaced BM-style Witch Doctor shop config with virtual infinite wormhole
 - `On_Player.HasUnityPotion` / `TakeUnityPotion`: fake possession + skip consume
-- Config: `FreeTeamWormhole` (default true), `BlockFreeWormholeDuringBoss` (default false)
-- `BossFightSystem.IsBossFightActive` — boss flag + EoW segments (shared later with respawn lock)
+- Config: `UnlimitedTeamTeleport` (default true), `BlockUnlimitedTeleportDuringBoss` (default false)
+- `BossFightSystem.IsBossFightActive` — boss flag + EoW segments (shared with respawn lock)
 - Real potions kept; not deleted from game
-- Created: [Free team wormhole](concepts/free-team-wormhole.md)
+- Created: [Unlimited team teleport](concepts/unlimited-team-teleport.md)
 - Updated: ServerConfig, loc, README, overview, multiplayer config rules, mod anatomy, mod entity
 
 ## [2026-07-27] feature | TeamToJoin join-once

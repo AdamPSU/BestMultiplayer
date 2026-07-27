@@ -62,7 +62,7 @@ public sealed class BossFightSystem : ModSystem
 	internal static bool IsLivesModeActive()
 	{
 		ServerConfig config = ServerConfig.Instance;
-		return config is not null && config.BossFightLivesMode is "PerPlayer" or "PerTeam";
+		return config is not null && config.BossFightLivesMode is BossFightLivesMode.PerPlayer or BossFightLivesMode.PerTeam;
 	}
 
 	/// <summary>
@@ -87,8 +87,8 @@ public sealed class BossFightSystem : ModSystem
 			return;
 		}
 
-		if (config.BossFightLivesMode == "PerTeam")
-			SeedTeamPools(config);
+		if (config.BossFightLivesMode == BossFightLivesMode.PerTeam)
+			SeedTeamPools();
 
 		for (int i = 0; i < Main.maxPlayers; i++)
 		{
@@ -101,7 +101,7 @@ public sealed class BossFightSystem : ModSystem
 		SnapshotDeadFlags();
 	}
 
-	private static void SeedTeamPools(ServerConfig config)
+	private static void SeedTeamPools()
 	{
 		int[] counts = new int[6];
 		for (int i = 0; i < Main.maxPlayers; i++)
@@ -111,15 +111,11 @@ public sealed class BossFightSystem : ModSystem
 				counts[p.team]++;
 		}
 
-		int budget = config.BossFightLivesAutoTeamSize ? 0 : config.BossFightRespawns;
+		// Shared pool = players on that team at fight start.
 		for (int team = 1; team <= 5; team++)
 		{
-			if (counts[team] <= 0)
-				continue;
-
-			TeamRespawnsLeft[team] = config.BossFightLivesAutoTeamSize
-				? counts[team]
-				: budget;
+			if (counts[team] > 0)
+				TeamRespawnsLeft[team] = counts[team];
 		}
 	}
 
@@ -141,7 +137,7 @@ public sealed class BossFightSystem : ModSystem
 
 			// Mid-join: PerPlayer full budget; PerTeam does not top up shared pool.
 			AssignPlayer(p, config);
-			if (config.BossFightLivesMode == "PerTeam" && p.team is >= 1 and <= 5
+			if (config.BossFightLivesMode == BossFightLivesMode.PerTeam && p.team is >= 1 and <= 5
 			    && !TeamRespawnsLeft.ContainsKey(p.team))
 				TeamRespawnsLeft[p.team] = 0;
 
@@ -156,17 +152,14 @@ public sealed class BossFightSystem : ModSystem
 		// Already dead at fight start / join: finish vanilla respawn without spending.
 		mp.RespawnAllowedThisDeath = player.dead;
 
-		if (config.BossFightLivesMode == "PerPlayer")
+		if (config.BossFightLivesMode == BossFightLivesMode.PerPlayer)
 		{
 			mp.RespawnsRemaining = config.BossFightRespawns;
 			return;
 		}
 
-		// PerTeam: teams 1–5 use shared map; unteamed = solo pool.
-		if (player.team == 0)
-			mp.RespawnsRemaining = config.BossFightLivesAutoTeamSize ? 1 : config.BossFightRespawns;
-		else
-			mp.RespawnsRemaining = 0;
+		// PerTeam: teams 1–5 use shared map; unteamed = solo pool of 1.
+		mp.RespawnsRemaining = player.team == 0 ? 1 : 0;
 	}
 
 	private static void ClearPools()
@@ -223,7 +216,7 @@ public sealed class BossFightSystem : ModSystem
 		if (config is null)
 			return;
 
-		if (config.BossFightLivesMode == "PerPlayer" || player.team == 0)
+		if (config.BossFightLivesMode == BossFightLivesMode.PerPlayer || player.team == 0)
 		{
 			if (mp.RespawnsRemaining > 0)
 			{

@@ -14,10 +14,12 @@ public sealed class BestMultiplayerPlayer : ModPlayer
 
 	public override void OnEnterWorld()
 	{
-		if (!TryTeamId(ServerConfig.Instance.TeamToJoin, out int team))
+		TeamToJoinOption choice = ServerConfig.Instance.TeamToJoin;
+		if (choice == TeamToJoinOption.None)
 			return;
 
-		Player.team = team;
+		// Enum order matches vanilla team ids (None=0 … Pink=5).
+		Player.team = (int)choice;
 		if (Main.netMode != NetmodeID.SinglePlayer)
 			NetMessage.SendData(MessageID.PlayerTeam, -1, -1, null, Player.whoAmI);
 	}
@@ -39,14 +41,4 @@ public sealed class BestMultiplayerPlayer : ModPlayer
 			t = 3600;
 		Player.respawnTimer = t;
 	}
-
-	private static bool TryTeamId(string name, out int team) => (team = name switch
-	{
-		"Red" => 1,
-		"Green" => 2,
-		"Blue" => 3,
-		"Yellow" => 4,
-		"Pink" => 5,
-		_ => 0,
-	}) != 0;
 }

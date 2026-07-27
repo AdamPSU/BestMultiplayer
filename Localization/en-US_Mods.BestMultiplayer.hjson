@@ -15,27 +15,22 @@ Configs: {
 
 		BossFightLivesMode: {
 			Label: Boss Fight Lives Mode
-			Tooltip: Off = vanilla infinite respawns. PerPlayer = personal respawn budget. PerTeam = shared budget per team. Empty budget hard-locks respawn until the boss ends (like Better Multiplayer).
+			Tooltip: Off = vanilla infinite respawns. PerPlayer = personal respawn budget (see Boss Fight Respawns). PerTeam = one shared pool per team equal to team size at fight start. Empty budget hard-locks until the boss ends.
 		}
 
 		BossFightRespawns: {
 			Label: Boss Fight Respawns
-			Tooltip: Respawn budget. PerPlayer = each player. PerTeam (when Auto Team Size is off) = shared pool size. 0 = lock on first death.
+			Tooltip: PerPlayer — how many times each player may respawn during a boss fight (0 = lock on first death). PerTeam — always team size at fight start (not editable). Hidden when mode is Off.
 		}
 
-		BossFightLivesAutoTeamSize: {
-			Label: Auto Team Size Lives
-			Tooltip: PerTeam only. When on, shared pool equals players on that team at fight start. Unteamed players get a solo pool of 1. When off, uses Boss Fight Respawns.
-		}
-
-		FreeTeamWormhole: {
-			Label: Free Team Wormhole
+		UnlimitedTeamTeleport: {
+			Label: Unlimited Team Teleport
 			Tooltip: Map-click teleport to teammates works without carrying Wormhole Potions. Real potions still exist and are not consumed while this is on.
 		}
 
-		BlockFreeWormholeDuringBoss: {
-			Label: Block Free Wormhole During Boss Fights
-			Tooltip: When enabled, free team wormholes are disabled while a boss is active. Real potions still work. Off by default.
+		BlockUnlimitedTeleportDuringBoss: {
+			Label: Block Unlimited Teleport During Boss Fights
+			Tooltip: When enabled, unlimited team teleport is disabled while a boss is active. Real potions still work. Off by default.
 		}
 	}
 
@@ -51,6 +46,59 @@ Configs: {
 		StopSpectateOnRespawn: {
 			Label: Stop Spectate On Respawn
 			Tooltip: Leave spectate mode when you respawn (feature not implemented yet).
+		}
+	}
+
+	TeamToJoinOption: {
+		Tooltip: ""
+
+		None: {
+			Label: None
+			Tooltip: ""
+		}
+
+		Red: {
+			Label: Red
+			Tooltip: ""
+		}
+
+		Green: {
+			Label: Green
+			Tooltip: ""
+		}
+
+		Blue: {
+			Label: Blue
+			Tooltip: ""
+		}
+
+		Yellow: {
+			Label: Yellow
+			Tooltip: ""
+		}
+
+		Pink: {
+			Label: Pink
+			Tooltip: ""
+		}
+	}
+
+	BossFightLivesMode: {
+		Tooltip: ""
+
+		Off: {
+			Label: Off
+			Tooltip: ""
+		}
+
+		PerPlayer: {
+			Label: Per Player
+			Tooltip: ""
+		}
+
+		PerTeam: {
+			Label: Per Team
+			Tooltip: ""
 		}
 	}
 }

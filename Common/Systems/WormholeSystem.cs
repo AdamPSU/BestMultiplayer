@@ -43,10 +43,10 @@ public sealed class WormholeSystem : ModSystem
 			return false;
 
 		ServerConfig config = ServerConfig.Instance;
-		if (config is null || !config.FreeTeamWormhole)
+		if (config is null || !config.UnlimitedTeamTeleport)
 			return false;
 
-		if (config.BlockFreeWormholeDuringBoss && BossFightSystem.IsBossFightActive())
+		if (config.BlockUnlimitedTeleportDuringBoss && BossFightSystem.IsBossFightActive())
 			return false;
 
 		return true;

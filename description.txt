@@ -1,4 +1,4 @@
 BestMultiplayer improves Terraria multiplayer with host-controlled rules and client presentation options.
 
-Server (host): auto team join, boss fight lives (per-player or per-team budget then lock), free team wormhole.
+Server (host): auto team join, boss fight lives (per-player or per-team budget then lock), unlimited team teleport.
 Client (local): team spectate preferences (planned).

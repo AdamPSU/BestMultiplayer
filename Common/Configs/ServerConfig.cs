@@ -6,6 +6,23 @@ using Terraria.ModLoader.Config;
 
 namespace BestMultiplayer.Common.Configs;
 
+public enum TeamToJoinOption
+{
+	None,
+	Red,
+	Green,
+	Blue,
+	Yellow,
+	Pink,
+}
+
+public enum BossFightLivesMode
+{
+	Off,
+	PerPlayer,
+	PerTeam,
+}
+
 /// <summary>
 /// Shared multiplayer policy. Synced from the server; only the host may change it in-session.
 /// </summary>
@@ -16,30 +33,26 @@ public sealed class ServerConfig : ModConfig
 	public static ServerConfig Instance => ModContent.GetInstance<ServerConfig>();
 
 	[Header("Teams")]
-	[DrawTicks]
-	[OptionStrings(new string[] { "None", "Red", "Green", "Blue", "Yellow", "Pink" })]
-	[DefaultValue("Red")]
-	public string TeamToJoin;
+	[Dropdown]
+	[DefaultValue(TeamToJoinOption.Red)]
+	public TeamToJoinOption TeamToJoin;
 
 	[Header("BossFights")]
-	[DrawTicks]
-	[OptionStrings(new string[] { "Off", "PerPlayer", "PerTeam" })]
-	[DefaultValue("PerPlayer")]
-	public string BossFightLivesMode;
+	[Dropdown]
+	[DefaultValue(BossFightLivesMode.PerPlayer)]
+	public BossFightLivesMode BossFightLivesMode;
 
+	[CustomModConfigItem(typeof(BossFightRespawnsElement))]
 	[Range(0, 99)]
 	[DefaultValue(1)]
 	public int BossFightRespawns;
 
-	[DefaultValue(true)]
-	public bool BossFightLivesAutoTeamSize;
-
 	[Header("Wormholes")]
 	[DefaultValue(true)]
-	public bool FreeTeamWormhole;
+	public bool UnlimitedTeamTeleport;
 
 	[DefaultValue(false)]
-	public bool BlockFreeWormholeDuringBoss;
+	public bool BlockUnlimitedTeleportDuringBoss;
 
 	public override bool AcceptClientChanges(ModConfig pendingConfig, int whoAmI, ref NetworkText message)
 	{

@@ -13,7 +13,7 @@ Build a stronger multiplayer experience than [Better Multiplayer](https://steamc
 
 Baseline BM (v1.6.3 — `wiki/entities/better-multiplayer-baseline.md`): TeamToJoin soft-lock, NoBossFightRespawn, Witch Doctor wormhole shop.
 
-BestMultiplayer deltas: join-once team; free team wormhole; boss lives (budget then lock) instead of hard ban.
+BestMultiplayer deltas: join-once team; unlimited team teleport; boss lives (budget then lock) instead of hard ban.
 
 ## Architecture
 
@@ -34,7 +34,7 @@ wiki/                              design notes and baseline inventory
 
 | Concern | Config | Runtime home |
 |---|---|---|
-| Auto team, boss respawn, free wormhole | `ServerConfig` | Players / Systems |
+| Auto team, boss lives, unlimited team teleport | `ServerConfig` | Players / Systems |
 | Spectate, HUD prefs | `ClientConfig` | Players / UI (local only) |
 | Custom packets | — | only if tML does not already sync the state |
 
@@ -47,8 +47,8 @@ Server config changes are host-only (`AcceptClientChanges`).
 | Folder + config scaffold | Done |
 | Config labels (en-US) | Done |
 | TeamToJoin (join-once on enter) | Done |
-| FreeTeamWormhole (virtual potion) | Done |
-| BlockFreeWormholeDuringBoss | Done (default off) |
+| UnlimitedTeamTeleport (virtual potion) | Done |
+| BlockUnlimitedTeleportDuringBoss | Done (default off) |
 | Boss fight lives (PerPlayer / PerTeam) | Done |
 | Spectate logic | Not implemented |
 

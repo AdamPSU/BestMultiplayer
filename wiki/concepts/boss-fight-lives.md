@@ -12,12 +12,10 @@ Deaths during a boss fight cost **respawns** from a budget. Empty budget → har
 | Field | Default | Meaning |
 |---|---|---|
 | `BossFightLivesMode` | `PerPlayer` | `Off` \| `PerPlayer` \| `PerTeam` |
-| `BossFightRespawns` | `1` | Budget size; `0` = lock on first death (BM) |
-| `BossFightLivesAutoTeamSize` | `true` | **PerTeam only:** pool = players on that team at fight start |
+| `BossFightRespawns` | `1` | **PerPlayer only.** Budget size; `0` = lock on first death (BM). Config UI shows “team size at fight start” under PerTeam (not this number). |
 
 - **PerPlayer:** each player gets `BossFightRespawns`.
-- **PerTeam + Auto:** shared pool per team id = team size at init; unteamed (`team == 0`) solo pool of `1`.
-- **PerTeam + !Auto:** shared pool = `BossFightRespawns` per present team; unteamed solo = `BossFightRespawns`.
+- **PerTeam:** shared pool per team = player count on that team at fight start; unteamed (`team == 0`) solo pool of `1`.
 - **Off:** vanilla infinite respawns.
 
 ## Life math
@@ -64,7 +62,7 @@ While locked, each `UpdateDead` sets `respawnTimer` to:
 ## Related
 
 - [Multiplayer config rules](multiplayer-config-rules.md)
-- [Free team wormhole](free-team-wormhole.md) (shared boss detect)
+- [Unlimited team teleport](unlimited-team-teleport.md) (shared boss detect)
 - [Better Multiplayer baseline](../entities/better-multiplayer-baseline.md)
 
 [^1]: Common/Systems/BossFightSystem.cs; Common/Players/BestMultiplayerPlayer.cs

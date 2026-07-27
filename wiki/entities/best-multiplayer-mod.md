@@ -33,7 +33,7 @@ Thin sealed `Mod` subclass. Features live under `Common/`.[^1]
 | Feature | Status |
 |---|---|
 | [TeamToJoin](../concepts/team-to-join.md) (join-once) | Done |
-| [Free team wormhole](../concepts/free-team-wormhole.md) | Done |
+| [Unlimited team teleport](../concepts/unlimited-team-teleport.md) | Done |
 | [Boss fight lives](../concepts/boss-fight-lives.md) | Done |
 | Spectate (client) | Config only |
 

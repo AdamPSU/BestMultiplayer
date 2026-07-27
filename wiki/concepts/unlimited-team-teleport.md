@@ -1,8 +1,8 @@
 ---
-title: Free Team Wormhole
+title: Unlimited Team Teleport
 description: Virtual infinite wormhole via vanilla HasUnityPotion/TakeUnityPotion hooks — no custom teleport.
 date: 2026-07-27
-tags: [feature, wormhole, multiplayer, server-config]
+tags: [feature, wormhole, teleport, multiplayer, server-config]
 ---
 
 Map-click teleport to **same-team** players works without carrying Wormhole Potions. Vanilla UI, same-team gate, chat announce, and net teleport stay untouched.[^1]
@@ -11,10 +11,10 @@ Map-click teleport to **same-team** players works without carrying Wormhole Poti
 
 | Field | Default | Meaning |
 |---|---|---|
-| `FreeTeamWormhole` | `true` | Pretend the player has a wormhole (no inventory slot) |
-| `BlockFreeWormholeDuringBoss` | `false` | When true, free rule off while boss/EoW active |
+| `UnlimitedTeamTeleport` | `true` | Pretend the player has a wormhole (no inventory slot) |
+| `BlockUnlimitedTeleportDuringBoss` | `false` | When true, unlimited rule off while boss/EoW active |
 
-Real potions remain craftable/lootable. While free is on, `TakeUnityPotion` no-ops so real stacks are not consumed on TP.
+Real potions remain craftable/lootable. While unlimited is on, `TakeUnityPotion` no-ops so real stacks are not consumed on TP.
 
 ## How
 
@@ -28,13 +28,13 @@ Vanilla map TP checks legacy names:
 - Has → `true` when `ShouldFakeWormhole`
 - Take → skip consume when faking
 
-`ShouldFakeWormhole`: alive, `FreeTeamWormhole`, and not (`BlockFreeWormholeDuringBoss` && `BossFightSystem.IsBossFightActive()`).
+`ShouldFakeWormhole`: alive, `UnlimitedTeamTeleport`, and not (`BlockUnlimitedTeleportDuringBoss` && `BossFightSystem.IsBossFightActive()`).
 
 ## vs Better Multiplayer
 
 | | BestMultiplayer | Better Multiplayer |
 |---|---|---|
-| Approach | Free virtual potion | Witch Doctor sells potions |
+| Approach | Unlimited virtual potion | Witch Doctor sells potions |
 | Inventory | No slot needed | Must buy/carry stacks |
 | Boss gate | Optional host toggle (default allow) | N/A |
 

@@ -29,10 +29,9 @@ flowchart LR
 |---|---|---|---|
 | `TeamToJoin` | `Red` | **Done** (join-once) | Assign team on world enter; `None` disables; no soft-lock — see [TeamToJoin](team-to-join.md) |
 | `BossFightLivesMode` | `PerPlayer` | **Done** | `Off` / `PerPlayer` / `PerTeam` — see [Boss fight lives](boss-fight-lives.md) |
-| `BossFightRespawns` | `1` | **Done** | Respawn budget; `0` = BM first-death lock |
-| `BossFightLivesAutoTeamSize` | `true` | **Done** | PerTeam: pool = team size at fight start |
-| `FreeTeamWormhole` | `true` | **Done** | Virtual wormhole for map team-TP — see [Free team wormhole](free-team-wormhole.md) |
-| `BlockFreeWormholeDuringBoss` | `false` | **Done** | When true, free rule off during boss/EoW |
+| `BossFightRespawns` | `1` | **Done** | PerPlayer budget; `0` = BM first-death lock; ignored in PerTeam (pool = team size) |
+| `UnlimitedTeamTeleport` | `true` | **Done** | Virtual wormhole for map team-TP — see [Unlimited team teleport](unlimited-team-teleport.md) |
+| `BlockUnlimitedTeleportDuringBoss` | `false` | **Done** | When true, unlimited rule off during boss/EoW |
 
 ## ClientConfig fields (scaffold)
 
@@ -45,7 +44,7 @@ flowchart LR
 
 - [TeamToJoin](team-to-join.md)
 - [Boss fight lives](boss-fight-lives.md)
-- [Free team wormhole](free-team-wormhole.md)
+- [Unlimited team teleport](unlimited-team-teleport.md)
 - [Mod anatomy](mod-anatomy.md)
 - [Scaffold conventions](scaffold-conventions.md)
 - [Better Multiplayer baseline](../entities/better-multiplayer-baseline.md)

@@ -1,11 +1,13 @@
 ---
 title: BestMultiplayer Mod
-description: Concrete mod identity — entry class, packaging metadata, and current emptiness.
+description: Concrete mod identity — entry class, packaging metadata, and scaffold surface.
 date: 2026-07-27
 tags: [mod, entity, tmodloader, terraria]
 ---
 
-**BestMultiplayer** is a tModLoader mod package: one C# entry type plus packaging/build metadata. Version **0.1**, author placeholder **Your Name**, display name **BestMultiplayer**.[^1][^2]
+**BestMultiplayer** is a tModLoader mod package. Version **0.1**, author placeholder **Your Name**, display name **BestMultiplayer**.[^1][^2]
+
+**Goal:** surpass [Better Multiplayer](better-multiplayer-baseline.md) (kittenchilly) — Workshop + [source](https://github.com/kittenchilly/BetterMultiplayer).
 
 ## Entry class
 
@@ -14,7 +16,7 @@ namespace BestMultiplayer
 public sealed class BestMultiplayer : Mod { }
 ```
 
-Empty sealed `Mod` subclass. Comment directs features into separate folders/types; keep this class for lifecycle/networking only.[^1]
+Thin sealed `Mod` subclass. Features live under `Common/` (and later `Content/`).[^1]
 
 ## Packaging
 
@@ -24,9 +26,7 @@ Empty sealed `Mod` subclass. Comment directs features into separate folders/type
 | author | Your Name |
 | version | 0.1 |
 | side | Both |
-| description | A feature-neutral tModLoader mod scaffold.[^2][^3] |
-
-`buildIgnore` excludes project/IDE/build dirs from the packaged mod.[^2]
+| description | Multiplayer QoL scaffold; configs present, logic pending.[^2][^3] |
 
 ## Project identity
 
@@ -36,10 +36,22 @@ Empty sealed `Mod` subclass. Comment directs features into separate folders/type
 | RootNamespace | BestMultiplayer |
 | Targets import | Steam-local `tMLMod.targets` (machine path)[^4] |
 
+## Scaffold surface
+
+| Type | Path |
+|---|---|
+| Server policy config | `Common/Configs/ServerConfig.cs` |
+| Client UX config | `Common/Configs/ClientConfig.cs` |
+| Player hooks | `Common/Players/BestMultiplayerPlayer.cs` |
+| Boss session helper | `Common/Systems/BossFightSystem.cs` |
+| Shop hooks | `Common/GlobalNPCs/ShopGlobalNPC.cs` |
+| Localization | `Localization/en-US_Mods.BestMultiplayer.hjson` |
+
 ## Related
 
+- [Mod anatomy](../concepts/mod-anatomy.md)
+- [Better Multiplayer baseline](better-multiplayer-baseline.md)
 - [Build pipeline](build-pipeline.md)
-- [Scaffold conventions](../concepts/scaffold-conventions.md)
 
 [^1]: BestMultiplayer.cs
 [^2]: build.txt

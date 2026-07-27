@@ -1,1 +1,6 @@
-A feature-neutral tModLoader mod scaffold.
+BestMultiplayer improves Terraria multiplayer with host-controlled rules and client presentation options.
+
+Scaffold stage: configs and folder layout are in place; feature logic is not wired yet.
+
+Server (host): auto team join, no respawn during boss fights, Witch Doctor wormhole potions.
+Client (local): team spectate preferences (planned).

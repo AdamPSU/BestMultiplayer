@@ -1,37 +1,68 @@
-# BestMultiplayer mod scaffold
+# BestMultiplayer
 
-This is a feature-neutral tModLoader 1.4.4.9 source scaffold with VS Code build support.
+tModLoader 1.4.4.9 multiplayer QoL mod (scaffold stage).
+
+## Goal
+
+Build a stronger multiplayer experience than [Better Multiplayer](https://steamcommunity.com/sharedfiles/filedetails/?id=2634682993) (kittenchilly).
+
+| | |
+|---|---|
+| Workshop | https://steamcommunity.com/sharedfiles/filedetails/?id=2634682993 |
+| Source | https://github.com/kittenchilly/BetterMultiplayer |
+
+Baseline (source v1.6.3 — full inventory in `wiki/entities/better-multiplayer-baseline.md`):
+
+1. **TeamToJoin** — force join team (`None`/`Red`/`Green`/`Blue`/`Yellow`/`Pink`, default Red)
+2. **NoBossFightRespawn** — while dead + boss/EoW active, keep resetting respawn timer (default on)
+3. **WitchDoctorWormhole** — Witch Doctor sells Wormhole Potions (default on)
+
+## Architecture
+
+One mod (`side = Both`). Split **authority** (server) from **presentation** (client). Pattern matches ExampleMod, Calamity, Magic Storage, Team Spectate.
+
+```text
+BestMultiplayer.cs                 thin Mod entry (packets/lifecycle only)
+Common/Configs/ServerConfig.cs     ConfigScope.ServerSide — host policy
+Common/Configs/ClientConfig.cs     ConfigScope.ClientSide — local UX
+Common/Players/                    ModPlayer hooks (team, respawn, spectate)
+Common/Systems/                    session helpers (boss-fight detection)
+Common/GlobalNPCs/                 shop and cross-NPC hooks
+Common/UI/                         client-only UI (add when needed)
+Content/                           new items/NPCs/tiles (add when needed)
+Localization/                      .hjson labels
+wiki/                              design notes and baseline inventory
+```
+
+| Concern | Config | Runtime home |
+|---|---|---|
+| Auto team, boss respawn, shops | `ServerConfig` | Players / Systems / GlobalNPCs |
+| Spectate, HUD prefs | `ClientConfig` | Players / UI (local only) |
+| Custom packets | — | only if tML does not already sync the state |
+
+Server config changes are host-only (`AcceptClientChanges`).
+
+## Status
+
+| Piece | State |
+|---|---|
+| Folder + config scaffold | Done |
+| Config labels (en-US) | Done |
+| Team / respawn / shop logic | Not implemented |
+| Spectate logic | Not implemented |
 
 ## First use
 
 1. Launch tModLoader.
-2. Open `Workshop -> Develop Mods -> Create Mod` and create a temporary mod once. This initializes the correct `ModSources` folder and version-specific project files.
-3. Use `Workshop -> Develop Mods -> Open Sources` to reveal that folder.
-4. Copy this scaffold into `ModSources`, or use the generated project file as the authoritative `.csproj` and copy the source files into it.
-5. Keep the mod folder, `build.txt`, `.cs`, `.csproj`, namespace, and class name aligned if you rename the mod later.
-6. Open `BestMultiplayer.csproj` in VS Code. Do not open only an individual `.cs` file.
+2. Open `Workshop -> Develop Mods -> Create Mod` once if needed (initializes `ModSources`).
+3. Place this repo under `ModSources` (or open it from there).
+4. Keep mod folder, `build.txt`, main type/namespace, and `.csproj` names aligned on rename.
+5. Open `BestMultiplayer.csproj` in VS Code (not a single `.cs` file).
 
 ## Build and test
 
-- VS Code: run the `tModLoader: build mod` task.
-- In tModLoader: use `Workshop -> Develop Mods -> Build + Reload`.
-- Test changes in a throwaway world first.
+- VS Code: `tModLoader: build mod` task.
+- In-game: `Workshop -> Develop Mods -> Build + Reload`.
+- Test in a throwaway multiplayer world.
 
-The local `.dotnet` SDK is used by the VS Code task. If the project is moved to another machine, install the .NET SDK required by that tModLoader version and regenerate the project through tModLoader.
-
-## Add features
-
-Suggested folders:
-
-```text
-Common/Configs/                 ModConfig classes
-Common/Systems/                 world or lifecycle systems
-Common/Players/                 ModPlayer state and sync
-Common/GlobalItems/             cross-cutting item behavior
-Common/GlobalNPCs/              cross-cutting NPC behavior
-Common/GlobalProjectiles/       cross-cutting projectile behavior
-Content/                        new items, projectiles, NPCs, tiles, and buffs
-Localization/                   .hjson labels, tooltips, and text
-```
-
-Keep client presentation settings in `ConfigScope.ClientSide` configs and shared gameplay/server policy in `ConfigScope.ServerSide` configs. Add network packets only for runtime state that is not already covered by tModLoader synchronization.
+Local `.dotnet` is used by the VS Code task. On another machine, install the .NET SDK required by that tModLoader version and regenerate the project through tModLoader if needed.

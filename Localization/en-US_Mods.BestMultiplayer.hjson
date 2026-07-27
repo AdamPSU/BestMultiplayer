@@ -1,0 +1,44 @@
+Configs: {
+	ServerConfig: {
+		DisplayName: Server
+
+		Headers: {
+			Teams: Teams
+			BossFights: Boss Fights
+			Economy: Economy
+		}
+
+		TeamToJoin: {
+			Label: Team To Join
+			Tooltip: Team forced when a player joins. None disables auto-join.
+		}
+
+		NoBossFightRespawn: {
+			Label: Disable Respawning During Boss Fights
+			Tooltip: While a boss is alive, dead players cannot finish respawning until the fight ends or everyone is dead.
+		}
+
+		WitchDoctorWormhole: {
+			Label: Witch Doctor Sells Wormhole Potions
+			Tooltip: Adds Wormhole Potions to the Witch Doctor shop.
+		}
+	}
+
+	ClientConfig: {
+		DisplayName: Client
+
+		Headers: {
+			Spectate: Spectate
+		}
+
+		SpectateOnDeath: {
+			Label: Spectate On Death
+			Tooltip: When you die in multiplayer, follow a living teammate (feature not implemented yet).
+		}
+
+		StopSpectateOnRespawn: {
+			Label: Stop Spectate On Respawn
+			Tooltip: Leave spectate mode when you respawn (feature not implemented yet).
+		}
+	}
+}

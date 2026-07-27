@@ -1,18 +1,19 @@
 ---
 title: Multiplayer Config Rules
-description: Client vs server config scope and when custom network packets are allowed.
+description: Client vs server config scope, host-only edits, and when custom packets are allowed.
 date: 2026-07-27
 tags: [multiplayer, networking, config, tmodloader]
 ---
 
-BestMultiplayer is named for multiplayer-safe design. The README states the policy; no configs or packets are implemented yet.[^1]
+Implemented as two `ModConfig` classes.[^1]
 
-| Concern | Rule |
-|---|---|
-| Client presentation prefs | `ConfigScope.ClientSide` |
-| Shared gameplay / server policy | `ConfigScope.ServerSide` |
-| Custom network packets | Only for runtime state tModLoader does not already sync |
-| Load side | `side = Both` in `build.txt`[^2] |
+| Concern | Rule | Type |
+|---|---|---|
+| Client presentation prefs | `ConfigScope.ClientSide` | `ClientConfig` |
+| Shared gameplay / server policy | `ConfigScope.ServerSide` | `ServerConfig` |
+| Who may edit server config in MP | Host only (`AcceptClientChanges`) | `ServerConfig` |
+| Custom network packets | Only for runtime state tModLoader does not already sync | — |
+| Load side | `side = Both` in `build.txt`[^2] | — |
 
 ```mermaid
 flowchart LR
@@ -22,14 +23,28 @@ flowchart LR
   Server -->|"Custom packet only if needed"| Client
 ```
 
-## Why it matters
+## ServerConfig fields (scaffold)
 
-Splitting scopes early avoids desync and “host-only feels different” bugs. Prefer built-in tModLoader synchronization before inventing packet types.[^1]
+| Field | Default | Intent |
+|---|---|---|
+| `TeamToJoin` | `Red` | Auto team; `None` disables |
+| `NoBossFightRespawn` | `true` | Block respawn while boss/EoW active |
+| `WitchDoctorWormhole` | `true` | Witch Doctor sells Wormhole Potion |
+
+Logic not wired yet — fields exist for UI and future hooks.[^1]
+
+## ClientConfig fields (scaffold)
+
+| Field | Default | Intent |
+|---|---|---|
+| `SpectateOnDeath` | `true` | Follow teammate when dead |
+| `StopSpectateOnRespawn` | `true` | Clear spectate on respawn |
 
 ## Related
 
+- [Mod anatomy](mod-anatomy.md)
 - [Scaffold conventions](scaffold-conventions.md)
-- [BestMultiplayer mod](../entities/best-multiplayer-mod.md)
+- [Better Multiplayer baseline](../entities/better-multiplayer-baseline.md)
 
-[^1]: README.md
+[^1]: Common/Configs/ServerConfig.cs, Common/Configs/ClientConfig.cs
 [^2]: build.txt

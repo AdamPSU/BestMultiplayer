@@ -10,8 +10,8 @@ This wiki covers **only** the BestMultiplayer repository — a Terraria tModLoad
 ## Key Findings
 
 - **Goal:** better multiplayer QoL than [Better Multiplayer](entities/better-multiplayer-baseline.md) (Workshop `2634682993`, [GitHub](https://github.com/kittenchilly/BetterMultiplayer)).
-- **Implemented:** [TeamToJoin](concepts/team-to-join.md); [Unlimited team teleport](concepts/unlimited-team-teleport.md); [Boss fight lives](concepts/boss-fight-lives.md); [team spectate](concepts/team-spectate.md) + death UI.
-- **Planned:** [roadmap](concepts/roadmap.md) — boss teammate respawn, boss spectate, camera lerp, damage board, instant respawn on boss end, optional Shared HP/DeathLink.
+- **Implemented:** [TeamToJoin](concepts/team-to-join.md); [Unlimited team teleport](concepts/unlimited-team-teleport.md); [Boss fight lives](concepts/boss-fight-lives.md) (+ spectate-target respawn); [team spectate](concepts/team-spectate.md) + death UI.
+- **Planned:** [roadmap](concepts/roadmap.md) — boss spectate, camera lerp, damage board, instant respawn on boss end, optional Shared HP/DeathLink.
 - **Collection:** [Shared World Map](concepts/collection-addons.md) as primary add-on; [catalog ack](concepts/catalog-ack.md) for the rest.
 - Baseline is tiny (v1.6.3 source): **exactly 3** ServerSide features — see [full inventory](entities/better-multiplayer-baseline.md).
 - Architecture: [mod anatomy](concepts/mod-anatomy.md). Target: tModLoader **1.4.4.9**, `side = Both`.

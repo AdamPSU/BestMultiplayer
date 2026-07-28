@@ -1,10 +1,12 @@
 using System.Collections.Generic;
 using BestMultiplayer.Common.Players;
+using BestMultiplayer.Common.UI;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using ReLogic.Graphics;
 using Terraria;
 using Terraria.GameContent;
+using Terraria.ID;
 using Terraria.Localization;
 using Terraria.ModLoader;
 using Terraria.UI;
@@ -12,8 +14,9 @@ using Terraria.UI;
 namespace BestMultiplayer.Common.Systems;
 
 /// <summary>
-/// Replaces vanilla death text: intro (title + spectating-in), then bottom respawn digits while dead.
+/// Client death chrome: custom death text + dead-only teammate head grid (MP).
 /// </summary>
+[Autoload(Side = ModSide.Client)]
 public sealed class DeathScreenSystem : ModSystem
 {
 	private const float TitleScale = 0.8f;
@@ -22,25 +25,72 @@ public sealed class DeathScreenSystem : ModSystem
 	/// <summary>Y of the bottom "Respawn in N" line; spectate grid sits above this.</summary>
 	internal static float RespawnTextY => Main.screenHeight - 140f;
 
-	public override void ModifyInterfaceLayers(List<GameInterfaceLayer> layers)
+	private UserInterface _gridUi;
+	private SpectateGridState _gridState;
+	private GameTime _lastTime = new();
+
+	public override void Load()
 	{
-		int idx = layers.FindIndex(layer => layer.Name == "Vanilla: Death Text");
-		if (idx == -1)
+		if (Main.dedServ)
 			return;
 
-		if (Main.LocalPlayer is { active: true, dead: true })
-			layers[idx].Active = false;
-
-		layers.Insert(idx, new LegacyGameInterfaceLayer(
-			"BestMultiplayer: DeathText",
-			delegate
-			{
-				if (Main.LocalPlayer is { active: true, dead: true })
-					DrawDeathUi();
-				return true;
-			},
-			InterfaceScaleType.UI));
+		_gridState = new SpectateGridState();
+		_gridState.Activate();
+		_gridUi = new UserInterface();
+		_gridUi.SetState(_gridState);
 	}
+
+	public override void Unload()
+	{
+		_gridUi = null;
+		_gridState = null;
+	}
+
+	public override void UpdateUI(GameTime gameTime)
+	{
+		_lastTime = gameTime;
+		if (ShouldShowGrid())
+			_gridUi?.Update(gameTime);
+	}
+
+	public override void ModifyInterfaceLayers(List<GameInterfaceLayer> layers)
+	{
+		int deathIdx = layers.FindIndex(layer => layer.Name == "Vanilla: Death Text");
+		if (deathIdx != -1)
+		{
+			if (Main.LocalPlayer is { active: true, dead: true })
+				layers[deathIdx].Active = false;
+
+			layers.Insert(deathIdx, new LegacyGameInterfaceLayer(
+				"BestMultiplayer: DeathText",
+				delegate
+				{
+					if (Main.LocalPlayer is { active: true, dead: true })
+						DrawDeathUi();
+					return true;
+				},
+				InterfaceScaleType.UI));
+		}
+
+		int mouseIdx = layers.FindIndex(l => l.Name == "Vanilla: Mouse Text");
+		if (mouseIdx != -1)
+		{
+			layers.Insert(mouseIdx, new LegacyGameInterfaceLayer(
+				"BestMultiplayer: SpectateGrid",
+				delegate
+				{
+					if (ShouldShowGrid())
+						_gridUi?.Draw(Main.spriteBatch, _lastTime);
+					return true;
+				},
+				InterfaceScaleType.UI));
+		}
+	}
+
+	private static bool ShouldShowGrid() =>
+		!Main.dedServ
+		&& Main.netMode != NetmodeID.SinglePlayer
+		&& Main.LocalPlayer is { active: true, dead: true };
 
 	private static void DrawDeathUi()
 	{

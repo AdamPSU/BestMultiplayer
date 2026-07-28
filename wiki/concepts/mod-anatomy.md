@@ -11,36 +11,38 @@ BestMultiplayer is one package (`side = Both`). It loads on host, joiners, and d
 
 | Layer | Scope | Who decides | Examples |
 |---|---|---|---|
-| Server policy | `ServerConfig` (`ServerSide`) | Host; synced to all | Team on join, unlimited team teleport, boss lives |
-| Client presentation | `ClientConfig` (`ClientSide`) | Each local player | Spectate on death, HUD prefs |
-| Runtime state | Players / Systems / packets | Server writes when shared | Respawn timers, team id |
+| Server policy | `ServerConfig` (`ServerSide`) | Host; synced to all | Team on join, unlimited team teleport, boss lives, boss-death teammate respawn |
+| Client presentation | `ClientConfig` (`ClientSide`) | Each local player | Spectate on death |
+| Runtime state | Players / Systems / packets | Server writes when shared | Respawn timers, team id, preferred respawn target |
 
 Rule: if two players disagreeing would cause **desync or unfairness** → server. If it is **this screen only** → client.[^1]
 
-## Folder map (implemented scaffold)
+## Folder map
 
 ```text
 BestMultiplayer.cs
+Common/Packets.cs
 Common/Configs/ServerConfig.cs
 Common/Configs/ClientConfig.cs
 Common/Players/BestMultiplayerPlayer.cs
+Common/Players/SpectatePlayer.cs
 Common/Systems/BossFightSystem.cs
+Common/Systems/DeathScreenSystem.cs   # death text + spectate grid host (client)
 Common/Systems/WormholeSystem.cs
-Common/GlobalNPCs/ShopGlobalNPC.cs
+Common/UI/SpectateGridState.cs
 Localization/en-US_Mods.BestMultiplayer.hjson
 ```
 
-| Path | Role | Status |
-|---|---|---|
-| `ServerConfig` | Host toggles | Fields + host `AcceptClientChanges` |
-| `ClientConfig` | Spectate prefs | Wired (auto + stop) |
-| `BestMultiplayerPlayer` | Team on enter; boss lives lock | TeamToJoin + lives done |
-| `SpectatePlayer` (+ nested keybinds) | Death camera, intro tick, hotkeys, packet | Done |
-| `DeathScreenSystem` | Custom death intro + bottom timer | Done |
-| `BossFightSystem` | Boss detect + lives pools | Done |
-| `WormholeSystem` | Unlimited team teleport hooks | Done |
-| `ShopGlobalNPC` | Unused (shop path dropped) | Empty stub |
-| `Content/` | New game content | Not created yet |
+| Path | Role |
+|---|---|
+| `ServerConfig` | Host toggles + host `AcceptClientChanges` |
+| `ClientConfig` | `SpectateOnDeath` |
+| `BestMultiplayerPlayer` | Team on enter; lives lock; boss-death respawn at spectate target |
+| `SpectatePlayer` (+ keybinds) | Death camera, intro, hotkeys, section packet |
+| `DeathScreenSystem` | Custom death text + MP head grid UI host |
+| `BossFightSystem` | Boss detect + lives pools |
+| `WormholeSystem` | Unlimited team teleport hooks |
+| `Packets` | Custom packet ids |
 
 ## Runtime gates
 
@@ -49,17 +51,7 @@ Server / listen-server authority:  Main.netMode != MultiplayerClient
 Local presentation only:           !Main.dedServ && player.whoAmI == Main.myPlayer
 ```
 
-Custom packets only when tModLoader does not already sync the state (prefer vanilla team/life/NPC sync first).[^1]
-
-## Real-mod precedents
-
-| Mod | Pattern |
-|---|---|
-| ExampleMod | `Common/` + `Content/`; thin `Mod` |
-| Calamity | `CalamityClientConfig` + `CalamityServerConfig` |
-| Magic Storage | Client + server configs; `Common/Players|Systems`; `AcceptClientChanges` for ops |
-| Team Spectate | Client-only config; `ModPlayer` camera; UI systems |
-| Better Multiplayer | Server-only config (3 rules) — our baseline, not our ceiling |
+Custom packets only when tModLoader does not already sync the state.[^1]
 
 ## Related
 

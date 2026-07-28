@@ -47,6 +47,9 @@ public sealed class ServerConfig : ModConfig
 	[DefaultValue(1)]
 	public int BossFightRespawns;
 
+	[DefaultValue(true)]
+	public bool RespawnAtTeammateDuringBoss;
+
 	[Header("Wormholes")]
 	[DefaultValue(true)]
 	public bool UnlimitedTeamTeleport;

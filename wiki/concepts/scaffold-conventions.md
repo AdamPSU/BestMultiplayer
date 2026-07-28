@@ -5,7 +5,7 @@ date: 2026-07-27
 tags: [conventions, architecture, tmodloader, scaffold]
 ---
 
-New work goes into typed folders under `Common/` (and later `Content/`). The root `Mod` class stays limited to lifecycle or networking.[^1][^2]
+New work goes into typed folders under `Common/` (and later `Content/` if needed). The root `Mod` class stays limited to lifecycle or networking.[^1][^2]
 
 ```mermaid
 flowchart TB
@@ -13,21 +13,21 @@ flowchart TB
   Mod --> Configs["Common/Configs"]
   Mod --> Systems["Common/Systems"]
   Mod --> Players["Common/Players"]
-  Mod --> Globals["Common/GlobalNPCs"]
+  Mod --> UI["Common/UI"]
   Mod --> Loc["Localization/"]
 ```
 
 ## Folders
 
-| Path | Responsibility | Present? |
-|---|---|---|
-| `Common/Configs/` | `ServerConfig`, `ClientConfig` | Yes |
-| `Common/Systems/` | World/session systems (`BossFightSystem`) | Stub |
-| `Common/Players/` | `ModPlayer` state (`BestMultiplayerPlayer`) | Stub |
-| `Common/GlobalNPCs/` | Shop / NPC hooks (`ShopGlobalNPC`) | Stub |
-| `Common/UI/` | Client UI | Later |
-| `Content/` | Items, projectiles, NPCs, tiles, buffs | Later |
-| `Localization/` | `.hjson` labels and tooltips | Yes |
+| Path | Responsibility |
+|---|---|
+| `Common/Configs/` | `ServerConfig`, `ClientConfig`, custom config elements |
+| `Common/Systems/` | Boss lives, death UI host, wormhole hooks |
+| `Common/Players/` | Team join, lives lock, spectate, boss-death respawn |
+| `Common/UI/` | Spectate head grid state |
+| `Common/Packets.cs` | Custom packet ids |
+| `Localization/` | `.hjson` labels and tooltips |
+| `Content/` | Items/NPCs/tiles — only when needed |
 
 ## Naming lockstep
 

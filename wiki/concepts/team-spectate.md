@@ -33,13 +33,17 @@ Hotkeys (dead only): previous / next teammate, stop. Next/prev during intro skip
 ## Config (`ClientConfig`)
 
 - `SpectateOnDeath` (default true) — auto enter spectate after intro
-- `StopSpectateOnRespawn` — always clear on respawn in v1 (dead-only)
+- Spectate always clears on respawn (dead-only)
+
+## Boss-death respawn
+
+Current spectate target is reported as preferred respawn whoAmI (MP packet to server). If [RespawnAtTeammateDuringBoss](boss-fight-lives.md) is on and the death was during a boss fight, respawn teleports beside that target when still valid. Stop / no target → vanilla spawn.
 
 ## Code
 
-- `Common/Players/SpectatePlayer.cs` — state, camera, hotkeys, `UpdateDead` tick, packets; nested `SpectateKeybinds`
-- `Common/UI/SpectateUISystem.cs` + `SpectateGridState.cs` — dead head grid
-- `Common/Systems/DeathScreenSystem.cs` — draw only
-- `BestMultiplayer.HandlePacket` — section load
+- `Common/Players/SpectatePlayer.cs` — state, camera, hotkeys, section packet; nested `SpectateKeybinds`
+- `Common/Systems/DeathScreenSystem.cs` — death text + grid UI host
+- `Common/UI/SpectateGridState.cs` — head grid
+- `BestMultiplayer.HandlePacket` / `Packets` — section + preferred respawn
 
 [^1]: Team Spectate Workshop 2563098343; BM design session 2026-07-27

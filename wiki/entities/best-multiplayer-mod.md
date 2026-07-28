@@ -26,7 +26,7 @@ Thin sealed `Mod` subclass. Features live under `Common/`.[^1]
 | author | Your Name |
 | version | 0.1 |
 | side | Both |
-| description | Multiplayer QoL; TeamToJoin done, more pending.[^2][^3] |
+| description | Multiplayer QoL (teams, boss lives, spectate, unlimited team TP).[^2][^3] |
 
 ## Feature status
 
@@ -35,20 +35,23 @@ Thin sealed `Mod` subclass. Features live under `Common/`.[^1]
 | [TeamToJoin](../concepts/team-to-join.md) (join-once) | Done |
 | [Unlimited team teleport](../concepts/unlimited-team-teleport.md) | Done |
 | [Boss fight lives](../concepts/boss-fight-lives.md) | Done |
+| Respawn at spectate target (boss deaths) | Done (`RespawnAtTeammateDuringBoss`) |
 | Spectate (client) | Death-only team camera + custom death UI |
 | Planned (boss/death/modes) | See [roadmap](../concepts/roadmap.md) |
 | Collection add-on | [Shared World Map](../concepts/collection-addons.md) |
 
-## Scaffold surface
+## Surface
 
 | Type | Path |
 |---|---|
 | Server policy config | `Common/Configs/ServerConfig.cs` |
 | Client UX config | `Common/Configs/ClientConfig.cs` |
-| Player hooks | `Common/Players/BestMultiplayerPlayer.cs` |
-| Boss session helper | `Common/Systems/BossFightSystem.cs` |
+| Player hooks | `Common/Players/BestMultiplayerPlayer.cs`, `SpectatePlayer.cs` |
+| Boss session | `Common/Systems/BossFightSystem.cs` |
+| Death UI + grid host | `Common/Systems/DeathScreenSystem.cs` |
 | Wormhole hooks | `Common/Systems/WormholeSystem.cs` |
-| Shop hooks (unused) | `Common/GlobalNPCs/ShopGlobalNPC.cs` |
+| Spectate grid | `Common/UI/SpectateGridState.cs` |
+| Packet ids | `Common/Packets.cs` |
 | Localization | `Localization/en-US_Mods.BestMultiplayer.hjson` |
 
 ## Related

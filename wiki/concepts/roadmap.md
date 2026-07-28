@@ -9,12 +9,11 @@ Planned work only — **not implemented yet**. Selected from the multiplayer cat
 
 ## Planned in-mod
 
-### Boss death → respawn at teammate (optional)
+### Boss death → respawn at teammate (optional) — **done**
 
 - **Scope:** boss-fight deaths only (not exploration/casual deaths).
-- **Behavior (draft):** when a boss fight is active and the player is allowed to respawn (lives remaining / not hard-locked), optional host config respawns them near a living teammate instead of bed/spawn.
-- **Knobs (draft):** enable; same-team only; max distance; fallback to vanilla spawn if no valid teammate.
-- **Inspiration:** Ghost Respawn, Improved Respawning “respawn on player” — clean-room; boss-gated.
+- **Behavior:** `RespawnAtTeammateDuringBoss` (default **on**): respawn beside the **current spectate target** only if still living same-team. No target → vanilla spawn. No nearest fallback.
+- See [boss fight lives](boss-fight-lives.md).
 
 ### Boss spectate (dead only)
 
@@ -56,7 +55,7 @@ Planned work only — **not implemented yet**. Selected from the multiplayer cat
 2. Smooth camera lerp  
 3. Boss spectate targets  
 4. Damage board (end-fight first, then mid-fight keybind)  
-5. Boss-death respawn-at-teammate  
+5. ~~Boss-death respawn-at-teammate~~ done  
 6. Shared HP / DeathLink mode  
 
 Order can change; implement when scheduled.

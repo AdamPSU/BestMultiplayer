@@ -13,10 +13,18 @@ Deaths during a boss fight cost **respawns** from a budget. Empty budget → har
 |---|---|---|
 | `BossFightLivesMode` | `PerPlayer` | `Off` \| `PerPlayer` \| `PerTeam` |
 | `BossFightRespawns` | `1` | **PerPlayer only.** Budget size; `0` = lock on first death (BM). Config UI shows “team size at fight start” under PerTeam (not this number). |
+| `RespawnAtTeammateDuringBoss` | `true` | After a death that occurred during a boss fight, respawn beside the teammate you were **spectating** (if still living, same team). No spectate target / Stop → vanilla bed/world spawn. No nearest fallback. |
 
 - **PerPlayer:** each player gets `BossFightRespawns`.
 - **PerTeam:** shared pool per team = player count on that team at fight start; unteamed (`team == 0`) solo pool of `1`.
 - **Off:** vanilla infinite respawns.
+
+## Respawn at teammate
+
+- Flag `DiedDuringBossFight` on `Kill` when `IsBossFightActive`.
+- While dead, local spectate target is stored as `PreferredRespawnWhoAmI` and synced to the server (packet).
+- On `OnRespawn` (server + singleplayer): if config on, flag set, and preferred still valid → `Teleport` ~2 tiles beside them. Clients get vanilla teleport sync.
+- Outside boss deaths: unchanged vanilla spawn.
 
 ## Life math
 
@@ -57,7 +65,8 @@ While locked, each `UpdateDead` sets `respawnTimer` to:
 
 - `Common/Systems/BossFightSystem.cs` — detect, pools, death edges
 - `Common/Systems/DeathScreenSystem.cs` — replace death text while hard-locked
-- `Common/Players/BestMultiplayerPlayer.cs` — `UpdateDead` clamp
+- `Common/Players/BestMultiplayerPlayer.cs` — `UpdateDead` clamp; teammate respawn teleport
+- `Common/Players/SpectatePlayer.cs` — preferred target for teammate respawn
 - `Common/Configs/ServerConfig.cs`
 
 ## Related

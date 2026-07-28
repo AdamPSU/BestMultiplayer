@@ -45,6 +45,11 @@ Configs: {
 			Tooltip: PerPlayer — how many times each player may respawn during a boss fight (0 = lock on first death). PerTeam — always team size at fight start (not editable). Hidden when mode is Off.
 		}
 
+		RespawnAtTeammateDuringBoss: {
+			Label: Respawn At Teammate During Boss
+			Tooltip: When on, players who die during a boss fight respawn beside the teammate they were spectating (if still living). No spectate target = vanilla bed/world spawn. Same-team only.
+		}
+
 		UnlimitedTeamTeleport: {
 			Label: Unlimited Team Teleport
 			Tooltip: Map-click teleport to teammates works without carrying Wormhole Potions. Real potions still exist and are not consumed while this is on.
@@ -63,11 +68,6 @@ Configs: {
 		SpectateOnDeath: {
 			Label: Spectate On Death
 			Tooltip: After a short death intro, automatically spectate the next living teammate (by player slot). Hotkeys still work when off.
-		}
-
-		StopSpectateOnRespawn: {
-			Label: Stop Spectate On Respawn
-			Tooltip: Clear spectate camera when you respawn.
 		}
 	}
 

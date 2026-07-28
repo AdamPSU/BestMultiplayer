@@ -30,15 +30,15 @@ flowchart LR
 | `TeamToJoin` | `Red` | **Done** (join-once) | Assign team on world enter; `None` disables; no soft-lock — see [TeamToJoin](team-to-join.md) |
 | `BossFightLivesMode` | `PerPlayer` | **Done** | `Off` / `PerPlayer` / `PerTeam` — see [Boss fight lives](boss-fight-lives.md) |
 | `BossFightRespawns` | `1` | **Done** | PerPlayer budget; `0` = BM first-death lock; ignored in PerTeam (pool = team size) |
+| `RespawnAtTeammateDuringBoss` | `true` | **Done** | Boss-death respawn beside **spectate target** only; else vanilla spawn |
 | `UnlimitedTeamTeleport` | `true` | **Done** | Virtual wormhole for map team-TP — see [Unlimited team teleport](unlimited-team-teleport.md) |
 | `BlockUnlimitedTeleportDuringBoss` | `false` | **Done** | When true, unlimited rule off during boss/EoW |
 
-## ClientConfig fields (scaffold)
+## ClientConfig fields
 
 | Field | Default | Intent |
 |---|---|---|
-| `SpectateOnDeath` | `true` | Follow teammate when dead |
-| `StopSpectateOnRespawn` | `true` | Clear spectate on respawn |
+| `SpectateOnDeath` | `true` | Auto-follow teammate after death intro |
 
 ## Related
 

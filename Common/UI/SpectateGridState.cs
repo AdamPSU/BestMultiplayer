@@ -1,4 +1,5 @@
 using System;
+using System.Collections.Generic;
 using BestMultiplayer.Common.Players;
 using BestMultiplayer.Common.Systems;
 using Microsoft.Xna.Framework;
@@ -13,8 +14,8 @@ using Terraria.UI;
 namespace BestMultiplayer.Common.UI;
 
 /// <summary>
-/// Teammate head grid while dead. Above respawn text normally; screen-center when hard-locked.
-/// Head draw matches Team Spectate (TextureAssets player layers + 40×56 crop).
+/// Teammate head grid while dead. Above bottom respawn-timer band.
+/// Head draw matches Team Spectate (TextureAssets layers + 40×56 crop).
 /// </summary>
 public sealed class SpectateGridState : UIState
 {
@@ -51,13 +52,7 @@ public sealed class SpectateGridState : UIState
 			Rebuild();
 		}
 
-		// Hard-lock (no lives): grid replaces center death chrome.
-		// Otherwise: sit just above "Respawn in N".
-		float top;
-		if (BossFightSystem.IsLocalHardLocked() && !SpectatePlayer.IsIntro)
-			top = Main.screenHeight / 2f - _panel.Height.Pixels / 2f;
-		else
-			top = DeathScreenSystem.RespawnTextY - GapAboveRespawn - _panel.Height.Pixels;
+		float top = DeathScreenSystem.RespawnTextY - GapAboveRespawn - _panel.Height.Pixels;
 		_panel.Top.Set(Math.Max(40f, top), 0f);
 
 		if (_panel.ContainsPoint(Main.MouseScreen))
@@ -90,7 +85,7 @@ public sealed class SpectateGridState : UIState
 	{
 		_grid.RemoveAllChildren();
 
-		var indices = new System.Collections.Generic.List<int>(8) { Main.myPlayer };
+		var indices = new List<int>(8) { Main.myPlayer };
 		for (int i = 0; i < Main.maxPlayers; i++)
 		{
 			if (i == Main.myPlayer)
@@ -101,7 +96,7 @@ public sealed class SpectateGridState : UIState
 		}
 
 		int count = indices.Count;
-		int cols = System.Math.Min(Cols, System.Math.Max(1, count));
+		int cols = Math.Min(Cols, Math.Max(1, count));
 		int rows = (count + cols - 1) / cols;
 		float width = cols * Cell + (cols - 1) * Gap;
 		float height = rows * Cell + (rows - 1) * Gap;
@@ -111,11 +106,9 @@ public sealed class SpectateGridState : UIState
 		for (int n = 0; n < count; n++)
 		{
 			int who = indices[n];
-			int col = n % cols;
-			int row = n / cols;
 			var btn = new SpectateHeadButton(who);
-			btn.Left.Set(col * (Cell + Gap), 0f);
-			btn.Top.Set(row * (Cell + Gap), 0f);
+			btn.Left.Set(n % cols * (Cell + Gap), 0f);
+			btn.Top.Set(n / cols * (Cell + Gap), 0f);
 			btn.Width.Set(Cell, 0f);
 			btn.Height.Set(Cell, 0f);
 			_grid.Append(btn);
@@ -125,27 +118,19 @@ public sealed class SpectateGridState : UIState
 
 public sealed class SpectateHeadButton : UIElement
 {
-	// Team Spectate PlayerHeadButton crop of player sheet frames.
 	private static readonly Rectangle HeadBounds = new(0, 0, 40, 56);
-
 	private readonly int _whoAmI;
 
 	public SpectateHeadButton(int whoAmI)
 	{
 		_whoAmI = whoAmI;
-		OnLeftClick += (_, _) => Clicked();
-	}
-
-	private void Clicked()
-	{
-		if (_whoAmI == Main.myPlayer || SpectatePlayer.Target == _whoAmI)
+		OnLeftClick += (_, _) =>
 		{
-			SpectatePlayer.StopFollowing();
-			return;
-		}
-
-		if (SpectatePlayer.IsValid(_whoAmI))
-			SpectatePlayer.SelectTarget(_whoAmI);
+			if (_whoAmI == Main.myPlayer || SpectatePlayer.Target == _whoAmI)
+				SpectatePlayer.StopFollowing();
+			else if (SpectatePlayer.IsValid(_whoAmI))
+				SpectatePlayer.SelectTarget(_whoAmI);
+		};
 	}
 
 	protected override void DrawSelf(SpriteBatch spriteBatch)
@@ -156,23 +141,23 @@ public sealed class SpectateHeadButton : UIElement
 		bool selected = SpectatePlayer.Target == _whoAmI
 			|| (SpectatePlayer.Target is null && _whoAmI == Main.myPlayer);
 
-		Color back = selected
+		Rectangle rect = d.ToRectangle();
+		Utils.DrawInvBG(spriteBatch, rect, selected
 			? new Color(80, 160, 80, 180)
-			: new Color(40, 50, 80, 160);
-		Utils.DrawInvBG(spriteBatch, d.ToRectangle(), back);
+			: new Color(40, 50, 80, 160));
 
 		if (selected)
-			DrawBorder(spriteBatch, d.ToRectangle(), Color.LightGreen);
+		{
+			Texture2D px = TextureAssets.MagicPixel.Value;
+			Color c = Color.LightGreen;
+			spriteBatch.Draw(px, new Rectangle(rect.X, rect.Y, rect.Width, 2), c);
+			spriteBatch.Draw(px, new Rectangle(rect.X, rect.Bottom - 2, rect.Width, 2), c);
+			spriteBatch.Draw(px, new Rectangle(rect.X, rect.Y, 2, rect.Height), c);
+			spriteBatch.Draw(px, new Rectangle(rect.Right - 2, rect.Y, 2, rect.Height), c);
+		}
 
-		// TS layer stack at scale 1. Face sits in upper half of the 40×56 crop — pin that
-		// visual center to the cell center (not the full sprite rect center).
 		Color mul = usable ? Color.White : Color.Gray;
-		const float faceCenterX = 20f; // mid of 40-wide crop
-		const float faceCenterY = 16f; // eyes/face band, not mid of 56
-		Vector2 pos = new(
-			d.X + d.Width / 2f - faceCenterX,
-			d.Y + d.Height / 2f - faceCenterY);
-
+		Vector2 pos = new(d.X + d.Width / 2f - 20f, d.Y + d.Height / 2f - 16f);
 		DrawLayer(spriteBatch, TextureAssets.Players[0, 0], pos, player.skinColor.MultiplyRGBA(mul));
 		DrawLayer(spriteBatch, TextureAssets.Players[0, 2], pos, player.eyeColor.MultiplyRGBA(mul));
 		DrawLayer(spriteBatch, TextureAssets.Players[0, 1], pos, Color.White.MultiplyRGBA(mul));
@@ -181,29 +166,17 @@ public sealed class SpectateHeadButton : UIElement
 		if (IsMouseHovering)
 		{
 			Main.LocalPlayer.mouseInterface = true;
-			string tip = _whoAmI == Main.myPlayer
+			Main.hoverItemName = _whoAmI == Main.myPlayer
 				? $"{player.name} ({Language.GetTextValue("Mods.BestMultiplayer.UI.Spectate.You")})"
 				: player.dead
 					? Language.GetTextValue("Mods.BestMultiplayer.UI.Spectate.Dead", player.name)
 					: player.name;
-			Main.hoverItemName = tip;
 		}
 	}
 
 	private static void DrawLayer(SpriteBatch sb, Asset<Texture2D> asset, Vector2 pos, Color color)
 	{
-		if (!asset.IsLoaded)
-			return;
-
-		sb.Draw(asset.Value, pos, HeadBounds, color, 0f, Vector2.Zero, 1f, SpriteEffects.None, 0f);
-	}
-
-	private static void DrawBorder(SpriteBatch sb, Rectangle r, Color c)
-	{
-		Texture2D px = TextureAssets.MagicPixel.Value;
-		sb.Draw(px, new Rectangle(r.X, r.Y, r.Width, 2), c);
-		sb.Draw(px, new Rectangle(r.X, r.Bottom - 2, r.Width, 2), c);
-		sb.Draw(px, new Rectangle(r.X, r.Y, 2, r.Height), c);
-		sb.Draw(px, new Rectangle(r.Right - 2, r.Y, 2, r.Height), c);
+		if (asset.IsLoaded)
+			sb.Draw(asset.Value, pos, HeadBounds, color, 0f, Vector2.Zero, 1f, SpriteEffects.None, 0f);
 	}
 }

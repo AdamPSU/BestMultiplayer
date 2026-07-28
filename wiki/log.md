@@ -1,5 +1,17 @@
 Chronological record of ingests, queries, and maintenance passes.
 
+## [2026-07-27] chore | In-place cleanup
+- Removed empty `ShopGlobalNPC` + unused `StopSpectateOnRespawn`
+- Merged spectate grid host into `DeathScreenSystem` (dropped `SpectateUISystem`)
+- Centralized packet ids (`Common/Packets.cs`); shared `IsLivingTeammate`
+- README / anatomy / config docs refreshed
+
+## [2026-07-27] feature | Respawn at spectate target (boss deaths)
+- `ServerConfig.RespawnAtTeammateDuringBoss` default **true**
+- Death during boss → flag; while dead preferred whoAmI tracks spectate target (MP packet)
+- On respawn (server/SP): teleport beside preferred if still valid; else vanilla spawn — **no nearest**
+- Docs: boss-fight-lives, roadmap
+
 ## [2026-07-27] research | Multiplayer catalog → roadmap + collection
 - Expansive Workshop/GitHub pass for MP-only features and add-ons
 - **Roadmap (in-mod, not coded yet):** boss-death respawn-at-teammate; boss spectate targets; smooth camera lerp; mid/end damage board; instant respawn when boss dies; Shared HP/DeathLink as optional mode

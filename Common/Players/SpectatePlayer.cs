@@ -1,3 +1,4 @@
+using BestMultiplayer.Common;
 using BestMultiplayer.Common.Configs;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Input;
@@ -10,12 +11,10 @@ using Terraria.ModLoader;
 namespace BestMultiplayer.Common.Players;
 
 /// <summary>
-/// Death-only team spectate: intro countdown, camera follow, hotkeys, section packets.
-/// Lifecycle mirrors Team Spectate (Kill / ModifyScreenPosition / OnRespawn); intro ticks in UpdateDead.
+/// Death-only team spectate: intro, camera, hotkeys, section packets.
 /// </summary>
 public sealed class SpectatePlayer : ModPlayer
 {
-	internal const byte PacketSection = 0;
 	private const int IntroDuration = 180;
 
 	internal static int? Target { get; private set; }
@@ -23,14 +22,12 @@ public sealed class SpectatePlayer : ModPlayer
 	internal static bool IsIntro => IntroTicks > 0;
 	internal static int IntroSeconds => (IntroTicks + 59) / 60;
 
-	/// <summary>User pressed Stop; do not auto-reacquire until next death.</summary>
 	private static bool _holdCorpse;
-
 	private static bool AutoSpectateEnabled => ClientConfig.Instance?.SpectateOnDeath ?? true;
 
 	internal static void Clear()
 	{
-		Target = null;
+		SetTarget(null, syncPreferred: false);
 		IntroTicks = 0;
 		_holdCorpse = false;
 	}
@@ -40,7 +37,7 @@ public sealed class SpectatePlayer : ModPlayer
 		if (Player.whoAmI != Main.myPlayer)
 			return;
 
-		Target = null;
+		SetTarget(null);
 		IntroTicks = IntroDuration;
 		_holdCorpse = false;
 	}
@@ -51,18 +48,17 @@ public sealed class SpectatePlayer : ModPlayer
 			return;
 
 		if (Target is int current && !IsValid(current))
-			Target = Step(current, +1);
+			SetTarget(Step(current, +1));
 
 		if (IntroTicks > 0)
 		{
 			IntroTicks--;
 			if (IntroTicks == 0 && AutoSpectateEnabled)
-				Target = Step(Main.myPlayer, +1);
+				SetTarget(Step(Main.myPlayer, +1));
 		}
 		else if (Target is null && !_holdCorpse && AutoSpectateEnabled)
 		{
-			// Teammate revived / joined while everyone was dead.
-			Target = Step(Main.myPlayer, +1);
+			SetTarget(Step(Main.myPlayer, +1));
 		}
 
 		TrySendSection();
@@ -76,7 +72,7 @@ public sealed class SpectatePlayer : ModPlayer
 		if (Target is not int t || !IsValid(t))
 		{
 			if (Target is not null)
-				Target = null;
+				SetTarget(null);
 			return;
 		}
 
@@ -114,7 +110,7 @@ public sealed class SpectatePlayer : ModPlayer
 
 	internal static void StopFollowing()
 	{
-		Target = null;
+		SetTarget(null);
 		IntroTicks = 0;
 		_holdCorpse = true;
 	}
@@ -123,17 +119,18 @@ public sealed class SpectatePlayer : ModPlayer
 	{
 		IntroTicks = 0;
 		_holdCorpse = false;
-		Target = whoAmI is int i && IsValid(i) ? i : null;
+		SetTarget(whoAmI is int i && IsValid(i) ? i : null);
 	}
 
-	internal static bool IsValid(int whoAmI)
+	private static void SetTarget(int? whoAmI, bool syncPreferred = true)
 	{
-		if (whoAmI < 0 || whoAmI >= Main.maxPlayers || whoAmI == Main.myPlayer)
-			return false;
-
-		Player p = Main.player[whoAmI];
-		return p.active && !p.dead && p.team == Main.LocalPlayer.team;
+		Target = whoAmI;
+		if (syncPreferred)
+			BestMultiplayerPlayer.SetPreferredRespawnTarget(whoAmI ?? -1);
 	}
+
+	internal static bool IsValid(int whoAmI) =>
+		BestMultiplayerPlayer.IsLivingTeammate(Main.LocalPlayer, whoAmI);
 
 	private static int? Step(int from, int dir)
 	{
@@ -155,7 +152,7 @@ public sealed class SpectatePlayer : ModPlayer
 			return;
 
 		ModPacket packet = Mod.GetPacket();
-		packet.Write(PacketSection);
+		packet.Write(Packets.Section);
 		packet.WriteVector2(Main.screenPosition);
 		packet.Send();
 	}
@@ -169,7 +166,6 @@ public sealed class SpectateKeybinds : ModSystem
 
 	public override void Load()
 	{
-		// Defaults: A/D (left/right). Rebindable in Controls; fine while dead.
 		PrevPlayer = KeybindLoader.RegisterKeybind(Mod, "PreviousPlayer", Keys.A);
 		NextPlayer = KeybindLoader.RegisterKeybind(Mod, "NextPlayer", Keys.D);
 		StopSpectating = KeybindLoader.RegisterKeybind(Mod, "StopSpectating", Keys.None);

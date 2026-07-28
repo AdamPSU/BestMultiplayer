@@ -1,69 +1,50 @@
 # BestMultiplayer
 
-tModLoader 1.4.4.9 multiplayer QoL mod (scaffold stage).
+tModLoader 1.4.4.9 multiplayer QoL mod.
 
 ## Goal
 
-Build a stronger multiplayer experience than [Better Multiplayer](https://steamcommunity.com/sharedfiles/filedetails/?id=2634682993) (kittenchilly).
+Stronger multiplayer experience than [Better Multiplayer](https://steamcommunity.com/sharedfiles/filedetails/?id=2634682993) (kittenchilly) — [source](https://github.com/kittenchilly/BetterMultiplayer).
 
-| | |
-|---|---|
-| Workshop | https://steamcommunity.com/sharedfiles/filedetails/?id=2634682993 |
-| Source | https://github.com/kittenchilly/BetterMultiplayer |
-
-Baseline BM (v1.6.3 — `wiki/entities/better-multiplayer-baseline.md`): TeamToJoin soft-lock, NoBossFightRespawn, Witch Doctor wormhole shop.
-
-BestMultiplayer deltas: join-once team; unlimited team teleport; boss lives (budget then lock) instead of hard ban.
+BM baseline (v1.6.3): TeamToJoin soft-lock, NoBossFightRespawn, Witch Doctor wormholes.  
+BestMultiplayer: join-once team; unlimited team teleport; boss lives (budget then lock); death spectate + optional respawn at spectate target.
 
 ## Architecture
 
-One mod (`side = Both`). Split **authority** (server) from **presentation** (client). Pattern matches ExampleMod, Calamity, Magic Storage, Team Spectate.
+One mod (`side = Both`). Server policy vs client presentation.
 
 ```text
-BestMultiplayer.cs                 thin Mod entry (packets/lifecycle only)
-Common/Configs/ServerConfig.cs     ConfigScope.ServerSide — host policy
-Common/Configs/ClientConfig.cs     ConfigScope.ClientSide — local UX
-Common/Players/                    ModPlayer hooks (team, respawn, spectate)
-Common/Systems/                    session helpers (boss-fight detection)
-Common/GlobalNPCs/                 shop and cross-NPC hooks
-Common/UI/                         client-only UI (add when needed)
-Content/                           new items/NPCs/tiles (add when needed)
-Localization/                      .hjson labels
-wiki/                              design notes and baseline inventory
+BestMultiplayer.cs              thin Mod entry (packets)
+Common/Configs/                 ServerConfig + ClientConfig
+Common/Players/                 team, lives lock, boss respawn, spectate
+Common/Systems/                 boss pools, death UI, wormhole hooks
+Common/UI/                      spectate head grid
+Localization/                   en-US hjson
+wiki/                           design notes
 ```
 
-| Concern | Config | Runtime home |
+| Concern | Config | Runtime |
 |---|---|---|
-| Auto team, boss lives, unlimited team teleport | `ServerConfig` | Players / Systems |
-| Spectate, HUD prefs | `ClientConfig` | Players / UI (local only) |
-| Custom packets | — | only if tML does not already sync the state |
+| Team, boss lives, teammate respawn, unlimited TP | `ServerConfig` | Players / Systems |
+| Spectate prefs | `ClientConfig` | SpectatePlayer / death UI |
+| Custom packets | — | section load + preferred respawn target |
 
-Server config changes are host-only (`AcceptClientChanges`).
+Server config edits are host-only (`AcceptClientChanges`).
 
 ## Status
 
 | Piece | State |
 |---|---|
-| Folder + config scaffold | Done |
-| Config labels (en-US) | Done |
-| TeamToJoin (join-once on enter) | Done |
-| UnlimitedTeamTeleport (virtual potion) | Done |
-| BlockUnlimitedTeleportDuringBoss | Done (default off) |
+| TeamToJoin (join-once) | Done |
+| Unlimited team teleport | Done |
 | Boss fight lives (PerPlayer / PerTeam) | Done |
 | Death UI + team spectate (dead only) | Done |
+| Respawn at spectate target (boss deaths) | Done |
 
-## First use
+## Build
 
-1. Launch tModLoader.
-2. Open `Workshop -> Develop Mods -> Create Mod` once if needed (initializes `ModSources`).
-3. Place this repo under `ModSources` (or open it from there).
-4. Keep mod folder, `build.txt`, main type/namespace, and `.csproj` names aligned on rename.
-5. Open `BestMultiplayer.csproj` in VS Code (not a single `.cs` file).
+- In-game: `Workshop → Develop Mods → Build + Reload`
+- VS Code: `tModLoader: build mod` task
+- Repo under `ModSources`; keep mod folder / `build.txt` / type names aligned
 
-## Build and test
-
-- VS Code: `tModLoader: build mod` task.
-- In-game: `Workshop -> Develop Mods -> Build + Reload`.
-- Test in a throwaway multiplayer world.
-
-Local `.dotnet` is used by the VS Code task. On another machine, install the .NET SDK required by that tModLoader version and regenerate the project through tModLoader if needed.
+Local `.dotnet` is used by the VS Code task (gitignored).

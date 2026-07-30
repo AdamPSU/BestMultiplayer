@@ -14,6 +14,7 @@ public sealed class BossFightSystem : ModSystem
 	private static readonly bool[] WasDead = new bool[Main.maxPlayers];
 	private static readonly Dictionary<int, int> TeamRespawnsLeft = new();
 	private static bool _poolsReady;
+	private static bool _fightWasActive;
 
 	public static bool IsBossFightActive()
 	{
@@ -31,13 +32,19 @@ public sealed class BossFightSystem : ModSystem
 
 	public override void PostUpdatePlayers()
 	{
-		if (!IsBossFightActive())
+		bool active = IsBossFightActive();
+		if (!active)
 		{
 			if (_poolsReady)
 				ClearPools();
+			if (_fightWasActive)
+				OnBossFightEnded();
+			_fightWasActive = false;
 			SnapshotDeadFlags();
 			return;
 		}
+
+		_fightWasActive = true;
 
 		if (!_poolsReady)
 			InitPools();
@@ -50,8 +57,26 @@ public sealed class BossFightSystem : ModSystem
 	public override void ClearWorld()
 	{
 		ClearPools();
+		_fightWasActive = false;
 		for (int i = 0; i < WasDead.Length; i++)
 			WasDead[i] = false;
+	}
+
+	/// <summary>
+	/// Fight just ended: release dead players immediately when config allows.
+	/// Runs after hard-lock UpdateDead for this frame (PostUpdatePlayers).
+	/// </summary>
+	private static void OnBossFightEnded()
+	{
+		if (!(ServerConfig.Instance?.InstantRespawnOnBossEnd ?? true))
+			return;
+
+		for (int i = 0; i < Main.maxPlayers; i++)
+		{
+			Player p = Main.player[i];
+			if (p.active && p.dead)
+				p.respawnTimer = 0;
+		}
 	}
 
 	internal static bool IsLivesModeActive()
@@ -65,6 +90,9 @@ public sealed class BossFightSystem : ModSystem
 	/// </summary>
 	internal static bool MayRespawnThisDeath(Player player)
 	{
+		if (SharedHealthSystem.IsPlayerHardLocked(player))
+			return false;
+
 		if (!IsBossFightActive() || !IsLivesModeActive())
 			return true;
 

@@ -41,6 +41,7 @@ Server config edits are host-only (`AcceptClientChanges`).
 | Death UI + team spectate (dead only) | Done |
 | Boss spectate + smooth camera | Done |
 | Respawn at spectate target (boss deaths) | Done |
+| Instant respawn when boss ends | Done |
 
 ## Build
 

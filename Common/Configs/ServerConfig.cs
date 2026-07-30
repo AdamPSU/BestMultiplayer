@@ -50,6 +50,22 @@ public sealed class ServerConfig : ModConfig
 	[DefaultValue(true)]
 	public bool RespawnAtTeammateDuringBoss;
 
+	[DefaultValue(true)]
+	public bool InstantRespawnOnBossEnd;
+
+	[Header("SharedHealth")]
+	[DefaultValue(false)]
+	public bool SharedHealthEnabled;
+
+	[DefaultValue(false)]
+	public bool SharedHealthBossesOnly;
+
+	/// <summary>Pool max = sum(living max HP) × this. 0.5–1.5, default 1.</summary>
+	[Range(0.5f, 1.5f)]
+	[Increment(0.05f)]
+	[DefaultValue(1f)]
+	public float SharedHealthMultiplier;
+
 	[Header("Wormholes")]
 	[DefaultValue(true)]
 	public bool UnlimitedTeamTeleport;

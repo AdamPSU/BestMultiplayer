@@ -8,6 +8,7 @@ UI: {
 	Death: {
 		Slain: You were slain...
 		OutOfLives: No lives left...
+		SharedHealthWipe: Your team fell together...
 		SpectatingIn: Spectating in {0}
 		RespawnIn: Respawn in {0}
 	}
@@ -28,6 +29,7 @@ Configs: {
 		Headers: {
 			Teams: Teams
 			BossFights: Boss Fights
+			SharedHealth: Shared Health
 			Wormholes: Wormholes
 		}
 
@@ -48,7 +50,27 @@ Configs: {
 
 		RespawnAtTeammateDuringBoss: {
 			Label: Respawn At Teammate During Boss
-			Tooltip: When on, players who die during a boss fight respawn beside the teammate they were spectating (if still living). No spectate target = vanilla bed/world spawn. Same-team only.
+			Tooltip: When on, players who die during a boss fight respawn beside a living teammate (spectate target if set, otherwise any living same-team player). No living teammate = vanilla bed/world spawn.
+		}
+
+		InstantRespawnOnBossEnd: {
+			Label: Instant Respawn When Boss Ends
+			Tooltip: When a boss fight ends (killed or despawned), dead players respawn immediately instead of finishing the vanilla countdown. Includes hard-locked players out of lives.
+		}
+
+		SharedHealthEnabled: {
+			Label: Shared Team Health
+			Tooltip: Challenge mode (off by default). Teamed players (1–5) share one HP pool. Everyone's life bar shows the pool. Pool empty = whole team dies. Independent of Boss Fight Lives. Unteamed players are unchanged.
+		}
+
+		SharedHealthBossesOnly: {
+			Label: Bosses Only
+			Tooltip: When on, shared health arms only during boss fights. When off, shared health stays active the whole session. Only applies while Shared Team Health is enabled.
+		}
+
+		SharedHealthMultiplier: {
+			Label: Pool Size
+			Tooltip: Team pool max as a multiplier of the sum of living members' max HP. 0.5 = half, 1.0 = full sum (default), 1.5 = one and a half. Joining teammates expands the pool. Only applies while Shared Team Health is enabled.
 		}
 
 		UnlimitedTeamTeleport: {

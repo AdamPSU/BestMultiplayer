@@ -34,25 +34,22 @@ Planned work only — **not implemented yet**. Selected from the multiplayer cat
 - Host toggles which columns appear.
 - **Inspiration:** Multiplayer Boss-Fight Stats (Workshop `2822937879`) — clean-room; may supersede that add-on later.
 
-### Instant respawn when boss dies
+### Instant respawn when boss dies — **done**
 
-- When the boss fight ends (boss dead/despawned and fight no longer active), dead players who were waiting or hard-locked are released and may respawn immediately (or with a minimal timer), instead of sitting out a full vanilla countdown.
+- `InstantRespawnOnBossEnd` (default **on**): when the fight ends (boss dead/despawned), all dead players get `respawnTimer = 0` (waiting + hard-locked).
 - Pairs with [boss fight lives](boss-fight-lives.md) hard-lock UX.
 - **Inspiration:** Improved Respawning “respawn on boss death”; BM community requests.
 
-### Shared HP / DeathLink (togglable game mode)
+### Shared Team Health (togglable game mode) — **done**
 
-- **Off by default.** Optional co-op challenge mode, not core QoL.
-- **Shared HP:** damage to one linked player affects a shared pool (or mirrored HP) — exact model TBD at implement time.
-- **DeathLink:** when the pool hits zero (or one linked player dies, mode-dependent), all linked players die.
-- Server config only; clear opt-in so casual hosts never hit it by accident.
-- **Inspiration:** Suffer Together / Shared Health Between Players — clean-room; separate mode, not default path.
+- **Off by default.** Always-on or bosses-only; pool size 50–150% of Σ max HP; join expands pool; boss wipe hard-locks, exploration wipe normal respawn. Independent of lives.
+- See [shared team health](shared-boss-health.md).
 
 ## Priority order (suggested)
 
-1. Instant respawn when boss dies  
-2. Damage board (end-fight first, then mid-fight keybind)  
-3. Shared HP / DeathLink mode  
+1. Damage board (end-fight first, then mid-fight keybind)  
+2. ~~Shared Boss Health~~ done  
+3. ~~Instant respawn when boss dies~~ done  
 4. ~~Boss spectate + smooth lerp~~ done  
 5. ~~Boss-death respawn-at-teammate~~ done  
 

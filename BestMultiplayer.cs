@@ -1,6 +1,7 @@
 using System.IO;
 using BestMultiplayer.Common;
 using BestMultiplayer.Common.Players;
+using BestMultiplayer.Common.Systems;
 using Microsoft.Xna.Framework;
 using Terraria;
 using Terraria.ID;
@@ -25,6 +26,10 @@ public sealed class BestMultiplayer : Mod
 				byte raw = reader.ReadByte();
 				if (Main.netMode == NetmodeID.Server)
 					BestMultiplayerPlayer.HandlePreferredRespawnPacket(whoAmI, raw == 255 ? -1 : raw);
+				break;
+
+			case Packets.SharedHealthPool:
+				SharedHealthSystem.HandlePoolPacket(reader);
 				break;
 		}
 	}

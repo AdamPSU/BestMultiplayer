@@ -31,6 +31,10 @@ flowchart LR
 | `BossFightLivesMode` | `PerPlayer` | **Done** | `Off` / `PerPlayer` / `PerTeam` — see [Boss fight lives](boss-fight-lives.md) |
 | `BossFightRespawns` | `1` | **Done** | PerPlayer budget; `0` = BM first-death lock; ignored in PerTeam (pool = team size) |
 | `RespawnAtTeammateDuringBoss` | `true` | **Done** | Boss-death respawn beside **spectate target** only; else vanilla spawn |
+| `InstantRespawnOnBossEnd` | `true` | **Done** | Zero `respawnTimer` for all dead players when boss fight ends |
+| `SharedHealthEnabled` | `false` | **Done** | Shared team HP — see [shared team health](shared-boss-health.md) |
+| `SharedHealthBossesOnly` | `false` | **Done** | Limit shared HP to boss fights |
+| `SharedHealthMultiplier` | `1.0` | **Done** | Pool max × Σ living max HP (0.5–1.5) |
 | `UnlimitedTeamTeleport` | `true` | **Done** | Virtual wormhole for map team-TP — see [Unlimited team teleport](unlimited-team-teleport.md) |
 | `BlockUnlimitedTeleportDuringBoss` | `false` | **Done** | When true, unlimited rule off during boss/EoW |
 

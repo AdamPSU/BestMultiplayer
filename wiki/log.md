@@ -1,5 +1,19 @@
 Chronological record of ingests, queries, and maintenance passes.
 
+## [2026-07-30] feature | Shared Team Health (redesign)
+- Master `SharedHealthEnabled` + `SharedHealthBossesOnly` + pool size 50–150%
+- Always-on by default when enabled; bosses-only optional; lives mode untouched
+- Join expands pool; boss wipe hard-locks; outside boss = normal respawn + re-arm
+- Config UI collapses sub-options when master off
+
+## [2026-07-29] feature | Shared Boss Health
+- Initial boss-only shared pool (superseded by 2026-07-30 redesign)
+
+## [2026-07-27] feature | Instant respawn when boss ends
+- `ServerConfig.InstantRespawnOnBossEnd` default **true**
+- On active→inactive fight edge: `respawnTimer = 0` for all dead players (waiting + hard-locked)
+- Runs in `BossFightSystem.PostUpdatePlayers` after hard-lock `UpdateDead`
+
 ## [2026-07-27] feature | Boss spectate + smooth camera
 - Death-only unified ring: teammates then bosses; grid boss heads
 - Smoothstep lerp (~0.3s) on target switch; preferred respawn player-only

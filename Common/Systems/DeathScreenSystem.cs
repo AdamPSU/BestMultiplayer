@@ -101,9 +101,13 @@ public sealed class DeathScreenSystem : ModSystem
 		if (SpectatePlayer.IsIntro)
 		{
 			bool hardLock = BossFightSystem.IsLocalHardLocked();
-			string title = Language.GetTextValue(hardLock
-				? "Mods.BestMultiplayer.UI.Death.OutOfLives"
-				: "Mods.BestMultiplayer.UI.Death.Slain");
+			bool sharedWipe = SharedHealthSystem.IsPlayerHardLocked(Main.LocalPlayer);
+			string titleKey = sharedWipe
+				? "Mods.BestMultiplayer.UI.Death.SharedHealthWipe"
+				: hardLock
+					? "Mods.BestMultiplayer.UI.Death.OutOfLives"
+					: "Mods.BestMultiplayer.UI.Death.Slain";
+			string title = Language.GetTextValue(titleKey);
 			string subtitle = Language.GetTextValue(
 				"Mods.BestMultiplayer.UI.Death.SpectatingIn",
 				SpectatePlayer.IntroSeconds);

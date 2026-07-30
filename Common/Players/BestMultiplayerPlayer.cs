@@ -17,6 +17,9 @@ public sealed class BestMultiplayerPlayer : ModPlayer
 	internal bool DiedDuringBossFight;
 	internal int PreferredRespawnWhoAmI = -1;
 
+	/// <summary>Set in OnRespawn; applied in PostUpdate after Spawn_SetPosition.</summary>
+	private int _pendingTeammate = -1;
+
 	public override void OnEnterWorld()
 	{
 		TeamToJoinOption choice = ServerConfig.Instance.TeamToJoin;
@@ -31,6 +34,7 @@ public sealed class BestMultiplayerPlayer : ModPlayer
 	public override void Kill(double damage, int hitDirection, bool pvp, PlayerDeathReason damageSource)
 	{
 		DiedDuringBossFight = BossFightSystem.IsBossFightActive();
+		_pendingTeammate = -1;
 		if (Player.whoAmI == Main.myPlayer)
 			SetPreferredRespawnTarget(-1);
 	}
@@ -46,16 +50,37 @@ public sealed class BestMultiplayerPlayer : ModPlayer
 		int preferred = PreferredRespawnWhoAmI;
 		PreferredRespawnWhoAmI = -1;
 
-		if (!wantTeammate || Main.netMode == NetmodeID.MultiplayerClient)
+		// Spawn_SetPosition runs after OnRespawn — defer teleport to PostUpdate.
+		if (wantTeammate && Main.netMode != NetmodeID.MultiplayerClient)
+			_pendingTeammate = ResolveTeammate(preferred);
+	}
+
+	public override void PostUpdate()
+	{
+		if (_pendingTeammate < 0 || Player.dead)
 			return;
 
-		if (preferred < 0 || !IsLivingTeammate(Player, preferred))
+		int mateWho = _pendingTeammate;
+		_pendingTeammate = -1;
+
+		if (!IsLivingTeammate(Player, mateWho))
+			mateWho = FindLivingTeammate(Player);
+		if (mateWho < 0)
 			return;
 
-		Player mate = Main.player[preferred];
+		Player mate = Main.player[mateWho];
 		float offsetX = mate.direction != 0 ? -mate.direction * 32f : 32f;
-		Player.Teleport(mate.position + new Vector2(offsetX, 0f), TeleportationStyleID.TeleportationPotion);
+		Vector2 pos = mate.position + new Vector2(offsetX, 0f);
+		int style = TeleportationStyleID.TeleportationPotion;
+
+		Player.Teleport(pos, style);
 		Player.fallStart = (int)(Player.position.Y / 16f);
+
+		if (Main.netMode == NetmodeID.Server)
+		{
+			RemoteClient.CheckSection(Player.whoAmI, pos);
+			NetMessage.SendData(MessageID.TeleportEntity, -1, -1, null, 0, Player.whoAmI, pos.X, pos.Y, style);
+		}
 	}
 
 	public override void UpdateDead()
@@ -69,6 +94,20 @@ public sealed class BestMultiplayerPlayer : ModPlayer
 		if (Main.getGoodWorld)
 			t = 3600;
 		Player.respawnTimer = t;
+	}
+
+	private int ResolveTeammate(int preferred) =>
+		IsLivingTeammate(Player, preferred) ? preferred : FindLivingTeammate(Player);
+
+	private static int FindLivingTeammate(Player self)
+	{
+		for (int i = 0; i < Main.maxPlayers; i++)
+		{
+			if (IsLivingTeammate(self, i))
+				return i;
+		}
+
+		return -1;
 	}
 
 	internal static bool IsLivingTeammate(Player self, int whoAmI)

@@ -36,8 +36,10 @@ Thin sealed `Mod` subclass. Features live under `Common/`.[^1]
 | [Unlimited team teleport](../concepts/unlimited-team-teleport.md) | Done |
 | [Boss fight lives](../concepts/boss-fight-lives.md) | Done |
 | Respawn at spectate target (boss deaths) | Done (`RespawnAtTeammateDuringBoss`) |
+| Instant respawn when boss ends | Done (`InstantRespawnOnBossEnd`) |
+| [Shared team health](../concepts/shared-boss-health.md) | Done (`SharedHealthEnabled`, default off) |
 | Spectate (client) | Death-only team camera + custom death UI |
-| Planned (boss/death/modes) | See [roadmap](../concepts/roadmap.md) |
+| Planned | See [roadmap](../concepts/roadmap.md) — damage board |
 | Collection add-on | [Shared World Map](../concepts/collection-addons.md) |
 
 ## Surface
@@ -46,7 +48,8 @@ Thin sealed `Mod` subclass. Features live under `Common/`.[^1]
 |---|---|
 | Server policy config | `Common/Configs/ServerConfig.cs` |
 | Client UX config | `Common/Configs/ClientConfig.cs` |
-| Player hooks | `Common/Players/BestMultiplayerPlayer.cs`, `SpectatePlayer.cs` |
+| Player hooks | `Common/Players/BestMultiplayerPlayer.cs`, `SpectatePlayer.cs`, `SharedHealthPlayer.cs` |
+| Shared HP | `Common/Systems/SharedHealthSystem.cs` |
 | Boss session | `Common/Systems/BossFightSystem.cs` |
 | Death UI + grid host | `Common/Systems/DeathScreenSystem.cs` |
 | Wormhole hooks | `Common/Systems/WormholeSystem.cs` |

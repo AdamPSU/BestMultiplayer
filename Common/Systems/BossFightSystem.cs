@@ -11,7 +11,7 @@ namespace BestMultiplayer.Common.Systems;
 /// </summary>
 public sealed class BossFightSystem : ModSystem
 {
-	private static readonly bool[] WasDead = new bool[Main.maxPlayers];
+	private static readonly DeathEdgeTracker DeathTracker = new();
 	private static readonly Dictionary<int, int> TeamRespawnsLeft = new();
 	private static bool _poolsReady;
 	private static bool _fightWasActive;
@@ -40,7 +40,7 @@ public sealed class BossFightSystem : ModSystem
 			if (_fightWasActive)
 				OnBossFightEnded();
 			_fightWasActive = false;
-			SnapshotDeadFlags();
+			DeathTracker.Snapshot();
 			return;
 		}
 
@@ -51,15 +51,14 @@ public sealed class BossFightSystem : ModSystem
 		else
 			EnsureNewPlayers();
 
-		ProcessDeathEdges();
+		DeathTracker.ForEachNewDeath(OnPlayerDied);
 	}
 
 	public override void ClearWorld()
 	{
 		ClearPools();
 		_fightWasActive = false;
-		for (int i = 0; i < WasDead.Length; i++)
-			WasDead[i] = false;
+		DeathTracker.Reset();
 	}
 
 	/// <summary>
@@ -85,29 +84,6 @@ public sealed class BossFightSystem : ModSystem
 		return config is not null && config.BossFightLivesMode is BossFightLivesMode.PerPlayer or BossFightLivesMode.PerTeam;
 	}
 
-	/// <summary>
-	/// True when this death may complete the vanilla respawn timer.
-	/// </summary>
-	internal static bool MayRespawnThisDeath(Player player)
-	{
-		if (SharedHealthSystem.IsPlayerHardLocked(player))
-			return false;
-
-		if (!IsBossFightActive() || !IsLivesModeActive())
-			return true;
-
-		return player.GetModPlayer<BestMultiplayerPlayer>().RespawnAllowedThisDeath;
-	}
-
-	/// <summary>
-	/// Local player is dead and out of boss-fight lives (hard lock).
-	/// </summary>
-	internal static bool IsLocalHardLocked()
-	{
-		Player player = Main.LocalPlayer;
-		return player.active && player.dead && !MayRespawnThisDeath(player);
-	}
-
 	private static void InitPools()
 	{
 		TeamRespawnsLeft.Clear();
@@ -115,7 +91,7 @@ public sealed class BossFightSystem : ModSystem
 		if (config is null || !IsLivesModeActive())
 		{
 			_poolsReady = true;
-			SnapshotDeadFlags();
+			DeathTracker.Snapshot();
 			return;
 		}
 
@@ -130,7 +106,7 @@ public sealed class BossFightSystem : ModSystem
 		}
 
 		_poolsReady = true;
-		SnapshotDeadFlags();
+		DeathTracker.Snapshot();
 	}
 
 	private static void SeedTeamPools()
@@ -173,7 +149,7 @@ public sealed class BossFightSystem : ModSystem
 			    && !TeamRespawnsLeft.ContainsKey(p.team))
 				TeamRespawnsLeft[p.team] = 0;
 
-			WasDead[i] = p.dead;
+			DeathTracker.Seed(i, p.dead);
 		}
 	}
 
@@ -212,35 +188,11 @@ public sealed class BossFightSystem : ModSystem
 		}
 	}
 
-	private static void ProcessDeathEdges()
-	{
-		if (!IsLivesModeActive())
-		{
-			SnapshotDeadFlags();
-			return;
-		}
-
-		for (int i = 0; i < Main.maxPlayers; i++)
-		{
-			Player p = Main.player[i];
-			bool dead = p.active && p.dead;
-			if (dead && !WasDead[i])
-				OnPlayerDied(p);
-			WasDead[i] = dead;
-		}
-	}
-
-	private static void SnapshotDeadFlags()
-	{
-		for (int i = 0; i < Main.maxPlayers; i++)
-		{
-			Player p = Main.player[i];
-			WasDead[i] = p.active && p.dead;
-		}
-	}
-
 	private static void OnPlayerDied(Player player)
 	{
+		if (!IsLivesModeActive())
+			return;
+
 		BestMultiplayerPlayer mp = player.GetModPlayer<BestMultiplayerPlayer>();
 		mp.RespawnAllowedThisDeath = false;
 

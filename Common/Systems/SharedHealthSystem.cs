@@ -27,7 +27,7 @@ public sealed class SharedHealthSystem : ModSystem
 	}
 
 	private static readonly Dictionary<int, Pool> Pools = new();
-	private static readonly bool[] WasDead = new bool[Main.maxPlayers];
+	private static readonly DeathEdgeTracker DeathTracker = new();
 	private static bool _armed;
 	private static bool _wiping;
 	private static int _wipeIgnoreWhoAmI = -1;
@@ -116,7 +116,7 @@ public sealed class SharedHealthSystem : ModSystem
 	{
 		if (Main.netMode == NetmodeID.MultiplayerClient)
 		{
-			SnapshotDeadFlags();
+			DeathTracker.Snapshot();
 			return;
 		}
 
@@ -124,14 +124,14 @@ public sealed class SharedHealthSystem : ModSystem
 		{
 			if (_armed)
 				DisarmAll();
-			SnapshotDeadFlags();
+			DeathTracker.Snapshot();
 			return;
 		}
 
 		if (!_armed)
 		{
 			ArmAllTeams();
-			SnapshotDeadFlags();
+			DeathTracker.Snapshot();
 			return;
 		}
 
@@ -146,14 +146,12 @@ public sealed class SharedHealthSystem : ModSystem
 			ApplyMultiplierChange(mult);
 
 		UpdateRostersAndReconcile();
-		SnapshotDeadFlags();
 	}
 
 	public override void ClearWorld()
 	{
 		DisarmAll();
-		for (int i = 0; i < WasDead.Length; i++)
-			WasDead[i] = false;
+		DeathTracker.Reset();
 	}
 
 	private static void ProcessDeathEdges()
@@ -161,22 +159,13 @@ public sealed class SharedHealthSystem : ModSystem
 		if (_wiping)
 			return;
 
-		for (int i = 0; i < Main.maxPlayers; i++)
-		{
-			Player p = Main.player[i];
-			bool dead = p.active && p.dead;
-			if (dead && !WasDead[i] && ShouldWipeOnMemberDeath(p))
-				ForceWipeTeam(p.team);
-		}
+		DeathTracker.ForEachNewDeath(WipeIfShould);
 	}
 
-	private static void SnapshotDeadFlags()
+	private static void WipeIfShould(Player p)
 	{
-		for (int i = 0; i < Main.maxPlayers; i++)
-		{
-			Player p = Main.player[i];
-			WasDead[i] = p.active && p.dead;
-		}
+		if (ShouldWipeOnMemberDeath(p))
+			ForceWipeTeam(p.team);
 	}
 
 	internal static void HandlePoolPacket(BinaryReader reader)
@@ -217,20 +206,8 @@ public sealed class SharedHealthSystem : ModSystem
 
 	private static void TryArmTeam(int team)
 	{
-		int sumMax = 0;
-		int living = 0;
-		int mask = 0;
-		for (int i = 0; i < Main.maxPlayers; i++)
-		{
-			Player p = Main.player[i];
-			if (!p.active || p.dead || p.team != team)
-				continue;
-			living++;
-			mask |= 1 << i;
-			sumMax += Math.Max(1, NaturalMax(p));
-		}
-
-		if (living == 0 || sumMax <= 0)
+		int sumMax = SumNaturalMax(team, out int mask);
+		if (mask == 0 || sumMax <= 0)
 			return;
 
 		int max = ScaleMax(sumMax, _armedMultiplier);
@@ -329,8 +306,7 @@ public sealed class SharedHealthSystem : ModSystem
 		}
 
 		bool changed = false;
-		List<int> teams = new(Pools.Keys);
-		foreach (int team in teams)
+		for (int team = 1; team <= 5; team++)
 		{
 			if (!Pools.TryGetValue(team, out Pool pool) || pool.Wiped)
 				continue;
@@ -398,9 +374,7 @@ public sealed class SharedHealthSystem : ModSystem
 			}
 
 			// Damage / heal reconcile among mirrored bars.
-			if (minLife < next && maxLife > next)
-				next = minLife;
-			else if (minLife < next)
+			if (minLife < next)
 				next = minLife;
 			else if (maxLife > next && joinLife == 0)
 				next = maxLife;
@@ -476,13 +450,9 @@ public sealed class SharedHealthSystem : ModSystem
 			}
 
 			bool wasArmed = _armed;
-			Pools.Clear();
-			_armed = false;
-			_wiping = false;
-			_armedMultiplier = 1f;
+			ResetPoolState();
 			if (wasArmed)
 				BroadcastPools();
-			SnapshotDeadFlags();
 			return;
 		}
 
@@ -498,11 +468,16 @@ public sealed class SharedHealthSystem : ModSystem
 				p.GetModPlayer<SharedHealthPlayer>().ClearSnapshot();
 		}
 
+		ResetPoolState();
+	}
+
+	private static void ResetPoolState()
+	{
 		Pools.Clear();
 		_armed = false;
 		_wiping = false;
 		_armedMultiplier = 1f;
-		SnapshotDeadFlags();
+		DeathTracker.Snapshot();
 	}
 
 	private static void MirrorTeam(int team)

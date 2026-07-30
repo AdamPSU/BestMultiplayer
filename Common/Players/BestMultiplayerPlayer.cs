@@ -60,11 +60,8 @@ public sealed class BestMultiplayerPlayer : ModPlayer
 		if (_pendingTeammate < 0 || Player.dead)
 			return;
 
-		int mateWho = _pendingTeammate;
+		int mateWho = ResolveTeammate(_pendingTeammate);
 		_pendingTeammate = -1;
-
-		if (!IsLivingTeammate(Player, mateWho))
-			mateWho = FindLivingTeammate(Player);
 		if (mateWho < 0)
 			return;
 
@@ -85,7 +82,7 @@ public sealed class BestMultiplayerPlayer : ModPlayer
 
 	public override void UpdateDead()
 	{
-		if (BossFightSystem.MayRespawnThisDeath(Player))
+		if (RespawnGate.MayRespawnThisDeath(Player))
 			return;
 
 		int t = 1200;

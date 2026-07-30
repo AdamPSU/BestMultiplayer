@@ -98,16 +98,11 @@ public sealed class DeathScreenSystem : ModSystem
 		Color color = player.GetDeathAlpha(Color.Transparent);
 		DynamicSpriteFont font = FontAssets.DeathText.Value;
 
+		RespawnGate.LockReason lockReason = RespawnGate.GetLockReason(player);
+
 		if (SpectatePlayer.IsIntro)
 		{
-			bool hardLock = BossFightSystem.IsLocalHardLocked();
-			bool sharedWipe = SharedHealthSystem.IsPlayerHardLocked(Main.LocalPlayer);
-			string titleKey = sharedWipe
-				? "Mods.BestMultiplayer.UI.Death.SharedHealthWipe"
-				: hardLock
-					? "Mods.BestMultiplayer.UI.Death.OutOfLives"
-					: "Mods.BestMultiplayer.UI.Death.Slain";
-			string title = Language.GetTextValue(titleKey);
+			string title = Language.GetTextValue(TitleKey(lockReason));
 			string subtitle = Language.GetTextValue(
 				"Mods.BestMultiplayer.UI.Death.SpectatingIn",
 				SpectatePlayer.IntroSeconds);
@@ -117,13 +112,20 @@ public sealed class DeathScreenSystem : ModSystem
 			return;
 		}
 
-		if (BossFightSystem.IsLocalHardLocked() || player.respawnTimer <= 0)
+		if (lockReason != RespawnGate.LockReason.None || player.respawnTimer <= 0)
 			return;
 
 		int seconds = (player.respawnTimer + 59) / 60;
 		string text = Language.GetTextValue("Mods.BestMultiplayer.UI.Death.RespawnIn", seconds);
 		DrawCentered(font, text, RespawnTextY, color, SmallScale);
 	}
+
+	private static string TitleKey(RespawnGate.LockReason reason) => reason switch
+	{
+		RespawnGate.LockReason.SharedHealthWipe => "Mods.BestMultiplayer.UI.Death.SharedHealthWipe",
+		RespawnGate.LockReason.OutOfLives => "Mods.BestMultiplayer.UI.Death.OutOfLives",
+		_ => "Mods.BestMultiplayer.UI.Death.Slain",
+	};
 
 	private static void DrawCentered(DynamicSpriteFont font, string text, float y, Color color, float scale)
 	{

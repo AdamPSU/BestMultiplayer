@@ -14,8 +14,7 @@ using Terraria.UI;
 namespace BestMultiplayer.Common.UI;
 
 /// <summary>
-/// Teammate head grid while dead. Above bottom respawn-timer band.
-/// Head draw matches Team Spectate (TextureAssets layers + 40×56 crop).
+/// Teammate + boss head grid while dead. Above bottom respawn-timer band.
 /// </summary>
 public sealed class SpectateGridState : UIState
 {
@@ -26,6 +25,7 @@ public sealed class SpectateGridState : UIState
 
 	private readonly UIPanel _panel = new();
 	private readonly UIElement _grid = new();
+	private readonly List<int> _bossScratch = new(8);
 	private int _lastSig = int.MinValue;
 
 	public override void OnInitialize()
@@ -59,11 +59,12 @@ public sealed class SpectateGridState : UIState
 			Main.LocalPlayer.mouseInterface = true;
 	}
 
-	private static int BuildSignature()
+	private int BuildSignature()
 	{
 		unchecked
 		{
-			int h = SpectatePlayer.Target ?? -1;
+			int h = (int)SpectatePlayer.Kind;
+			h = h * 397 ^ (SpectatePlayer.Target ?? -1);
 			h = h * 397 ^ Main.myPlayer;
 			for (int i = 0; i < Main.maxPlayers; i++)
 			{
@@ -74,28 +75,40 @@ public sealed class SpectateGridState : UIState
 				h = h * 397 ^ (p.dead ? 1 : 0);
 				h = h * 397 ^ p.hair;
 				h = h * 397 ^ p.hairColor.PackedValue.GetHashCode();
-				h = h * 397 ^ p.skinColor.PackedValue.GetHashCode();
+			}
+
+			SpectatePlayer.CollectBossIndices(_bossScratch);
+			h = h * 397 ^ _bossScratch.Count;
+			for (int i = 0; i < _bossScratch.Count; i++)
+			{
+				int bi = _bossScratch[i];
+				h = h * 397 ^ bi;
+				h = h * 397 ^ Main.npc[bi].type;
 			}
 
 			return h;
 		}
 	}
 
+	// Called only from Update() right after BuildSignature(), which already refreshed _bossScratch.
 	private void Rebuild()
 	{
 		_grid.RemoveAllChildren();
 
-		var indices = new List<int>(8) { Main.myPlayer };
+		var entries = new List<(bool boss, int id)>(16) { (false, Main.myPlayer) };
 		for (int i = 0; i < Main.maxPlayers; i++)
 		{
 			if (i == Main.myPlayer)
 				continue;
 			Player p = Main.player[i];
 			if (p.active && p.team == Main.LocalPlayer.team)
-				indices.Add(i);
+				entries.Add((false, i));
 		}
 
-		int count = indices.Count;
+		for (int i = 0; i < _bossScratch.Count; i++)
+			entries.Add((true, _bossScratch[i]));
+
+		int count = entries.Count;
 		int cols = Math.Min(Cols, Math.Max(1, count));
 		int rows = (count + cols - 1) / cols;
 		float width = cols * Cell + (cols - 1) * Gap;
@@ -105,8 +118,8 @@ public sealed class SpectateGridState : UIState
 
 		for (int n = 0; n < count; n++)
 		{
-			int who = indices[n];
-			var btn = new SpectateHeadButton(who);
+			(bool boss, int id) = entries[n];
+			UIElement btn = boss ? new SpectateBossButton(id) : new SpectateHeadButton(id);
 			btn.Left.Set(n % cols * (Cell + Gap), 0f);
 			btn.Top.Set(n / cols * (Cell + Gap), 0f);
 			btn.Width.Set(Cell, 0f);
@@ -126,10 +139,12 @@ public sealed class SpectateHeadButton : UIElement
 		_whoAmI = whoAmI;
 		OnLeftClick += (_, _) =>
 		{
-			if (_whoAmI == Main.myPlayer || SpectatePlayer.Target == _whoAmI)
+			bool isSelf = _whoAmI == Main.myPlayer;
+			bool isCurrent = SpectatePlayer.Kind == SpectateKind.Player && SpectatePlayer.Target == _whoAmI;
+			if (isSelf || isCurrent)
 				SpectatePlayer.StopFollowing();
-			else if (SpectatePlayer.IsValid(_whoAmI))
-				SpectatePlayer.SelectTarget(_whoAmI);
+			else if (SpectatePlayer.IsValidPlayer(_whoAmI))
+				SpectatePlayer.SelectPlayer(_whoAmI);
 		};
 	}
 
@@ -137,9 +152,9 @@ public sealed class SpectateHeadButton : UIElement
 	{
 		CalculatedStyle d = GetDimensions();
 		Player player = Main.player[_whoAmI];
-		bool usable = SpectatePlayer.IsValid(_whoAmI) || _whoAmI == Main.myPlayer;
-		bool selected = SpectatePlayer.Target == _whoAmI
-			|| (SpectatePlayer.Target is null && _whoAmI == Main.myPlayer);
+		bool usable = SpectatePlayer.IsValidPlayer(_whoAmI) || _whoAmI == Main.myPlayer;
+		bool selected = SpectatePlayer.Kind == SpectateKind.Player && SpectatePlayer.Target == _whoAmI
+			|| (SpectatePlayer.Kind == SpectateKind.None && _whoAmI == Main.myPlayer);
 
 		Rectangle rect = d.ToRectangle();
 		Utils.DrawInvBG(spriteBatch, rect, selected
@@ -147,14 +162,7 @@ public sealed class SpectateHeadButton : UIElement
 			: new Color(40, 50, 80, 160));
 
 		if (selected)
-		{
-			Texture2D px = TextureAssets.MagicPixel.Value;
-			Color c = Color.LightGreen;
-			spriteBatch.Draw(px, new Rectangle(rect.X, rect.Y, rect.Width, 2), c);
-			spriteBatch.Draw(px, new Rectangle(rect.X, rect.Bottom - 2, rect.Width, 2), c);
-			spriteBatch.Draw(px, new Rectangle(rect.X, rect.Y, 2, rect.Height), c);
-			spriteBatch.Draw(px, new Rectangle(rect.Right - 2, rect.Y, 2, rect.Height), c);
-		}
+			DrawSelectionBorder(spriteBatch, rect, Color.LightGreen);
 
 		Color mul = usable ? Color.White : Color.Gray;
 		Vector2 pos = new(d.X + d.Width / 2f - 20f, d.Y + d.Height / 2f - 16f);
@@ -174,9 +182,72 @@ public sealed class SpectateHeadButton : UIElement
 		}
 	}
 
+	internal static void DrawSelectionBorder(SpriteBatch spriteBatch, Rectangle rect, Color c)
+	{
+		Texture2D px = TextureAssets.MagicPixel.Value;
+		spriteBatch.Draw(px, new Rectangle(rect.X, rect.Y, rect.Width, 2), c);
+		spriteBatch.Draw(px, new Rectangle(rect.X, rect.Bottom - 2, rect.Width, 2), c);
+		spriteBatch.Draw(px, new Rectangle(rect.X, rect.Y, 2, rect.Height), c);
+		spriteBatch.Draw(px, new Rectangle(rect.Right - 2, rect.Y, 2, rect.Height), c);
+	}
+
 	private static void DrawLayer(SpriteBatch sb, Asset<Texture2D> asset, Vector2 pos, Color color)
 	{
 		if (asset.IsLoaded)
 			sb.Draw(asset.Value, pos, HeadBounds, color, 0f, Vector2.Zero, 1f, SpriteEffects.None, 0f);
+	}
+}
+
+public sealed class SpectateBossButton : UIElement
+{
+	private readonly int _npcIndex;
+
+	public SpectateBossButton(int npcIndex)
+	{
+		_npcIndex = npcIndex;
+		OnLeftClick += (_, _) =>
+		{
+			bool isCurrent = SpectatePlayer.Kind == SpectateKind.Boss && SpectatePlayer.Target == _npcIndex;
+			if (isCurrent)
+				SpectatePlayer.StopFollowing();
+			else if (SpectatePlayer.IsValidBoss(_npcIndex))
+				SpectatePlayer.SelectBoss(_npcIndex);
+		};
+	}
+
+	protected override void DrawSelf(SpriteBatch spriteBatch)
+	{
+		CalculatedStyle d = GetDimensions();
+		NPC npc = Main.npc[_npcIndex];
+		bool usable = SpectatePlayer.IsValidBoss(_npcIndex);
+		bool selected = SpectatePlayer.Kind == SpectateKind.Boss && SpectatePlayer.Target == _npcIndex;
+
+		Rectangle rect = d.ToRectangle();
+		Utils.DrawInvBG(spriteBatch, rect, selected
+			? new Color(160, 100, 80, 180)
+			: new Color(50, 40, 40, 160));
+
+		if (selected)
+			SpectateHeadButton.DrawSelectionBorder(spriteBatch, rect, Color.Coral);
+
+		int head = usable ? npc.GetBossHeadTextureIndex() : -1;
+		if (head >= 0 && head < TextureAssets.NpcHeadBoss.Length)
+		{
+			Asset<Texture2D> asset = TextureAssets.NpcHeadBoss[head];
+			if (asset.IsLoaded)
+			{
+				Texture2D tex = asset.Value;
+				Vector2 pos = new(
+					d.X + (d.Width - tex.Width) / 2f,
+					d.Y + (d.Height - tex.Height) / 2f);
+				spriteBatch.Draw(tex, pos, Color.White);
+			}
+		}
+
+		if (IsMouseHovering)
+		{
+			Main.LocalPlayer.mouseInterface = true;
+			Main.hoverItemName = Language.GetTextValue("Mods.BestMultiplayer.UI.Spectate.Boss", npc.FullName);
+		}
 	}
 }

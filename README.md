@@ -7,7 +7,7 @@ tModLoader 1.4.4.9 multiplayer QoL mod.
 Stronger multiplayer experience than [Better Multiplayer](https://steamcommunity.com/sharedfiles/filedetails/?id=2634682993) (kittenchilly) — [source](https://github.com/kittenchilly/BetterMultiplayer).
 
 BM baseline (v1.6.3): TeamToJoin soft-lock, NoBossFightRespawn, Witch Doctor wormholes.  
-BestMultiplayer: join-once team; unlimited team teleport; boss lives (budget then lock); death spectate + optional respawn at spectate target.
+BestMultiplayer: join-once team; unlimited team teleport; boss lives (budget then lock); death spectate (teammates + bosses, smooth cam) + optional respawn at spectate target.
 
 ## Architecture
 
@@ -39,6 +39,7 @@ Server config edits are host-only (`AcceptClientChanges`).
 | Unlimited team teleport | Done |
 | Boss fight lives (PerPlayer / PerTeam) | Done |
 | Death UI + team spectate (dead only) | Done |
+| Boss spectate + smooth camera | Done |
 | Respawn at spectate target (boss deaths) | Done |
 
 ## Build

@@ -2,7 +2,6 @@ using System.Collections.Generic;
 using BestMultiplayer.Common.Configs;
 using BestMultiplayer.Common.Players;
 using Terraria;
-using Terraria.ID;
 using Terraria.ModLoader;
 
 namespace BestMultiplayer.Common.Systems;
@@ -23,13 +22,7 @@ public sealed class BossFightSystem : ModSystem
 		for (int i = 0; i < Main.maxNPCs; i++)
 		{
 			NPC npc = Main.npc[i];
-			if (!npc.active)
-				continue;
-
-			if (npc.boss)
-				return true;
-
-			if (npc.type is NPCID.EaterofWorldsHead or NPCID.EaterofWorldsBody or NPCID.EaterofWorldsTail)
+			if (npc.active && BossNpc.IsAnySegment(npc))
 				return true;
 		}
 

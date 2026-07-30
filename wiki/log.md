@@ -1,5 +1,10 @@
 Chronological record of ingests, queries, and maintenance passes.
 
+## [2026-07-27] feature | Boss spectate + smooth camera
+- Death-only unified ring: teammates then bosses; grid boss heads
+- Smoothstep lerp (~0.3s) on target switch; preferred respawn player-only
+- Clean-room of Team Spectate / Multiplayer Boss Spectator ideas
+
 ## [2026-07-27] chore | In-place cleanup
 - Removed empty `ShopGlobalNPC` + unused `StopSpectateOnRespawn`
 - Merged spectate grid host into `DeathScreenSystem` (dropped `SpectateUISystem`)

@@ -15,17 +15,16 @@ Planned work only — **not implemented yet**. Selected from the multiplayer cat
 - **Behavior:** `RespawnAtTeammateDuringBoss` (default **on**): respawn beside the **current spectate target** only if still living same-team. No target → vanilla spawn. No nearest fallback.
 - See [boss fight lives](boss-fight-lives.md).
 
-### Boss spectate (dead only)
+### Boss spectate (dead only) — **done**
 
-- Extend death spectate beyond living teammates: cycle **active bosses** as camera targets.
-- Still death-only; same hotkeys / grid mental model where possible.
+- Death spectate cycles **active bosses** + teammates in one A/D ring; boss heads on grid.
+- Preferred respawn remains player-only.
 - **Inspiration:** Team Spectate boss list; Multiplayer Boss Spectator — clean-room.
 
-### Smooth camera lerp
+### Smooth camera lerp — **done**
 
-- Interpolate camera when switching spectate targets (player ↔ player, player ↔ boss).
+- ~0.3s smoothstep when switching spectate targets (player ↔ player, player ↔ boss); then hard-follow.
 - Client presentation only.
-- **Inspiration:** Multiplayer Boss Spectator smooth interpolation.
 
 ### Mid-fight / end-fight damage board
 
@@ -52,11 +51,11 @@ Planned work only — **not implemented yet**. Selected from the multiplayer cat
 ## Priority order (suggested)
 
 1. Instant respawn when boss dies  
-2. Smooth camera lerp  
-3. Boss spectate targets  
-4. Damage board (end-fight first, then mid-fight keybind)  
+2. Damage board (end-fight first, then mid-fight keybind)  
+3. Shared HP / DeathLink mode  
+4. ~~Boss spectate + smooth lerp~~ done  
 5. ~~Boss-death respawn-at-teammate~~ done  
-6. Shared HP / DeathLink mode  
+
 
 Order can change; implement when scheduled.
 

@@ -1,6 +1,6 @@
 Keybinds: {
-	PreviousPlayer.DisplayName: Spectate previous teammate
-	NextPlayer.DisplayName: Spectate next teammate
+	PreviousPlayer.DisplayName: Spectate previous target
+	NextPlayer.DisplayName: Spectate next target
 	StopSpectating.DisplayName: Stop spectating
 }
 
@@ -15,6 +15,7 @@ UI: {
 	Spectate: {
 		You: You
 		Dead: "{0} is dead"
+		Boss: "{0} (Boss)"
 		OtherTeam: "{0} is on another team"
 		Unavailable: Unavailable
 	}
@@ -67,7 +68,7 @@ Configs: {
 
 		SpectateOnDeath: {
 			Label: Spectate On Death
-			Tooltip: After a short death intro, automatically spectate the next living teammate (by player slot). Hotkeys still work when off.
+			Tooltip: After a short death intro, automatically spectate the next living teammate (then bosses if none). Hotkeys cycle teammates and bosses. Smooth camera on switch.
 		}
 	}
 

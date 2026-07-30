@@ -38,8 +38,8 @@ Localization/en-US_Mods.BestMultiplayer.hjson
 | `ServerConfig` | Host toggles + host `AcceptClientChanges` |
 | `ClientConfig` | `SpectateOnDeath` |
 | `BestMultiplayerPlayer` | Team on enter; lives lock; boss-death respawn at spectate target |
-| `SpectatePlayer` (+ keybinds) | Death camera, intro, hotkeys, section packet |
-| `DeathScreenSystem` | Custom death text + MP head grid UI host |
+| `SpectatePlayer` (+ keybinds) | Death camera (players + bosses), lerp, hotkeys, section packet |
+| `DeathScreenSystem` | Custom death text + MP player/boss head grid |
 | `BossFightSystem` | Boss detect + lives pools |
 | `WormholeSystem` | Unlimited team teleport hooks |
 | `Packets` | Custom packet ids |

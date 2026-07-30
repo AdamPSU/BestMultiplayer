@@ -1,34 +1,36 @@
 ---
 title: Team Spectate
-description: Death-only camera follow of living teammates, with a custom death intro and bottom respawn timer.
+description: Death-only camera follow of living teammates and bosses, with smooth lerp and a custom death intro.
 date: 2026-07-27
-tags: [spectate, death, client, multiplayer]
+tags: [spectate, death, client, multiplayer, boss]
 ---
 
-Local presentation only. Inspired by [Team Spectate](https://github.com/NotLe0n/TeamSpectate) (NotLe0n) — clean-room; not a soft dependency.[^1]
+Local presentation only. Inspired by [Team Spectate](https://github.com/NotLe0n/TeamSpectate) and Multiplayer Boss Spectator — clean-room; not a soft dependency.[^1]
 
 ## Flow
 
 1. **Intro (3s)** — hide vanilla death text. Title + `spectating in N`.
    - Normal: `You were slain...`
    - Boss hard-lock: `No lives left...`
-2. **Spectate** — camera on next living teammate by `whoAmI` slot (wrap). Clear death chrome; bottom-center **digits only** (small death font) when a respawn is allowed. Hard-lock: no bottom counter.
-3. **Corpse** — no target (Stop, or no valid teammate). Bottom timer still applies when allowed.
+2. **Spectate** — camera on target; clear death chrome; bottom-center **digits only** when respawn allowed. Hard-lock: no bottom counter.
+3. **Corpse** — no target (Stop, or nothing valid). Bottom timer still applies when allowed.
 
-Hotkeys (dead only): previous / next teammate, stop. Next/prev during intro skips remaining countdown.
+Hotkeys (dead only): previous / next **target**, stop. Next/prev during intro skips remaining countdown.
 
-**Grid UI (dead, multiplayer):** top-right teammate head panel. Click living teammate to follow; click self or current target to stop. Dead heads greyed out.
+**Grid UI (dead, multiplayer):** bottom band above respawn text. Self + teammates, then active boss heads. Click living teammate or boss to follow; click self or current target to stop. Dead heads greyed out.
 
-## Rules
+## Targets
 
-| Rule | Behavior |
+| Kind | Valid when |
 |---|---|
-| Valid target | Active, living, same team, not self |
-| Auto after intro | Next teammate after local slot (`SpectateOnDeath`) |
-| Target invalid | Re-pick next by slot; else corpse cam |
-| Alive | No spectate (v1) |
-| Intro tick hook | `ModPlayer.UpdateDead` (not `PostUpdate` — skipped while dead) |
-| MP chunks | While dead + target, section packet every 10 ticks → `RemoteClient.CheckSection` |
+| Player | Active, living, same team, not self |
+| Boss | Active, not `dontCountMe`, head of multi-segment (`realLife`), and (`boss` or EoW head or boss-head texture index ≥ 0) |
+
+**Unified A/D ring:** living teammates by `whoAmI`, then bosses by npc index (wrap).
+
+**Auto after intro** (`SpectateOnDeath`): next living teammate first; if none, first valid boss; else corpse.
+
+**Camera:** ~0.3s smoothstep lerp on target change; then hard-follow target center. Section packet every 10 ticks while following (MP).
 
 ## Config (`ClientConfig`)
 
@@ -37,13 +39,13 @@ Hotkeys (dead only): previous / next teammate, stop. Next/prev during intro skip
 
 ## Boss-death respawn
 
-Current spectate target is reported as preferred respawn whoAmI (MP packet to server). If [RespawnAtTeammateDuringBoss](boss-fight-lives.md) is on and the death was during a boss fight, respawn teleports beside that target when still valid. Stop / no target → vanilla spawn.
+Preferred respawn whoAmI is set only while spectating a **player**. Boss or corpse → no preferred target → vanilla spawn. See [RespawnAtTeammateDuringBoss](boss-fight-lives.md).
 
 ## Code
 
-- `Common/Players/SpectatePlayer.cs` — state, camera, hotkeys, section packet; nested `SpectateKeybinds`
+- `Common/Players/SpectatePlayer.cs` — kind, step ring, lerp, hotkeys, section packet; nested `SpectateKeybinds`
 - `Common/Systems/DeathScreenSystem.cs` — death text + grid UI host
-- `Common/UI/SpectateGridState.cs` — head grid
+- `Common/UI/SpectateGridState.cs` — player + boss head buttons
 - `BestMultiplayer.HandlePacket` / `Packets` — section + preferred respawn
 
-[^1]: Team Spectate Workshop 2563098343; BM design session 2026-07-27
+[^1]: Team Spectate Workshop 2563098343; Multiplayer Boss Spectator 2822925665; BM design 2026-07-27

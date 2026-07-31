@@ -31,11 +31,11 @@ flowchart LR
 | `BossFightLivesMode` | `PerPlayer` | **Done** | `Off` / `PerPlayer` / `PerTeam` — see [Boss fight lives](boss-fight-lives.md) |
 | `BossFightRespawns` | `1` | **Done** | PerPlayer budget; `0` = BM first-death lock; ignored in PerTeam (pool = team size) |
 | `RespawnAtTeammateDuringBoss` | `true` | **Done** | Boss-death respawn beside **spectate target** only; else vanilla spawn |
-| `InstantRespawnOnBossEnd` | `true` | **Done** | Zero `respawnTimer` for all dead players when boss fight ends |
 | `BossFightStatsEnabled` | `true` | **Done** | Live boss-fight stats feed — see [boss fight stats](boss-fight-stats.md) |
+| *(always on)* Instant respawn on boss end | — | **Done** | Not configurable; dead players always get `respawnTimer = 0` when the fight ends |
 | `SharedHealthEnabled` | `false` | **Done** | Shared team HP — see [shared team health](shared-boss-health.md) |
 | `SharedHealthBossesOnly` | `false` | **Done** | Limit shared HP to boss fights |
-| `SharedHealthMultiplier` | `1.0` | **Done** | Pool max × Σ living max HP (0.5–1.5) |
+| `SharedHealthMultiplier` | `0.5` | **Done** | Team HP multiplier — pool max × Σ living max HP (0.5–1.5); UI-gated on master |
 | `UnlimitedTeamTeleport` | `true` | **Done** | Virtual wormhole for map team-TP — see [Unlimited team teleport](unlimited-team-teleport.md) |
 | `BlockUnlimitedTeleportDuringBoss` | `false` | **Done** | When true, unlimited rule off during boss/EoW |
 
@@ -46,6 +46,29 @@ flowchart LR
 | `SpectateOnDeath` | `true` | Auto-follow teammate after death intro |
 | `ShowBossFightStats` | `true` | Show boss-fight stats feed locally |
 
+## Config UI
+
+Calamity-style theming via stock tML attributes (purple instead of red).
+
+| Piece | Value |
+|---|---|
+| Panel | `BackgroundColor(42, 28, 58, 216)` on each `ModConfig` |
+| Rows | `BackgroundColor(110, 62, 168, 192)` on every option |
+| Slider | `SliderColor(224, 165, 56, 128)` on `SharedHealthMultiplier` |
+| Icons | Vanilla `[i:Item]` chat tags in Labels |
+| Display names | `Server Config` / `Client Config` |
+
+### Collapsing dependents
+
+| Child | Visible when |
+|---|---|
+| `BossFightRespawns` | Lives mode is `PerPlayer` or `PerTeam` |
+| `SharedHealthBossesOnly` | `SharedHealthEnabled` |
+| `SharedHealthMultiplier` | `SharedHealthEnabled` |
+| `BlockUnlimitedTeleportDuringBoss` | `UnlimitedTeamTeleport` |
+
+Implemented with `ConfigGateAttribute` + `GatedBooleanElement` / `GatedFloatElement` (and existing `BossFightRespawnsElement`). Constants live in `ConfigUiStyle`.
+
 ## Related
 
 - [TeamToJoin](team-to-join.md)
@@ -55,5 +78,5 @@ flowchart LR
 - [Scaffold conventions](scaffold-conventions.md)
 - [Better Multiplayer baseline](../entities/better-multiplayer-baseline.md)
 
-[^1]: Common/Configs/ServerConfig.cs, Common/Configs/ClientConfig.cs, Common/Players/BestMultiplayerPlayer.cs
+[^1]: Common/Configs/ServerConfig.cs, Common/Configs/ClientConfig.cs, Common/Configs/ConfigUiStyle.cs, Common/Configs/ConfigGateAttribute.cs, Common/Configs/GatedBooleanElement.cs, Common/Configs/GatedFloatElement.cs, Common/Players/BestMultiplayerPlayer.cs
 [^2]: build.txt

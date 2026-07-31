@@ -14,7 +14,7 @@ Deaths during a boss fight cost **respawns** from a budget. Empty budget → har
 | `BossFightLivesMode` | `PerPlayer` | `Off` \| `PerPlayer` \| `PerTeam` |
 | `BossFightRespawns` | `1` | **PerPlayer only.** Budget size; `0` = lock on first death (BM). Config UI shows “team size at fight start” under PerTeam (not this number). |
 | `RespawnAtTeammateDuringBoss` | `true` | After a death that occurred during a boss fight, respawn beside the teammate you were **spectating** (if still living, same team). No spectate target / Stop → vanilla bed/world spawn. No nearest fallback. |
-| `InstantRespawnOnBossEnd` | `true` | When the boss fight ends (killed or despawned), set every dead player's `respawnTimer` to `0` so they respawn immediately (includes hard-lock). |
+| *(always on)* Instant respawn on boss end | — | When the boss fight ends (killed or despawned), every dead player's `respawnTimer` is set to `0` (includes hard-lock). Not configurable. |
 
 - **PerPlayer:** each player gets `BossFightRespawns`.
 - **PerTeam:** shared pool per team = player count on that team at fight start; unteamed (`team == 0`) solo pool of `1`.
@@ -39,7 +39,7 @@ Spend on **death rising edge** (`dead` false→true) while boss active. If remai
 ## Fight edge
 
 - Boss active and pools not ready → `InitPools` (covers fight start and mid-join into an active fight).
-- Boss inactive → clear pools; on **active→inactive** edge, if `InstantRespawnOnBossEnd`, zero `respawnTimer` for all dead players (after that frame’s hard-lock `UpdateDead`).
+- Boss inactive → clear pools; on **active→inactive** edge, zero `respawnTimer` for all dead players (after that frame’s hard-lock `UpdateDead`).
 - Mid-join: PerPlayer gets full budget; PerTeam does **not** top up the shared pool.
 - Already dead at init/join: allowed to finish vanilla respawn without spending.
 

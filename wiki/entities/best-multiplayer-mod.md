@@ -36,7 +36,7 @@ Thin sealed `Mod` subclass. Features live under `Common/`.[^1]
 | [Unlimited team teleport](../concepts/unlimited-team-teleport.md) | Done |
 | [Boss fight lives](../concepts/boss-fight-lives.md) | Done |
 | Respawn at spectate target (boss deaths) | Done (`RespawnAtTeammateDuringBoss`) |
-| Instant respawn when boss ends | Done (`InstantRespawnOnBossEnd`) |
+| Instant respawn when boss ends | Done (always on) |
 | [Shared team health](../concepts/shared-boss-health.md) | Done (`SharedHealthEnabled`, default off) |
 | Spectate (client) | Death-only team camera + custom death UI |
 | [Boss fight stats feed](../concepts/boss-fight-stats.md) | Done (layout M live feed) |

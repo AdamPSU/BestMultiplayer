@@ -1,6 +1,5 @@
 using System;
 using System.Collections.Generic;
-using BestMultiplayer.Common.Configs;
 using BestMultiplayer.Common.Systems;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
@@ -37,8 +36,6 @@ public sealed class FightStatsFeedState : UIState
 	private bool _leftWas;
 	private bool _rightWas;
 	private bool _wasLocalDead;
-
-	private static bool ShowTaken => ServerConfig.Instance?.SharedHealthEnabled == true;
 
 	public override void OnInitialize()
 	{
@@ -92,15 +89,11 @@ public sealed class FightStatsFeedState : UIState
 		Color takenColor = CombatText.DamagedFriendly;
 		Color mute = Main.MouseTextColorReal * 0.65f;
 
+		int takenPct = FightStatsSystem.Pct(FightStatsSystem.GetTaken(_selected), teamTaken);
+
 		x = DrawLabel(spriteBatch, $"{dealtPct}% dealt", x, midY, dealtColor);
-
-		if (ShowTaken)
-		{
-			int takenPct = FightStatsSystem.Pct(FightStatsSystem.GetTaken(_selected), teamTaken);
-			x = DrawLabel(spriteBatch, "·", x, midY, mute);
-			x = DrawLabel(spriteBatch, $"{takenPct}% taken", x, midY, takenColor);
-		}
-
+		x = DrawLabel(spriteBatch, "·", x, midY, mute);
+		x = DrawLabel(spriteBatch, $"{takenPct}% taken", x, midY, takenColor);
 		x = DrawLabel(spriteBatch, "·", x, midY, mute);
 		string deathText = deaths == 1 ? "1 death" : $"{deaths} deaths";
 		DrawLabel(spriteBatch, deathText, x, midY, deaths > 0 ? takenColor : mute);
@@ -148,8 +141,8 @@ public sealed class FightStatsFeedState : UIState
 
 	private void LayoutPanel()
 	{
-		// "100% dealt · 100% taken · 99 deaths" ≈ 220; without taken ≈ 150
-		float statsW = ShowTaken ? 220f : 150f;
+		// "100% dealt · 100% taken · 99 deaths" ≈ 220
+		const float statsW = 220f;
 		float width = _roster.Count * Head + Math.Max(0, _roster.Count - 1) * HeadGap + 8f + statsW;
 		float height = Head + Pad * 2f;
 

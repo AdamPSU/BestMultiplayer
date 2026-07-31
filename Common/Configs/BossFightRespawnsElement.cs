@@ -1,4 +1,5 @@
 using Microsoft.Xna.Framework;
+using Microsoft.Xna.Framework.Graphics;
 using Terraria;
 using Terraria.GameContent.UI.Elements;
 using Terraria.ModLoader.Config;
@@ -15,6 +16,7 @@ public sealed class BossFightRespawnsElement : ConfigElement<int>
 	private UIText _minus;
 	private UIText _plus;
 	private BossFightLivesMode _drawnMode = (BossFightLivesMode)(-1);
+	private bool? _lastShown;
 
 	public override void OnBind()
 	{
@@ -26,7 +28,7 @@ public sealed class BossFightRespawnsElement : ConfigElement<int>
 		_minus.Left.Set(-50f, 1f);
 		_minus.OnLeftClick += (_, _) =>
 		{
-			if (CurrentMode() != BossFightLivesMode.PerPlayer)
+			if (CurrentMode() != BossFightLivesMode.PerPlayer || IgnoresMouseInteraction)
 				return;
 			Value = Utils.Clamp(Value - 1, 0, 99);
 		};
@@ -37,13 +39,13 @@ public sealed class BossFightRespawnsElement : ConfigElement<int>
 		_plus.Left.Set(-28f, 1f);
 		_plus.OnLeftClick += (_, _) =>
 		{
-			if (CurrentMode() != BossFightLivesMode.PerPlayer)
+			if (CurrentMode() != BossFightLivesMode.PerPlayer || IgnoresMouseInteraction)
 				return;
 			Value = Utils.Clamp(Value + 1, 0, 99);
 		};
 		Append(_plus);
 
-		ApplyMode(CurrentMode());
+		ApplyMode(CurrentMode(), force: true);
 	}
 
 	public override void Update(GameTime gameTime)
@@ -51,24 +53,34 @@ public sealed class BossFightRespawnsElement : ConfigElement<int>
 		base.Update(gameTime);
 		BossFightLivesMode mode = CurrentMode();
 		if (mode != _drawnMode)
-			ApplyMode(mode);
+			ApplyMode(mode, force: false);
+	}
+
+	protected override void DrawSelf(SpriteBatch spriteBatch)
+	{
+		if (IgnoresMouseInteraction || GetDimensions().Height < 1f)
+			return;
+		base.DrawSelf(spriteBatch);
 	}
 
 	private BossFightLivesMode CurrentMode() =>
 		Item is ServerConfig cfg ? cfg.BossFightLivesMode : BossFightLivesMode.Off;
 
-	private void ApplyMode(BossFightLivesMode mode)
+	private void ApplyMode(BossFightLivesMode mode, bool force)
 	{
 		_drawnMode = mode;
 		bool edit = mode == BossFightLivesMode.PerPlayer;
 		bool show = mode is BossFightLivesMode.PerPlayer or BossFightLivesMode.PerTeam;
 
-		Height.Set(show ? 30f : 0f, 0f);
-		_minus.IgnoresMouseInteraction = !edit;
-		_plus.IgnoresMouseInteraction = !edit;
-		_minus.TextColor = edit ? Color.White : Color.Transparent;
-		_plus.TextColor = edit ? Color.White : Color.Transparent;
-		Recalculate();
+		if (force)
+			_lastShown = null;
+
+		ConfigVisibility.Apply(this, show, ref _lastShown);
+
+		_minus.IgnoresMouseInteraction = !edit || !show;
+		_plus.IgnoresMouseInteraction = !edit || !show;
+		_minus.TextColor = edit && show ? Color.White : Color.Transparent;
+		_plus.TextColor = edit && show ? Color.White : Color.Transparent;
 	}
 
 	private string LabelText()

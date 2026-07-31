@@ -67,9 +67,7 @@ public sealed class BossFightSystem : ModSystem
 	/// </summary>
 	private static void OnBossFightEnded()
 	{
-		if (!(ServerConfig.Instance?.InstantRespawnOnBossEnd ?? true))
-			return;
-
+		// Always instant-respawn when a boss fight ends (no longer a config toggle).
 		for (int i = 0; i < Main.maxPlayers; i++)
 		{
 			Player p = Main.player[i];

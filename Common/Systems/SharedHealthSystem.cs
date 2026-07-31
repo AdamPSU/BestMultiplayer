@@ -197,7 +197,7 @@ public sealed class SharedHealthSystem : ModSystem
 	private static void ArmAllTeams()
 	{
 		Pools.Clear();
-		_armedMultiplier = Utils.Clamp(ServerConfig.Instance?.SharedHealthMultiplier ?? 1f, 0.5f, 1.5f);
+		_armedMultiplier = Utils.Clamp(ServerConfig.Instance?.SharedHealthMultiplier ?? 0.5f, 0.5f, 1.5f);
 		for (int team = 1; team <= 5; team++)
 			TryArmTeam(team);
 		_armed = true;

@@ -7,13 +7,13 @@ tags: [feature, challenge, multiplayer, server-config]
 
 Challenge mode (**off by default**). Teamed players (1–5) share one HP pool; everyone’s vanilla life bar shows the pool. Independent of [boss fight lives](boss-fight-lives.md). Unteamed players are unchanged.[^1]
 
-## Config (header: Shared Health)
+## Config (header: Shared Health Mode)
 
 | Field | Default | Meaning |
 |---|---|---|
 | `SharedHealthEnabled` | `false` | Master toggle |
 | `SharedHealthBossesOnly` | `false` | If true, only arm during boss fights; if false, whole session |
-| `SharedHealthMultiplier` | `1.0` | Pool max = Σ living `statLifeMax2` × multiplier. Range **0.5–1.5** (native tMod slider) |
+| `SharedHealthMultiplier` | `0.5` | Pool max = Σ living `statLifeMax2` × multiplier. Range **0.5–1.5** (native tMod slider) |
 
 Lives mode is **not** turned off when this is enabled — both can run together.
 
@@ -35,7 +35,7 @@ Any living team member dying while the pool is armed and not already wiped **Dea
 | Boss fight active | Team dies; **hard-lock** until boss ends (ignores remaining lives budget for that wipe). Death text: “Your team fell together…”. |
 | Outside boss | Team dies; **normal respawn** (no hard-lock). Pool re-arms full when someone is living again. |
 
-Works with `InstantRespawnOnBossEnd` for boss hard-locks.
+Works with always-on instant respawn on boss end for hard-locks.
 
 ## Code
 

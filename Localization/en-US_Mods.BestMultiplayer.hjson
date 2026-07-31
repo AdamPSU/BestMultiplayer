@@ -24,73 +24,68 @@ UI: {
 
 Configs: {
 	ServerConfig: {
-		DisplayName: Server
+		DisplayName: Server Config
 
 		Headers: {
 			Teams: Teams
 			BossFights: Boss Fights
-			SharedHealth: Shared Health
+			SharedHealth: Shared Health Mode
 			Wormholes: Wormholes
 		}
 
 		TeamToJoin: {
-			Label: Team To Join
-			Tooltip: Team assigned when a player joins the world. None disables auto-join. Players may change teams afterward.
+			Label: "[i:TeamBlockWhite] Team To Join"
+			Tooltip: Auto-assign this team when joining the world.
 		}
 
 		BossFightLivesMode: {
-			Label: Boss Fight Lives Mode
-			Tooltip: Off = vanilla infinite respawns. PerPlayer = personal respawn budget (see Boss Fight Respawns). PerTeam = one shared pool per team equal to team size at fight start. Empty budget hard-locks until the boss ends.
+			Label: "[i:LifeCrystal] Boss Fight Lives Mode"
+			Tooltip: How many times you can respawn during a boss fight.
 		}
 
 		BossFightRespawns: {
-			Label: Boss Fight Respawns
-			Tooltip: PerPlayer — how many times each player may respawn during a boss fight (0 = lock on first death). PerTeam — always team size at fight start (not editable). Hidden when mode is Off.
+			Label: "[i:Tombstone] Boss Fight Respawns"
+			Tooltip: Extra lives per player (0 = one life only).
 		}
 
 		RespawnAtTeammateDuringBoss: {
-			Label: Respawn At Teammate During Boss
-			Tooltip: When on, players who die during a boss fight respawn beside a living teammate (spectate target if set, otherwise any living same-team player). No living teammate = vanilla bed/world spawn.
-		}
-
-		InstantRespawnOnBossEnd: {
-			Label: Instant Respawn When Boss Ends
-			Tooltip: When a boss fight ends (killed or despawned), dead players respawn immediately instead of finishing the vanilla countdown. Includes hard-locked players out of lives.
+			Label: "[i:MagicMirror] Respawn At Teammate During Boss"
+			Tooltip: Respawn next to a living teammate instead of at your bed.
 		}
 
 		BossFightStatsEnabled: {
-			Label: Boss Fight Stats Feed
-			Tooltip: During boss fights, show a compact team damage feed (dealt %, taken %, deaths) beside Settings. Clients can hide it locally.
+			Label: "[i:DPSMeter] Boss Fight Stats Feed"
+			Tooltip: Show live damage stats during boss fights.
 		}
 
 		SharedHealthEnabled: {
-			Label: Shared Team Health
-			Tooltip: Challenge mode (off by default). Teamed players (1–5) share one HP pool. Everyone's life bar shows the pool. Pool empty = whole team dies. Independent of Boss Fight Lives. Unteamed players are unchanged.
+			Label: "[i:CrossNecklace] Shared Team Health"
+			Tooltip: Your team shares one HP bar. Empty bar = whole team dies.
 		}
 
 		SharedHealthBossesOnly: {
-			Label: Bosses Only
-			Tooltip: When on, shared health arms only during boss fights. When off, shared health stays active the whole session. Only applies while Shared Team Health is enabled.
+			Label: "[i:SlimeCrown] Bosses Only"
+			Tooltip: Shared HP only during boss fights.
 		}
 
 		SharedHealthMultiplier: {
-			Label: Pool Size
-			Tooltip: Team pool max as a multiplier of the sum of living members' max HP. 0.5 = half, 1.0 = full sum (default), 1.5 = one and a half. Joining teammates expands the pool. Only applies while Shared Team Health is enabled.
+			Label: "[i:LifeFruit] Team HP Multiplier"
+			Tooltip: Size of the shared HP bar vs your team's combined max HP.
 		}
 
 		UnlimitedTeamTeleport: {
-			Label: Unlimited Team Teleport
-			Tooltip: Map-click teleport to teammates works without carrying Wormhole Potions. Real potions still exist and are not consumed while this is on.
+			Label: "[i:WormholePotion] Unlimited Team Teleport"
+			Tooltip: Map-click teleport to teammates without Wormhole Potions.
 		}
 
 		BlockUnlimitedTeleportDuringBoss: {
-			Label: Block Unlimited Teleport During Boss Fights
-			Tooltip: When enabled, unlimited team teleport is disabled while a boss is active. Real potions still work. Off by default.
+			Label: "[i:PortalGun] Block Unlimited Teleport During Boss Fights"
+			Tooltip: Disable free team teleport while a boss is alive.
 		}
 	}
 
 	ClientConfig: {
-		DisplayName: Client
+		DisplayName: Client Config
 
 		Headers: {
 			Spectate: Spectate
@@ -98,13 +93,13 @@ Configs: {
 		}
 
 		SpectateOnDeath: {
-			Label: Spectate On Death
-			Tooltip: After a short death intro, automatically spectate the next living teammate (then bosses if none). Hotkeys cycle teammates and bosses. Smooth camera on switch.
+			Label: "[i:Binoculars] Spectate On Death"
+			Tooltip: Auto-spectate teammates after you die.
 		}
 
 		ShowBossFightStats: {
-			Label: Show Boss Fight Stats
-			Tooltip: Show the live boss-fight stats feed (head strip + selected player %). Off hides it for you only.
+			Label: "[i:Radar] Show Boss Fight Stats"
+			Tooltip: Show the boss-fight stats feed on your screen.
 		}
 	}
 
@@ -117,27 +112,27 @@ Configs: {
 		}
 
 		Red: {
-			Label: Red
+			Label: "[i:RedDye] Red"
 			Tooltip: ""
 		}
 
 		Green: {
-			Label: Green
+			Label: "[i:GreenDye] Green"
 			Tooltip: ""
 		}
 
 		Blue: {
-			Label: Blue
+			Label: "[i:BlueDye] Blue"
 			Tooltip: ""
 		}
 
 		Yellow: {
-			Label: Yellow
+			Label: "[i:YellowDye] Yellow"
 			Tooltip: ""
 		}
 
 		Pink: {
-			Label: Pink
+			Label: "[i:PinkDye] Pink"
 			Tooltip: ""
 		}
 	}
@@ -151,12 +146,12 @@ Configs: {
 		}
 
 		PerPlayer: {
-			Label: Per Player
+			Label: "[i:HealingPotion] Per Player"
 			Tooltip: ""
 		}
 
 		PerTeam: {
-			Label: Per Team
+			Label: "[i:SuperHealingPotion] Per Team"
 			Tooltip: ""
 		}
 	}

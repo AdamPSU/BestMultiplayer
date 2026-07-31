@@ -13,9 +13,9 @@ Compact live feed during boss fights: mini head strip + selected player’s deal
 |---|---|
 | When | Boss fight active (`BossFightSystem.IsBossFightActive`) + 6s freeze after |
 | Who | Same team as local (team 0 = self only) |
-| Stats | `N% dealt` · (`N% taken` if shared HP on) · `N deaths` — % of **team totals** |
+| Stats | `N% dealt` · `N% taken` · `N deaths` — % of **team totals** |
 | Dealt | Damage to boss segments only (`BossNpc.IsAnySegment`) |
-| Taken | Only while `SharedHealthEnabled`; share of team damage taken |
+| Taken | Share of team damage taken (always; not gated on shared HP) |
 | Layout | **M** — head strip (dim non-selected ~40%) + labeled stats for selected |
 | Place | Left of Settings; **Y-centered on vanilla boss bar** (`screenH - 50`) |
 | Click head | Select that player |

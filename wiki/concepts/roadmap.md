@@ -34,7 +34,7 @@ Planned work only — **not implemented yet**. Selected from the multiplayer cat
 
 ### Instant respawn when boss dies — **done**
 
-- `InstantRespawnOnBossEnd` (default **on**): when the fight ends (boss dead/despawned), all dead players get `respawnTimer = 0` (waiting + hard-locked).
+- Instant respawn when boss ends (always on, not configurable): when the fight ends (boss dead/despawned), all dead players get `respawnTimer = 0` (waiting + hard-locked).
 - Pairs with [boss fight lives](boss-fight-lives.md) hard-lock UX.
 - **Inspiration:** Improved Respawning “respawn on boss death”; BM community requests.
 

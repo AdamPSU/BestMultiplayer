@@ -25,7 +25,7 @@ public sealed class GatedFloatElement : FloatElement
 
 	protected override void DrawSelf(SpriteBatch spriteBatch)
 	{
-		if (IgnoresMouseInteraction || GetDimensions().Height < 1f)
+		if (ConfigVisibility.IsCollapsed(this))
 			return;
 
 		base.DrawSelf(spriteBatch);

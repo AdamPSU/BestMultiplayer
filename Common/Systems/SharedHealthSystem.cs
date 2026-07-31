@@ -33,11 +33,9 @@ public sealed class SharedHealthSystem : ModSystem
 	private static int _wipeIgnoreWhoAmI = -1;
 	private static float _armedMultiplier = 1f;
 
-	public static bool IsEnabled() =>
-		ServerConfig.Instance?.SharedHealthEnabled == true;
+	public static bool IsEnabled() => ServerConfig.Instance.SharedHealthEnabled;
 
-	public static bool IsBossesOnly() =>
-		ServerConfig.Instance?.SharedHealthBossesOnly == true;
+	public static bool IsBossesOnly() => ServerConfig.Instance.SharedHealthBossesOnly;
 
 	/// <summary>Config on and (not bosses-only, or a boss fight is active).</summary>
 	public static bool ShouldBeActive() =>
@@ -50,7 +48,7 @@ public sealed class SharedHealthSystem : ModSystem
 		&& _armed
 		&& player.active
 		&& !player.dead
-		&& player.team is >= 1 and <= 5
+		&& Teams.IsReal(player.team)
 		&& Pools.TryGetValue(player.team, out Pool pool)
 		&& !pool.Wiped;
 
@@ -61,7 +59,7 @@ public sealed class SharedHealthSystem : ModSystem
 	public static bool IsPlayerHardLocked(Player player) =>
 		player.active
 		&& player.dead
-		&& player.team is >= 1 and <= 5
+		&& Teams.IsReal(player.team)
 		&& IsTeamWiped(player.team)
 		&& BossFightSystem.IsBossFightActive();
 
@@ -87,7 +85,7 @@ public sealed class SharedHealthSystem : ModSystem
 		ShouldBeActive()
 		&& _armed
 		&& player.active
-		&& player.team is >= 1 and <= 5
+		&& Teams.IsReal(player.team)
 		&& Pools.TryGetValue(player.team, out Pool pool)
 		&& !pool.Wiped;
 
@@ -141,7 +139,7 @@ public sealed class SharedHealthSystem : ModSystem
 		// MP: KillMe alone often does not kill remote clients — keep enforcing.
 		EnforceWipedTeams();
 
-		float mult = Utils.Clamp(ServerConfig.Instance.SharedHealthMultiplier, 0.5f, 1.5f);
+		float mult = Utils.Clamp(ServerConfig.Instance.SharedHealthMultiplier, 1f, 3f);
 		if (Math.Abs(mult - _armedMultiplier) > 0.0001f)
 			ApplyMultiplierChange(mult);
 
@@ -197,8 +195,8 @@ public sealed class SharedHealthSystem : ModSystem
 	private static void ArmAllTeams()
 	{
 		Pools.Clear();
-		_armedMultiplier = Utils.Clamp(ServerConfig.Instance?.SharedHealthMultiplier ?? 0.5f, 0.5f, 1.5f);
-		for (int team = 1; team <= 5; team++)
+		_armedMultiplier = Utils.Clamp(ServerConfig.Instance.SharedHealthMultiplier, 1f, 3f);
+		for (int team = Teams.Min; team <= Teams.Max; team++)
 			TryArmTeam(team);
 		_armed = true;
 		BroadcastPools();
@@ -285,7 +283,7 @@ public sealed class SharedHealthSystem : ModSystem
 			return;
 
 		// Ensure teams with living members have a pool (first join after empty / post-wipe).
-		for (int team = 1; team <= 5; team++)
+		for (int team = Teams.Min; team <= Teams.Max; team++)
 		{
 			if (Pools.TryGetValue(team, out Pool existing) && !existing.Wiped)
 				continue;
@@ -306,7 +304,7 @@ public sealed class SharedHealthSystem : ModSystem
 		}
 
 		bool changed = false;
-		for (int team = 1; team <= 5; team++)
+		for (int team = Teams.Min; team <= Teams.Max; team++)
 		{
 			if (!Pools.TryGetValue(team, out Pool pool) || pool.Wiped)
 				continue;
@@ -431,7 +429,7 @@ public sealed class SharedHealthSystem : ModSystem
 
 				int restoreMax = sp.RealLifeMax > 0 ? sp.RealLifeMax : Math.Max(1, p.statLifeMax);
 				int life = p.statLife;
-				if (p.team is >= 1 and <= 5 && Pools.TryGetValue(p.team, out Pool pool) && pool.Max > 0 && !p.dead)
+				if (Teams.IsReal(p.team) && Pools.TryGetValue(p.team, out Pool pool) && pool.Max > 0 && !p.dead)
 					life = (int)Math.Round(restoreMax * (double)pool.Current / pool.Max);
 
 				if (p.dead)
@@ -575,11 +573,7 @@ public sealed class SharedHealthSystem : ModSystem
 		if (Main.netMode != NetmodeID.Server)
 			return;
 
-		Mod mod = ModContent.GetInstance<BestMultiplayer>();
-		if (mod is null)
-			return;
-
-		ModPacket packet = mod.GetPacket();
+		ModPacket packet = ModContent.GetInstance<BestMultiplayer>().GetPacket();
 		packet.Write(Packets.SharedHealthPool);
 		if (!_armed)
 		{

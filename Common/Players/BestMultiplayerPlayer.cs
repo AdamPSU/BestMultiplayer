@@ -43,8 +43,7 @@ public sealed class BestMultiplayerPlayer : ModPlayer
 	{
 		RespawnAllowedThisDeath = false;
 
-		bool wantTeammate = DiedDuringBossFight
-			&& (ServerConfig.Instance?.RespawnAtTeammateDuringBoss ?? true);
+		bool wantTeammate = DiedDuringBossFight && ServerConfig.Instance.RespawnAtTeammateDuringBoss;
 		DiedDuringBossFight = false;
 
 		int preferred = PreferredRespawnWhoAmI;

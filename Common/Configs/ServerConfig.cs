@@ -70,15 +70,15 @@ public sealed class ServerConfig : ModConfig
 	[DefaultValue(false)]
 	public bool SharedHealthBossesOnly;
 
-	/// <summary>Pool max = sum(living max HP) × this. 0.5–1.5, default 1.</summary>
+	/// <summary>Pool max = sum(living max HP) × this. 1–3, default 1.5.</summary>
 	[BackgroundColor(ConfigUiStyle.RowR, ConfigUiStyle.RowG, ConfigUiStyle.RowB, ConfigUiStyle.RowA)]
 	[ConfigGate(nameof(SharedHealthEnabled))]
 	[CustomModConfigItem(typeof(GatedFloatElement))]
 	[SliderColor(ConfigUiStyle.SliderR, ConfigUiStyle.SliderG, ConfigUiStyle.SliderB, ConfigUiStyle.SliderA)]
-	[Range(0.5f, 1.5f)]
+	[Range(1f, 3f)]
 	[Increment(0.05f)]
 	[DrawTicks]
-	[DefaultValue(0.5f)]
+	[DefaultValue(1.5f)]
 	public float SharedHealthMultiplier;
 
 	[Header("Wormholes")]

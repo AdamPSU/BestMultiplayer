@@ -28,6 +28,8 @@ public sealed class DeathScreenSystem : ModSystem
 	private UserInterface _gridUi;
 	private SpectateGridState _gridState;
 	private GameTime _lastTime = new();
+	private LegacyGameInterfaceLayer _deathTextLayer;
+	private LegacyGameInterfaceLayer _spectateGridLayer;
 
 	public override void Load()
 	{
@@ -38,12 +40,34 @@ public sealed class DeathScreenSystem : ModSystem
 		_gridState.Activate();
 		_gridUi = new UserInterface();
 		_gridUi.SetState(_gridState);
+
+		_deathTextLayer = new LegacyGameInterfaceLayer(
+			"BestMultiplayer: DeathText",
+			delegate
+			{
+				if (Main.LocalPlayer is { active: true, dead: true })
+					DrawDeathUi();
+				return true;
+			},
+			InterfaceScaleType.UI);
+
+		_spectateGridLayer = new LegacyGameInterfaceLayer(
+			"BestMultiplayer: SpectateGrid",
+			delegate
+			{
+				if (ShouldShowGrid())
+					_gridUi?.Draw(Main.spriteBatch, _lastTime);
+				return true;
+			},
+			InterfaceScaleType.UI);
 	}
 
 	public override void Unload()
 	{
 		_gridUi = null;
 		_gridState = null;
+		_deathTextLayer = null;
+		_spectateGridLayer = null;
 	}
 
 	public override void UpdateUI(GameTime gameTime)
@@ -61,30 +85,12 @@ public sealed class DeathScreenSystem : ModSystem
 			if (Main.LocalPlayer is { active: true, dead: true })
 				layers[deathIdx].Active = false;
 
-			layers.Insert(deathIdx, new LegacyGameInterfaceLayer(
-				"BestMultiplayer: DeathText",
-				delegate
-				{
-					if (Main.LocalPlayer is { active: true, dead: true })
-						DrawDeathUi();
-					return true;
-				},
-				InterfaceScaleType.UI));
+			layers.Insert(deathIdx, _deathTextLayer);
 		}
 
 		int mouseIdx = layers.FindIndex(l => l.Name == "Vanilla: Mouse Text");
 		if (mouseIdx != -1)
-		{
-			layers.Insert(mouseIdx, new LegacyGameInterfaceLayer(
-				"BestMultiplayer: SpectateGrid",
-				delegate
-				{
-					if (ShouldShowGrid())
-						_gridUi?.Draw(Main.spriteBatch, _lastTime);
-					return true;
-				},
-				InterfaceScaleType.UI));
-		}
+			layers.Insert(mouseIdx, _spectateGridLayer);
 	}
 
 	private static bool ShouldShowGrid() =>

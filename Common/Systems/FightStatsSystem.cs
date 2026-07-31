@@ -33,7 +33,7 @@ public sealed class FightStatsSystem : ModSystem
 	public static bool IsTracking => _tracking;
 
 	public static bool ShouldShowFeed =>
-		(ServerConfig.Instance?.BossFightStatsEnabled ?? true)
+		ServerConfig.Instance.BossFightStatsEnabled
 		&& (_tracking || _freezeLeft > 0);
 
 	/// <summary>True during the post-boss feed hold (stats frozen, feed still visible).</summary>
@@ -116,7 +116,7 @@ public sealed class FightStatsSystem : ModSystem
 
 	public override void PostUpdatePlayers()
 	{
-		if (!(ServerConfig.Instance?.BossFightStatsEnabled ?? true))
+		if (!ServerConfig.Instance.BossFightStatsEnabled)
 		{
 			if (_tracking || _freezeLeft > 0)
 				ResetAll();
@@ -221,7 +221,7 @@ public sealed class FightStatsSystem : ModSystem
 	/// <summary>Arm tracking if a boss fight is live. Returns false if stats should not count.</summary>
 	private static bool TryEnsureTracking()
 	{
-		if (!(ServerConfig.Instance?.BossFightStatsEnabled ?? true))
+		if (!ServerConfig.Instance.BossFightStatsEnabled)
 			return false;
 		if (_freezeLeft > 0 && !_tracking)
 			return false; // post-fight freeze — ignore stragglers

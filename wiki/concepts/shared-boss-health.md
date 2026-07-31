@@ -13,7 +13,7 @@ Challenge mode (**off by default**). Teamed players (1–5) share one HP pool; e
 |---|---|---|
 | `SharedHealthEnabled` | `false` | Master toggle |
 | `SharedHealthBossesOnly` | `false` | If true, only arm during boss fights; if false, whole session |
-| `SharedHealthMultiplier` | `0.5` | Pool max = Σ living `statLifeMax2` × multiplier. Range **0.5–1.5** (native tMod slider) |
+| `SharedHealthMultiplier` | `1.5` | Pool max = Σ living `statLifeMax2` × multiplier. Range **1–3** (native tMod slider) |
 
 Lives mode is **not** turned off when this is enabled — both can run together.
 

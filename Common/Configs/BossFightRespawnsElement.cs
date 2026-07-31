@@ -58,13 +58,12 @@ public sealed class BossFightRespawnsElement : ConfigElement<int>
 
 	protected override void DrawSelf(SpriteBatch spriteBatch)
 	{
-		if (IgnoresMouseInteraction || GetDimensions().Height < 1f)
+		if (ConfigVisibility.IsCollapsed(this))
 			return;
 		base.DrawSelf(spriteBatch);
 	}
 
-	private BossFightLivesMode CurrentMode() =>
-		Item is ServerConfig cfg ? cfg.BossFightLivesMode : BossFightLivesMode.Off;
+	private BossFightLivesMode CurrentMode() => ((ServerConfig)Item).BossFightLivesMode;
 
 	private void ApplyMode(BossFightLivesMode mode, bool force)
 	{

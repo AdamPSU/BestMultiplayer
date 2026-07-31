@@ -5,28 +5,13 @@ using Terraria.UI;
 
 namespace BestMultiplayer.Common.Configs;
 
-/// <summary>
-/// Hide this config row unless a sibling member on the same config object equals <see cref="VisibleWhen"/>.
-/// Default <see cref="VisibleWhen"/> is <c>true</c> (for bool masters).
-/// </summary>
+/// <summary>Hide this config row unless a sibling bool member on the same config object is true.</summary>
 [AttributeUsage(AttributeTargets.Field | AttributeTargets.Property)]
 public sealed class ConfigGateAttribute : Attribute
 {
 	public string MemberName { get; }
 
-	public object VisibleWhen { get; }
-
-	public ConfigGateAttribute(string memberName)
-	{
-		MemberName = memberName;
-		VisibleWhen = true;
-	}
-
-	public ConfigGateAttribute(string memberName, object visibleWhen)
-	{
-		MemberName = memberName;
-		VisibleWhen = visibleWhen;
-	}
+	public ConfigGateAttribute(string memberName) => MemberName = memberName;
 }
 
 internal static class ConfigVisibility
@@ -36,31 +21,12 @@ internal static class ConfigVisibility
 	public static bool IsVisible(object item, MemberInfo gatedMember)
 	{
 		var gate = gatedMember.GetCustomAttribute<ConfigGateAttribute>(inherit: true);
-		if (gate is null || item is null)
-			return true;
-
-		object hostValue = ReadMember(item, gate.MemberName);
-		if (hostValue is null)
-			return false;
-
-		object expected = gate.VisibleWhen;
-		if (expected is null)
-			return hostValue is true;
-
-		if (hostValue is Enum && expected is not Enum)
-		{
-			try
-			{
-				expected = Enum.ToObject(hostValue.GetType(), expected);
-			}
-			catch
-			{
-				return false;
-			}
-		}
-
-		return Equals(hostValue, expected);
+		return gate is null || (item is not null && ReadMember(item, gate.MemberName) is true);
 	}
+
+	/// <summary>True when the element is currently collapsed (hidden by a gate) and shouldn't draw.</summary>
+	public static bool IsCollapsed(UIElement element) =>
+		element.IgnoresMouseInteraction || element.GetDimensions().Height < 1f;
 
 	/// <summary>
 	/// tML wraps each config row in a UISortableElement. WrapIt snapshots container height AFTER

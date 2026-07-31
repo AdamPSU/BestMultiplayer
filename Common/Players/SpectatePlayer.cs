@@ -35,7 +35,7 @@ public sealed class SpectatePlayer : ModPlayer
 	private static bool _holdCorpse;
 	private static int _lerpTicks;
 	private static Vector2 _lerpFrom;
-	private static bool AutoSpectateEnabled => ClientConfig.Instance?.SpectateOnDeath ?? true;
+	private static bool AutoSpectateEnabled => ClientConfig.Instance.SpectateOnDeath;
 
 	internal static void Clear()
 	{
@@ -133,8 +133,7 @@ public sealed class SpectatePlayer : ModPlayer
 
 	internal static void SelectPlayer(int whoAmI)
 	{
-		IntroTicks = 0;
-		_holdCorpse = false;
+		ResetManualSelectState();
 		if (IsValidPlayer(whoAmI))
 			SetTarget(SpectateKind.Player, whoAmI);
 		else
@@ -143,8 +142,7 @@ public sealed class SpectatePlayer : ModPlayer
 
 	internal static void SelectBoss(int npcIndex)
 	{
-		IntroTicks = 0;
-		_holdCorpse = false;
+		ResetManualSelectState();
 		if (IsValidBoss(npcIndex))
 			SetTarget(SpectateKind.Boss, npcIndex);
 		else
@@ -192,9 +190,14 @@ public sealed class SpectatePlayer : ModPlayer
 
 	private static void SelectStep(int dir)
 	{
+		ResetManualSelectState();
+		ApplyStep(dir);
+	}
+
+	private static void ResetManualSelectState()
+	{
 		IntroTicks = 0;
 		_holdCorpse = false;
-		ApplyStep(dir);
 	}
 
 	private static void ApplyStep(int dir)

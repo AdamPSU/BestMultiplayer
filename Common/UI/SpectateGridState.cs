@@ -131,7 +131,6 @@ public sealed class SpectateGridState : UIState
 
 public sealed class SpectateHeadButton : UIElement
 {
-	private static readonly Rectangle HeadBounds = new(0, 0, 40, 56);
 	private readonly int _whoAmI;
 
 	public SpectateHeadButton(int whoAmI)
@@ -166,10 +165,7 @@ public sealed class SpectateHeadButton : UIElement
 
 		Color mul = usable ? Color.White : Color.Gray;
 		Vector2 pos = new(d.X + d.Width / 2f - 20f, d.Y + d.Height / 2f - 16f);
-		DrawLayer(spriteBatch, TextureAssets.Players[0, 0], pos, player.skinColor.MultiplyRGBA(mul));
-		DrawLayer(spriteBatch, TextureAssets.Players[0, 2], pos, player.eyeColor.MultiplyRGBA(mul));
-		DrawLayer(spriteBatch, TextureAssets.Players[0, 1], pos, Color.White.MultiplyRGBA(mul));
-		DrawLayer(spriteBatch, TextureAssets.PlayerHair[player.hair], pos, player.hairColor.MultiplyRGBA(mul));
+		PlayerHeadRenderer.Draw(spriteBatch, player, pos, mul);
 
 		if (IsMouseHovering)
 		{
@@ -191,11 +187,6 @@ public sealed class SpectateHeadButton : UIElement
 		spriteBatch.Draw(px, new Rectangle(rect.Right - 2, rect.Y, 2, rect.Height), c);
 	}
 
-	private static void DrawLayer(SpriteBatch sb, Asset<Texture2D> asset, Vector2 pos, Color color)
-	{
-		if (asset.IsLoaded)
-			sb.Draw(asset.Value, pos, HeadBounds, color, 0f, Vector2.Zero, 1f, SpriteEffects.None, 0f);
-	}
 }
 
 public sealed class SpectateBossButton : UIElement

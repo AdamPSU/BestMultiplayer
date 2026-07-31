@@ -15,6 +15,7 @@ public sealed class FightStatsUISystem : ModSystem
 	private UserInterface _ui;
 	private FightStatsFeedState _state;
 	private GameTime _lastTime = new();
+	private LegacyGameInterfaceLayer _feedLayer;
 
 	public override void Load()
 	{
@@ -25,12 +26,22 @@ public sealed class FightStatsUISystem : ModSystem
 		_state.Activate();
 		_ui = new UserInterface();
 		_ui.SetState(_state);
+		_feedLayer = new LegacyGameInterfaceLayer(
+			"BestMultiplayer: FightStatsFeed",
+			delegate
+			{
+				if (ShouldShow())
+					_ui?.Draw(Main.spriteBatch, _lastTime);
+				return true;
+			},
+			InterfaceScaleType.UI);
 	}
 
 	public override void Unload()
 	{
 		_ui = null;
 		_state = null;
+		_feedLayer = null;
 	}
 
 	public override void UpdateUI(GameTime gameTime)
@@ -46,22 +57,14 @@ public sealed class FightStatsUISystem : ModSystem
 		if (mouseIdx == -1)
 			return;
 
-		layers.Insert(mouseIdx, new LegacyGameInterfaceLayer(
-			"BestMultiplayer: FightStatsFeed",
-			delegate
-			{
-				if (ShouldShow())
-					_ui?.Draw(Main.spriteBatch, _lastTime);
-				return true;
-			},
-			InterfaceScaleType.UI));
+		layers.Insert(mouseIdx, _feedLayer);
 	}
 
 	private static bool ShouldShow() =>
 		!Main.dedServ
 		&& !Main.gameMenu
 		&& !Main.playerInventory
-		&& (ClientConfig.Instance?.ShowBossFightStats ?? true)
+		&& ClientConfig.Instance.ShowBossFightStats
 		&& FightStatsSystem.ShouldShowFeed
 		&& Main.LocalPlayer is { active: true };
 }

@@ -16,18 +16,32 @@ public sealed class BossFightSystem : ModSystem
 	private static bool _poolsReady;
 	private static bool _fightWasActive;
 
+	// Several systems poll IsBossFightActive multiple times per tick; cache the O(maxNPCs)
+	// scan result for the current tick instead of rescanning on every call.
+	private static long _activeCacheTick = -1;
+	private static bool _activeCache;
+
 	public static bool IsBossFightActive()
 	{
+		if (Main.GameUpdateCount == _activeCacheTick)
+			return _activeCache;
+
+		_activeCacheTick = Main.GameUpdateCount;
+
 		// Do NOT require HasValidTarget: when everyone is dead the boss often has no target,
 		// which would clear lives pools and allow infinite respawns.
+		_activeCache = false;
 		for (int i = 0; i < Main.maxNPCs; i++)
 		{
 			NPC npc = Main.npc[i];
 			if (npc.active && BossNpc.IsAnySegment(npc))
-				return true;
+			{
+				_activeCache = true;
+				break;
+			}
 		}
 
-		return false;
+		return _activeCache;
 	}
 
 	public override void PostUpdatePlayers()
@@ -76,17 +90,14 @@ public sealed class BossFightSystem : ModSystem
 		}
 	}
 
-	internal static bool IsLivesModeActive()
-	{
-		ServerConfig config = ServerConfig.Instance;
-		return config is not null && config.BossFightLivesMode is BossFightLivesMode.PerPlayer or BossFightLivesMode.PerTeam;
-	}
+	internal static bool IsLivesModeActive() =>
+		ServerConfig.Instance.BossFightLivesMode is BossFightLivesMode.PerPlayer or BossFightLivesMode.PerTeam;
 
 	private static void InitPools()
 	{
 		TeamRespawnsLeft.Clear();
 		ServerConfig config = ServerConfig.Instance;
-		if (config is null || !IsLivesModeActive())
+		if (!IsLivesModeActive())
 		{
 			_poolsReady = true;
 			DeathTracker.Snapshot();
@@ -118,7 +129,7 @@ public sealed class BossFightSystem : ModSystem
 		}
 
 		// Shared pool = players on that team at fight start.
-		for (int team = 1; team <= 5; team++)
+		for (int team = Teams.Min; team <= Teams.Max; team++)
 		{
 			if (counts[team] > 0)
 				TeamRespawnsLeft[team] = counts[team];
@@ -128,7 +139,7 @@ public sealed class BossFightSystem : ModSystem
 	private static void EnsureNewPlayers()
 	{
 		ServerConfig config = ServerConfig.Instance;
-		if (config is null || !IsLivesModeActive())
+		if (!IsLivesModeActive())
 			return;
 
 		for (int i = 0; i < Main.maxPlayers; i++)
@@ -143,7 +154,7 @@ public sealed class BossFightSystem : ModSystem
 
 			// Mid-join: PerPlayer full budget; PerTeam does not top up shared pool.
 			AssignPlayer(p, config);
-			if (config.BossFightLivesMode == BossFightLivesMode.PerTeam && p.team is >= 1 and <= 5
+			if (config.BossFightLivesMode == BossFightLivesMode.PerTeam && Teams.IsReal(p.team)
 			    && !TeamRespawnsLeft.ContainsKey(p.team))
 				TeamRespawnsLeft[p.team] = 0;
 
@@ -195,9 +206,6 @@ public sealed class BossFightSystem : ModSystem
 		mp.RespawnAllowedThisDeath = false;
 
 		ServerConfig config = ServerConfig.Instance;
-		if (config is null)
-			return;
-
 		if (config.BossFightLivesMode == BossFightLivesMode.PerPlayer || player.team == 0)
 		{
 			if (mp.RespawnsRemaining > 0)

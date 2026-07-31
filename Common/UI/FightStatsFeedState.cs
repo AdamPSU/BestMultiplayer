@@ -3,24 +3,31 @@ using System.Collections.Generic;
 using BestMultiplayer.Common.Systems;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
-using ReLogic.Content;
 using Terraria;
 using Terraria.GameContent;
 using Terraria.GameContent.UI.Elements;
 using Terraria.Localization;
-using Terraria.ModLoader.UI;
 using Terraria.UI;
 
 namespace BestMultiplayer.Common.UI;
 
 /// <summary>
 /// Layout M: settings-style UIPanel, vanilla-ish heads + health bars, selected stats.
-/// Y-centered on vanilla boss bar; left of Settings.
+/// Y-centered on vanilla boss bar; X right edge matches player hearts (max HP row).
 /// </summary>
 public sealed class FightStatsFeedState : UIState
 {
-	// Vanilla BigProgressBarHelper.DrawBareBonesBar centers the bar at (screenW/2, screenH - 50).
+	// Boss bar Y: BigProgressBarHelper centers at (screenW/2, screenH - 50).
 	private const float BossBarCenterYFromBottom = 50f;
+
+	// Player hearts right edge at max HP (ClassicPlayerResourcesDisplaySet):
+	//   UI_ScreenAnchorX = screenWidth - 800
+	//   hover/row: X in [500 + anchor, 500 + 260 + anchor] for a full 10-heart row
+	//   → right = screenWidth - 40
+	private const float PlayerHeartsRightInset = 40f;
+
+	// Vanilla Settings button (DrawInterface_29): anchor (screenW-110, screenH-20) when dead.
+	private const float SettingsClearance = 52f;
 
 	// UIPanel 9-slice: cornerSize=12, barSize=4 (vanilla settings inset).
 	private const int Head = 32;
@@ -30,26 +37,33 @@ public sealed class FightStatsFeedState : UIState
 	private const int CellH = Head + StackGap + BarH;
 	private const int Pad = 8;
 	private const float DimAlpha = 0.72f; // non-selected only; selected = 1
-	private const float RightReserve = 100f;
-	private const float GapBeforeSettings = 8f;
 	private const float TextScale = 0.85f;
 
-	private static readonly Rectangle HeadSrc = new(0, 0, 40, 56);
+	// Match SpectateGridState chrome.
+	private static readonly Color PanelBg = new Color(33, 43, 79) * 0.85f;
+	private static readonly Color PanelBorder = new Color(89, 116, 213) * 0.9f;
 
 	private readonly UIPanel _panel = new();
 	private readonly List<int> _roster = new(8);
+	private readonly int[] _respawnMax = new int[Main.maxPlayers];
+	private readonly bool[] _wasDead = new bool[Main.maxPlayers];
 	private int _selected = -1;
 	private bool _leftWas;
 	private bool _rightWas;
 	private bool _wasLocalDead;
 
+	private int _dealtPct;
+	private int _takenPct;
+	private int _deaths;
+	private string _deathText = "";
+	private float _statsWidth = 180f;
+
 	public override void OnInitialize()
 	{
 		_panel.SetPadding(Pad);
-		// Same chrome as settings menu / ExampleCoinsUI (UIPanel 9-slice, corner 12 / bar 4).
-		_panel.BackgroundColor = UICommon.DefaultUIBlue;
-		_panel.BorderColor = UICommon.DefaultUIBorder;
-		_panel.HAlign = 1f;
+		_panel.BackgroundColor = PanelBg;
+		_panel.BorderColor = PanelBorder;
+		_panel.HAlign = 1f; // right edge anchors to parent; Left is inset from screen right
 		Append(_panel);
 	}
 
@@ -57,14 +71,16 @@ public sealed class FightStatsFeedState : UIState
 	{
 		base.Update(gameTime);
 		BuildRoster();
+		TrackRespawnSnapshots();
 		SnapOnLocalDeath();
 		EnsureSelection();
+		RefreshStats();
 		LayoutPanel();
 		HandleClicks();
 
 		float blink = FightStatsSystem.FeedBlinkAlpha;
-		_panel.BackgroundColor = UICommon.DefaultUIBlue * blink;
-		_panel.BorderColor = UICommon.DefaultUIBorder * blink;
+		_panel.BackgroundColor = WithAlpha(PanelBg, blink);
+		_panel.BorderColor = WithAlpha(PanelBorder, blink);
 
 		if (_panel.ContainsPoint(Main.MouseScreen))
 			Main.LocalPlayer.mouseInterface = true;
@@ -89,8 +105,8 @@ public sealed class FightStatsFeedState : UIState
 			var headRect = new Rectangle((int)x, (int)y, Head, Head);
 			DrawHead(spriteBatch, who, headRect, alpha, sel);
 
-			var barRect = new Rectangle((int)x, (int)(y + Head + StackGap), Head, 6);
-			DrawHpBar(spriteBatch, who, barRect, alpha);
+			var barRect = new Rectangle((int)x, (int)(y + Head + StackGap), Head, BarH);
+			DrawHpBar(spriteBatch, who, barRect, alpha, _respawnMax[who]);
 
 			x += Head + HeadGap;
 		}
@@ -98,20 +114,15 @@ public sealed class FightStatsFeedState : UIState
 		float textX = x + 6f;
 		// Panel inner vertical center (matches earlier layout-M that sat on the boss-bar midline).
 		float midY = d.Y + d.Height * 0.5f;
-		TeamTotals(out int teamDealt, out int teamTaken);
-		int dealtPct = FightStatsSystem.Pct(FightStatsSystem.GetDealt(_selected), teamDealt);
-		int deaths = FightStatsSystem.GetDeaths(_selected);
 		Color dealtColor = CombatText.DamagedHostile * blink;
 		Color takenColor = CombatText.DamagedFriendly * blink;
 		Color mute = Main.MouseTextColorReal * (0.65f * blink);
-		int takenPct = FightStatsSystem.Pct(FightStatsSystem.GetTaken(_selected), teamTaken);
 
-		textX = DrawLabel(spriteBatch, $"{dealtPct}% dealt", textX, midY, dealtColor);
+		textX = DrawLabel(spriteBatch, $"{_dealtPct}% dealt", textX, midY, dealtColor);
 		textX = DrawLabel(spriteBatch, "·", textX, midY, mute);
-		textX = DrawLabel(spriteBatch, $"{takenPct}% taken", textX, midY, takenColor);
+		textX = DrawLabel(spriteBatch, $"{_takenPct}% taken", textX, midY, takenColor);
 		textX = DrawLabel(spriteBatch, "·", textX, midY, mute);
-		string deathText = deaths == 1 ? "1 death" : $"{deaths} deaths";
-		DrawLabel(spriteBatch, deathText, textX, midY, mute);
+		DrawLabel(spriteBatch, _deathText, textX, midY, Color.White * blink);
 	}
 
 	private void BuildRoster()
@@ -130,6 +141,20 @@ public sealed class FightStatsFeedState : UIState
 			int cmp = FightStatsSystem.GetDealt(b).CompareTo(FightStatsSystem.GetDealt(a));
 			return cmp != 0 ? cmp : a.CompareTo(b);
 		});
+	}
+
+	private void TrackRespawnSnapshots()
+	{
+		for (int i = 0; i < Main.maxPlayers; i++)
+		{
+			Player p = Main.player[i];
+			bool dead = p.active && p.dead;
+			if (dead && !_wasDead[i])
+				_respawnMax[i] = Math.Max(1, p.respawnTimer);
+			if (!dead)
+				_respawnMax[i] = 0;
+			_wasDead[i] = dead;
+		}
 	}
 
 	private void SnapOnLocalDeath()
@@ -156,31 +181,39 @@ public sealed class FightStatsFeedState : UIState
 
 	private void LayoutPanel()
 	{
-		// Measure stats string so panel hugs content (no huge empty right side).
-		float statsW = MeasureStatsWidth();
 		float headsW = _roster.Count * Head + Math.Max(0, _roster.Count - 1) * HeadGap;
-		float width = headsW + 6f + statsW;
+		float width = headsW + 6f + _statsWidth + Pad * 2f;
 		float height = CellH + Pad * 2f;
 
-		_panel.Width.Set(width + Pad * 2, 0f);
+		_panel.Width.Set(width, 0f);
 		_panel.Height.Set(height, 0f);
-		_panel.Left.Set(-(RightReserve + GapBeforeSettings), 0f);
+		// Match Classic hearts row right edge (max HP): screenWidth - 40.
+		_panel.Left.Set(-PlayerHeartsRightInset, 0f);
 
 		float barCenterY = Main.screenHeight - BossBarCenterYFromBottom;
-		_panel.Top.Set(barCenterY - height / 2f, 0f);
+		float top = barCenterY - height / 2f;
+		// Dead: Settings button appears bottom-right — keep feed above it.
+		if (Main.LocalPlayer.dead)
+			top = Math.Min(top, Main.screenHeight - SettingsClearance - height);
+		_panel.Top.Set(top, 0f);
 	}
 
-	private float MeasureStatsWidth()
+	/// <summary>Recomputes the selected player's dealt/taken/deaths stats once per frame for both layout and draw.</summary>
+	private void RefreshStats()
 	{
 		if (_selected < 0)
-			return 180f;
+		{
+			_statsWidth = 180f;
+			return;
+		}
+
 		TeamTotals(out int teamDealt, out int teamTaken);
-		int dealtPct = FightStatsSystem.Pct(FightStatsSystem.GetDealt(_selected), teamDealt);
-		int takenPct = FightStatsSystem.Pct(FightStatsSystem.GetTaken(_selected), teamTaken);
-		int deaths = FightStatsSystem.GetDeaths(_selected);
-		string deathText = deaths == 1 ? "1 death" : $"{deaths} deaths";
-		string s = $"{dealtPct}% dealt · {takenPct}% taken · {deathText}";
-		return FontAssets.MouseText.Value.MeasureString(s).X * TextScale + 4f;
+		_dealtPct = FightStatsSystem.Pct(FightStatsSystem.GetDealt(_selected), teamDealt);
+		_takenPct = FightStatsSystem.Pct(FightStatsSystem.GetTaken(_selected), teamTaken);
+		_deaths = FightStatsSystem.GetDeaths(_selected);
+		_deathText = _deaths == 1 ? "1 death" : $"{_deaths} deaths";
+		string s = $"{_dealtPct}% dealt · {_takenPct}% taken · {_deathText}";
+		_statsWidth = FontAssets.MouseText.Value.MeasureString(s).X * TextScale + 4f;
 	}
 
 	private void HandleClicks()
@@ -245,53 +278,65 @@ public sealed class FightStatsFeedState : UIState
 	private static void DrawHead(SpriteBatch sb, int whoAmI, Rectangle rect, float opacity, bool selected)
 	{
 		Player player = Main.player[whoAmI];
-		// Soft plate behind head (inventory-slot language, not a second panel).
-		Color plate = selected
-			? new Color(90, 120, 200, 160)
-			: new Color(40, 55, 110, 120);
-		Utils.DrawInvBG(sb, rect, plate);
+		Utils.DrawInvBG(sb, rect, selected
+			? new Color(80, 160, 80, 180)
+			: new Color(40, 50, 80, 160));
 
 		if (selected)
-		{
-			// UICommon.MainPanelBackground RGB (#212B4F) — dark blue settings chrome.
-			Color edge = new Color(33, 43, 79);
-			Texture2D px = TextureAssets.MagicPixel.Value;
-			sb.Draw(px, new Rectangle(rect.X, rect.Y, rect.Width, 1), edge);
-			sb.Draw(px, new Rectangle(rect.X, rect.Bottom - 1, rect.Width, 1), edge);
-			sb.Draw(px, new Rectangle(rect.X, rect.Y, 1, rect.Height), edge);
-			sb.Draw(px, new Rectangle(rect.Right - 1, rect.Y, 1, rect.Height), edge);
-		}
+			SpectateHeadButton.DrawSelectionBorder(sb, rect, Color.LightGreen);
 
-		Color mul = (player.dead ? Color.Gray : Color.White) * opacity;
+		Color mul = Color.White * opacity;
 		float scale = Head / 40f;
 		var pos = new Vector2(
 			rect.X + (rect.Width - 40 * scale) / 2f,
 			rect.Y + (rect.Height - 28 * scale) / 2f);
-		DrawLayer(sb, TextureAssets.Players[0, 0], pos, player.skinColor.MultiplyRGBA(mul), scale);
-		DrawLayer(sb, TextureAssets.Players[0, 2], pos, player.eyeColor.MultiplyRGBA(mul), scale);
-		DrawLayer(sb, TextureAssets.Players[0, 1], pos, Color.White.MultiplyRGBA(mul), scale);
-		DrawLayer(sb, TextureAssets.PlayerHair[player.hair], pos, player.hairColor.MultiplyRGBA(mul), scale);
+		PlayerHeadRenderer.Draw(sb, player, pos, mul, scale, grayscale: player.dead);
+
+		if (player.dead)
+			DrawDeathMark(sb, rect, opacity);
 
 		if (rect.Contains(Main.MouseScreen.ToPoint()))
 			SetHover(whoAmI, player);
 	}
 
+	private static void DrawDeathMark(SpriteBatch sb, Rectangle headRect, float opacity)
+	{
+		Texture2D tex = TextureAssets.MapDeath.Value;
+		float fit = Math.Min(headRect.Width, headRect.Height) * 0.85f;
+		float scale = fit / Math.Max(tex.Width, tex.Height);
+		var origin = new Vector2(tex.Width * 0.5f, tex.Height * 0.5f);
+		var center = new Vector2(headRect.X + headRect.Width * 0.5f, headRect.Y + headRect.Height * 0.5f);
+		sb.Draw(tex, center, null, Color.Red * opacity, 0f, origin, scale, SpriteEffects.None, 0f);
+	}
+
 	/// <summary>
-	/// Screen-space HP bar using vanilla Hb2 (track) + Hb1 (fill).
+	/// Screen-space HP / respawn bar using vanilla Hb2 (track) + Hb1 (fill).
 	/// <see cref="Main.DrawHealthBar"/> expects world coords and is unusable in UI layers.
 	/// </summary>
-	private static void DrawHpBar(SpriteBatch sb, int whoAmI, Rectangle rect, float alpha)
+	private static void DrawHpBar(SpriteBatch sb, int whoAmI, Rectangle rect, float alpha, int respawnMax)
 	{
 		Player player = Main.player[whoAmI];
-		float frac = 0f;
-		if (!player.dead && player.statLifeMax2 > 0)
-			frac = MathHelper.Clamp(player.statLife / (float)player.statLifeMax2, 0f, 1f);
-
-		Color trackColor = Color.White * alpha;
-		Color fillColor = new Color(60, 200, 70) * alpha;
 		Texture2D track = TextureAssets.Hb2.Value;
 		Texture2D fill = TextureAssets.Hb1.Value;
-		sb.Draw(track, rect, trackColor);
+		sb.Draw(track, rect, Color.White * alpha);
+
+		float frac = 0f;
+		Color fillColor = new Color(60, 200, 70) * alpha;
+
+		if (player.dead)
+		{
+			if (RespawnGate.GetLockReason(player) == RespawnGate.LockReason.None
+			    && respawnMax > 0 && player.respawnTimer > 0)
+			{
+				frac = MathHelper.Clamp(player.respawnTimer / (float)respawnMax, 0f, 1f);
+				fillColor = Color.White * alpha;
+			}
+		}
+		else if (player.statLifeMax2 > 0)
+		{
+			frac = MathHelper.Clamp(player.statLife / (float)player.statLifeMax2, 0f, 1f);
+		}
+
 		if (frac > 0f)
 		{
 			int srcW = Math.Max(1, (int)(fill.Width * frac));
@@ -310,14 +355,28 @@ public sealed class FightStatsFeedState : UIState
 		string label = whoAmI == Main.myPlayer
 			? $"{player.name} ({Language.GetTextValue("Mods.BestMultiplayer.UI.Spectate.You")})"
 			: player.name;
-		if (!player.dead && player.statLifeMax2 > 0)
+
+		if (player.dead)
+		{
+			if (RespawnGate.GetLockReason(player) != RespawnGate.LockReason.None)
+				label += " (locked)";
+			else if (player.respawnTimer > 0)
+			{
+				int seconds = (player.respawnTimer + 59) / 60;
+				label += $" ({seconds}s)";
+			}
+			else
+				label += " (dead)";
+		}
+		else if (player.statLifeMax2 > 0)
+		{
 			label += $" ({player.statLife}/{player.statLifeMax2})";
+		}
+
 		Main.hoverItemName = label;
 	}
 
-	private static void DrawLayer(SpriteBatch sb, Asset<Texture2D> asset, Vector2 pos, Color color, float scale)
-	{
-		if (asset.IsLoaded)
-			sb.Draw(asset.Value, pos, HeadSrc, color, 0f, Vector2.Zero, scale, SpriteEffects.None, 0f);
-	}
+	/// <summary>Alpha-only scale — keeps RGB (unlike Color * float).</summary>
+	private static Color WithAlpha(Color c, float a) =>
+		new(c.R, c.G, c.B, (int)(c.A * MathHelper.Clamp(a, 0f, 1f)));
 }

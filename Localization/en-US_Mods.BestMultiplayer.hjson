@@ -58,6 +58,11 @@ Configs: {
 			Tooltip: When a boss fight ends (killed or despawned), dead players respawn immediately instead of finishing the vanilla countdown. Includes hard-locked players out of lives.
 		}
 
+		BossFightStatsEnabled: {
+			Label: Boss Fight Stats Feed
+			Tooltip: During boss fights, show a compact team damage feed (dealt %, taken %, deaths) beside Settings. Clients can hide it locally.
+		}
+
 		SharedHealthEnabled: {
 			Label: Shared Team Health
 			Tooltip: Challenge mode (off by default). Teamed players (1–5) share one HP pool. Everyone's life bar shows the pool. Pool empty = whole team dies. Independent of Boss Fight Lives. Unteamed players are unchanged.
@@ -86,11 +91,20 @@ Configs: {
 
 	ClientConfig: {
 		DisplayName: Client
-		Headers.Spectate: Spectate
+
+		Headers: {
+			Spectate: Spectate
+			FightStats: Fight Stats
+		}
 
 		SpectateOnDeath: {
 			Label: Spectate On Death
 			Tooltip: After a short death intro, automatically spectate the next living teammate (then bosses if none). Hotkeys cycle teammates and bosses. Smooth camera on switch.
+		}
+
+		ShowBossFightStats: {
+			Label: Show Boss Fight Stats
+			Tooltip: Show the live boss-fight stats feed (head strip + selected player %). Off hides it for you only.
 		}
 	}
 

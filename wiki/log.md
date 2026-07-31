@@ -1,5 +1,12 @@
 Chronological record of ingests, queries, and maintenance passes.
 
+## [2026-07-31] feature | Boss fight stats feed
+- Layout M: head strip (dim non-selected) + selected dealt%/taken%/deaths
+- Left of Settings; boss-only; 6s freeze on end; click head/cycle
+- Server `BossFightStatsEnabled` + client `ShowBossFightStats` (both default on)
+- `FightStatsSystem` + `FightStatsPlayer` + snapshot packet; `FightStatsFeedState` UI
+- Roadmap damage board → done
+
 ## [2026-07-30] feature | Shared Team Health (redesign)
 - Master `SharedHealthEnabled` + `SharedHealthBossesOnly` + pool size 50–150%
 - Always-on by default when enabled; bosses-only optional; lives mode untouched

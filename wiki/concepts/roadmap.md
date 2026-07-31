@@ -1,7 +1,7 @@
 ---
 title: Feature roadmap
 description: Planned BestMultiplayer features selected after multiplayer catalog research (2026-07-27).
-date: 2026-07-27
+date: 2026-07-31
 tags: [roadmap, planned, multiplayer]
 ---
 
@@ -26,13 +26,11 @@ Planned work only — **not implemented yet**. Selected from the multiplayer cat
 - ~0.3s smoothstep when switching spectate targets (player ↔ player, player ↔ boss); then hard-follow.
 - Client presentation only.
 
-### Mid-fight / end-fight damage board
+### Mid-fight / end-fight damage board — **done**
 
-- Track per-player damage dealt / taken / deaths (and optionally DPS) while a boss fight is active.
-- **End of fight:** print a short board to chat (or UI).
-- **Mid-fight:** keybind dumps “so far” stats.
-- Host toggles which columns appear.
-- **Inspiration:** Multiplayer Boss-Fight Stats (Workshop `2822937879`) — clean-room; may supersede that add-on later.
+- Live layout-M feed (head strip + selected dealt%/taken%/deaths), left of Settings.
+- Boss-only; 6s freeze on fight end; server + client toggles.
+- See [boss fight stats](boss-fight-stats.md).
 
 ### Instant respawn when boss dies — **done**
 
@@ -45,16 +43,9 @@ Planned work only — **not implemented yet**. Selected from the multiplayer cat
 - **Off by default.** Always-on or bosses-only; pool size 50–150% of Σ max HP; join expands pool; boss wipe hard-locks, exploration wipe normal respawn. Independent of lives.
 - See [shared team health](shared-boss-health.md).
 
-## Priority order (suggested)
+## Priority order
 
-1. Damage board (end-fight first, then mid-fight keybind)  
-2. ~~Shared Boss Health~~ done  
-3. ~~Instant respawn when boss dies~~ done  
-4. ~~Boss spectate + smooth lerp~~ done  
-5. ~~Boss-death respawn-at-teammate~~ done  
-
-
-Order can change; implement when scheduled.
+All planned in-mod items from the 2026-07-27 pass are **done**.
 
 ## Explicitly not in this roadmap
 

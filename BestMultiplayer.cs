@@ -31,6 +31,14 @@ public sealed class BestMultiplayer : Mod
 			case Packets.SharedHealthPool:
 				SharedHealthSystem.HandlePoolPacket(reader);
 				break;
+
+			case Packets.FightStatsSnapshot:
+				FightStatsSystem.HandleSnapshotPacket(reader);
+				break;
+
+			case Packets.FightStatsDelta:
+				FightStatsSystem.HandleDeltaPacket(reader, whoAmI);
+				break;
 		}
 	}
 

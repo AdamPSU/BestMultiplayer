@@ -39,7 +39,7 @@ Thin sealed `Mod` subclass. Features live under `Common/`.[^1]
 | Instant respawn when boss ends | Done (`InstantRespawnOnBossEnd`) |
 | [Shared team health](../concepts/shared-boss-health.md) | Done (`SharedHealthEnabled`, default off) |
 | Spectate (client) | Death-only team camera + custom death UI |
-| Planned | See [roadmap](../concepts/roadmap.md) — damage board |
+| [Boss fight stats feed](../concepts/boss-fight-stats.md) | Done (layout M live feed) |
 | Collection add-on | [Shared World Map](../concepts/collection-addons.md) |
 
 ## Surface
@@ -48,9 +48,10 @@ Thin sealed `Mod` subclass. Features live under `Common/`.[^1]
 |---|---|
 | Server policy config | `Common/Configs/ServerConfig.cs` |
 | Client UX config | `Common/Configs/ClientConfig.cs` |
-| Player hooks | `Common/Players/BestMultiplayerPlayer.cs`, `SpectatePlayer.cs`, `SharedHealthPlayer.cs` |
+| Player hooks | `Common/Players/BestMultiplayerPlayer.cs`, `SpectatePlayer.cs`, `SharedHealthPlayer.cs`, `FightStatsPlayer.cs` |
 | Shared HP | `Common/Systems/SharedHealthSystem.cs` |
 | Boss session | `Common/Systems/BossFightSystem.cs` |
+| Fight stats | `Common/Systems/FightStatsSystem.cs`, `FightStatsUISystem.cs`, `Common/UI/FightStatsFeedState.cs` |
 | Death UI + grid host | `Common/Systems/DeathScreenSystem.cs` |
 | Wormhole hooks | `Common/Systems/WormholeSystem.cs` |
 | Spectate grid | `Common/UI/SpectateGridState.cs` |

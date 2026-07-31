@@ -17,8 +17,8 @@ One mod (`side = Both`). Server policy vs client presentation.
 BestMultiplayer.cs              thin Mod entry (packets)
 Common/Configs/                 ServerConfig + ClientConfig
 Common/Players/                 team, lives lock, boss respawn, spectate
-Common/Systems/                 boss pools, death UI, wormhole hooks
-Common/UI/                      spectate head grid
+Common/Systems/                 boss pools, fight stats, death UI, wormhole hooks
+Common/UI/                      spectate grid, fight stats feed
 Localization/                   en-US hjson
 wiki/                           design notes
 ```
@@ -42,6 +42,7 @@ Server config edits are host-only (`AcceptClientChanges`).
 | Boss spectate + smooth camera | Done |
 | Respawn at spectate target (boss deaths) | Done |
 | Instant respawn when boss ends | Done |
+| Boss fight stats feed (live) | Done |
 
 ## Build
 

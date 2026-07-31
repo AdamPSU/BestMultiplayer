@@ -27,18 +27,24 @@ Common/Configs/ClientConfig.cs
 Common/Players/BestMultiplayerPlayer.cs
 Common/Players/SpectatePlayer.cs
 Common/Systems/BossFightSystem.cs
+Common/Systems/FightStatsSystem.cs
+Common/Systems/FightStatsUISystem.cs   # client stats feed host
 Common/Systems/DeathScreenSystem.cs   # death text + spectate grid host (client)
 Common/Systems/WormholeSystem.cs
+Common/Players/FightStatsPlayer.cs
 Common/UI/SpectateGridState.cs
+Common/UI/FightStatsFeedState.cs
 Localization/en-US_Mods.BestMultiplayer.hjson
 ```
 
 | Path | Role |
 |---|---|
 | `ServerConfig` | Host toggles + host `AcceptClientChanges` |
-| `ClientConfig` | `SpectateOnDeath` |
+| `ClientConfig` | Spectate + show fight stats |
 | `BestMultiplayerPlayer` | Team on enter; lives lock; boss-death respawn at spectate target |
 | `SpectatePlayer` (+ keybinds) | Death camera (players + bosses), lerp, hotkeys, section packet |
+| `FightStatsPlayer` / `FightStatsSystem` | Boss-fight dealt/taken/deaths + snapshot packet |
+| `FightStatsUISystem` / `FightStatsFeedState` | Layout-M live feed (left of Settings) |
 | `DeathScreenSystem` | Custom death text + MP player/boss head grid |
 | `BossFightSystem` | Boss detect + lives pools |
 | `WormholeSystem` | Unlimited team teleport hooks |

@@ -32,6 +32,7 @@ flowchart LR
 | `BossFightRespawns` | `1` | **Done** | PerPlayer budget; `0` = BM first-death lock; ignored in PerTeam (pool = team size) |
 | `RespawnAtTeammateDuringBoss` | `true` | **Done** | Boss-death respawn beside **spectate target** only; else vanilla spawn |
 | `InstantRespawnOnBossEnd` | `true` | **Done** | Zero `respawnTimer` for all dead players when boss fight ends |
+| `BossFightStatsEnabled` | `true` | **Done** | Live boss-fight stats feed — see [boss fight stats](boss-fight-stats.md) |
 | `SharedHealthEnabled` | `false` | **Done** | Shared team HP — see [shared team health](shared-boss-health.md) |
 | `SharedHealthBossesOnly` | `false` | **Done** | Limit shared HP to boss fights |
 | `SharedHealthMultiplier` | `1.0` | **Done** | Pool max × Σ living max HP (0.5–1.5) |
@@ -43,6 +44,7 @@ flowchart LR
 | Field | Default | Intent |
 |---|---|---|
 | `SpectateOnDeath` | `true` | Auto-follow teammate after death intro |
+| `ShowBossFightStats` | `true` | Show boss-fight stats feed locally |
 
 ## Related
 

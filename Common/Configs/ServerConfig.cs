@@ -53,6 +53,9 @@ public sealed class ServerConfig : ModConfig
 	[DefaultValue(true)]
 	public bool InstantRespawnOnBossEnd;
 
+	[DefaultValue(true)]
+	public bool BossFightStatsEnabled;
+
 	[Header("SharedHealth")]
 	[DefaultValue(false)]
 	public bool SharedHealthEnabled;

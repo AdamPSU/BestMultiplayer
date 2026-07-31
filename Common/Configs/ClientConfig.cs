@@ -14,4 +14,8 @@ public sealed class ClientConfig : ModConfig
 	[Header("Spectate")]
 	[DefaultValue(true)]
 	public bool SpectateOnDeath;
+
+	[Header("FightStats")]
+	[DefaultValue(true)]
+	public bool ShowBossFightStats;
 }

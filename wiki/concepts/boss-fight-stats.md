@@ -5,20 +5,23 @@ date: 2026-07-31
 tags: [boss, stats, ui, multiplayer]
 ---
 
-Compact live feed during boss fights: mini head strip + selected player’s dealt % / taken % / deaths.
+Compact live feed during boss fights: enlarged head strip + per-player HP bars + selected player’s dealt % / taken % / deaths.
 
 ## Behavior
 
 | Rule | Detail |
 |---|---|
-| When | Boss fight active (`BossFightSystem.IsBossFightActive`) + 6s freeze after |
+| When | Boss fight active (`BossFightSystem.IsBossFightActive`) + 5s freeze after (slow blink during freeze) |
 | Who | Same team as local (team 0 = self only) |
 | Stats | `N% dealt` · `N% taken` · `N deaths` — % of **team totals** |
 | Dealt | Damage to boss segments only (`BossNpc.IsAnySegment`) |
 | Taken | Share of team damage taken (always; not gated on shared HP) |
-| Layout | **M** — head strip (dim non-selected ~40%) + labeled stats for selected |
+| Layout | **M** — settings-style `UIPanel` (`UICommon.DefaultUIBlue`, black border, 9-slice corner 12 / bar 4) + head strip + vanilla `DrawHealthBar` + stats |
+| Heads | 32px; selected full opacity + gold edge; non-selected ~72% alpha only |
+| HP bar | `Main.instance.DrawHealthBar`; hover shows `name (cur/max)` |
+| Sizing | Panel hugs heads + measured stats width (minimal empty space) |
 | Place | Left of Settings; **Y-centered on vanilla boss bar** (`screenH - 50`) |
-| Click head | Select that player |
+| Click head/bar | Select that player |
 | Click panel / right-click | Next / previous in dealt-desc order |
 | Hide | Inventory open; server or client toggle off |
 

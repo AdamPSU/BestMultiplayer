@@ -1,52 +1,66 @@
 ---
 title: Feature roadmap
-description: Planned BestMultiplayer features selected after multiplayer catalog research (2026-07-27).
+description: Planned BestMultiplayer features after multiplayer pain-point research (2026-07-31).
 date: 2026-07-31
 tags: [roadmap, planned, multiplayer]
 ---
 
-Planned work only — **not implemented yet**. Selected from the multiplayer catalog pass; everything else is either done, [collection add-on](collection-addons.md), or [acknowledged without commit](catalog-ack.md).
+Planned work only — **not implemented yet**. Active todo from the 2026-07-31 research pass. Prior pass items are archived under **Done**.
 
-## Planned in-mod
+## Active todo (priority order)
 
-### Boss death → respawn at teammate (optional) — **done**
+1. **Pings**
+2. **Party UI**
+3. **Shared World Map**
+4. **Improved Respawning (subset)**
 
-- **Scope:** boss-fight deaths only (not exploration/casual deaths).
-- **Behavior:** `RespawnAtTeammateDuringBoss` (default **on**): respawn beside the **current spectate target** only if still living same-team. No target → vanilla spawn. No nearest fallback.
-- See [boss fight lives](boss-fight-lives.md).
+### Pings
 
-### Boss spectate (dead only) — **done**
+- Team point-of-interest markers: self, tile, NPC/enemy, dropped item.
+- World + map visibility; optional hold-to-chat notify.
+- Server config: duration, limit, cooldown; client visuals.
+- **Inspiration:** [Pings](https://steamcommunity.com/sharedfiles/filedetails/?id=2803799129) (direwolf420) — clean-room.
 
-- Death spectate cycles **active bosses** + teammates in one A/D ring; boss heads on grid.
-- Preferred respawn remains player-only.
-- **Inspiration:** Team Spectate boss list; Multiplayer Boss Spectator — clean-room.
+### Party UI — **partial (boss-only HP under heads)**
 
-### Smooth camera lerp — **done**
+- **Done:** fight-stats feed heads enlarged (36px) + HP bar under each head during boss fights.
+- Still open: always-on frames; mana / potion CD / respawn on frames; gear peek.
+- **Inspiration:** [Party UI](https://steamcommunity.com/sharedfiles/filedetails/?id=3520267377), Team Info, ETUD — clean-room.
 
-- ~0.3s smoothstep when switching spectate targets (player ↔ player, player ↔ boss); then hard-follow.
-- Client presentation only.
+### Shared World Map
 
-### Mid-fight / end-fight damage board — **done**
+- Exploration fog sync for co-op (live and/or share/request).
+- **Open decision:** absorb a minimal in-mod path vs keep [collection add-on](collection-addons.md) ([Shared World Map](https://steamcommunity.com/sharedfiles/filedetails/?id=2815010161)).
+- Ship whichever path closes the fog gap for BestMultiplayer players.
 
-- Live layout-M feed (head strip + selected dealt%/taken%/deaths), left of Settings.
-- Boss-only; 6s freeze on fight end; server + client toggles.
-- See [boss fight stats](boss-fight-stats.md).
+### Improved Respawning (subset)
 
-### Instant respawn when boss dies — **done**
+Cherry-pick remaining IR features — **not** full Improved Respawning. Already covered elsewhere: boss lives, respawn-at-spectate-target (boss), instant respawn on boss end.
 
-- Instant respawn when boss ends (always on, not configurable): when the fight ends (boss dead/despawned), all dead players get `respawnTimer = 0` (waiting + hard-locked).
-- Pairs with [boss fight lives](boss-fight-lives.md) hard-lock UX.
-- **Inspiration:** Improved Respawning “respawn on boss death”; BM community requests.
+Candidates still open (confirm when implementing):
 
-### Shared Team Health (togglable game mode) — **done**
+- Ghost free-move while waiting to respawn
+- Respawn near living teammate outside boss fights (distance + team gates)
+- Configurable respawn timer (boss / non-boss)
+- HP% / mana% on respawn
+- Keep buffs on death (optional multiplier)
+- Freeze respawn timer while hard-locked (lives lock UX)
+- Lives remaining HUD
 
-- **Off by default.** Always-on or bosses-only; pool size 50–150% of Σ max HP; join expands pool; boss wipe hard-locks, exploration wipe normal respawn. Independent of lives.
-- See [shared team health](shared-boss-health.md).
+**Inspiration:** [Improved Respawning](https://steamcommunity.com/sharedfiles/filedetails/?id=3098184209) — clean-room, host-togglable slices only.
 
-## Priority order
+## Done (2026-07-27 pass)
 
-All planned in-mod items from the 2026-07-27 pass are **done**.
+| Item | Notes |
+|---|---|
+| Respawn at teammate (boss deaths) | Spectate target only; see [boss fight lives](boss-fight-lives.md) |
+| Boss spectate (dead only) | Bosses + teammates; A/D ring |
+| Smooth camera lerp | ~0.3s smoothstep |
+| Fight stats feed | Layout M; see [boss fight stats](boss-fight-stats.md) |
+| Instant respawn on boss end | Always on |
+| Shared Team Health | Optional mode; see [shared team health](shared-boss-health.md) |
+| TeamToJoin, unlimited team TP, boss lives, death UI | Core BM baseline+ |
 
 ## Explicitly not in this roadmap
 
-See [catalog acknowledgements](catalog-ack.md) and [collection add-ons](collection-addons.md). Examples: lives HUD polish, party frames, quick wormhole keybind, team soft-lock, full Improved Respawning, InfraSonic, Dtboss projectile hide (collection/ack only unless revisited).
+See [catalog acknowledgements](catalog-ack.md). Examples: InfraSonic, Dtboss projectile hide, full IR hardcore world-lives suite, Magic Storage / general QoL, connection/mod-sync fixes.

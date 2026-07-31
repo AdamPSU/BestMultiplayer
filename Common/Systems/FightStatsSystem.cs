@@ -2,6 +2,7 @@ using System;
 using System.IO;
 using BestMultiplayer.Common;
 using BestMultiplayer.Common.Configs;
+using Microsoft.Xna.Framework;
 using Terraria;
 using Terraria.ID;
 using Terraria.ModLoader;
@@ -16,7 +17,7 @@ namespace BestMultiplayer.Common.Systems;
 public sealed class FightStatsSystem : ModSystem
 {
 	private const int SyncInterval = 15;
-	private const int FreezeTicks = 360; // 6s
+	private const int FreezeTicks = 300; // 5s
 
 	private static readonly int[] Dealt = new int[Main.maxPlayers];
 	private static readonly int[] Taken = new int[Main.maxPlayers];
@@ -34,6 +35,22 @@ public sealed class FightStatsSystem : ModSystem
 	public static bool ShouldShowFeed =>
 		(ServerConfig.Instance?.BossFightStatsEnabled ?? true)
 		&& (_tracking || _freezeLeft > 0);
+
+	/// <summary>True during the post-boss feed hold (stats frozen, feed still visible).</summary>
+	public static bool IsPostFightFreeze => _freezeLeft > 0 && !_tracking;
+
+	/// <summary>1 while fighting; slow sine blink (~1.25s) during post-fight freeze.</summary>
+	public static float FeedBlinkAlpha
+	{
+		get
+		{
+			if (!IsPostFightFreeze)
+				return 1f;
+			// Period ≈ 1.25s; keep readable (never fully invisible).
+			float wave = 0.5f + 0.5f * MathF.Sin(Main.GlobalTimeWrappedHourly * (MathHelper.TwoPi / 1.25f));
+			return 0.45f + 0.55f * wave;
+		}
+	}
 
 	public static int GetDealt(int whoAmI) => Dealt[whoAmI];
 	public static int GetTaken(int whoAmI) => Taken[whoAmI];

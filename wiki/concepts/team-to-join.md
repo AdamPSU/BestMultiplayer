@@ -21,7 +21,7 @@ Vanilla team ids: None→0, Red→1, Green→2, Blue→3, Yellow→4, Pink→5. 
 
 ## Behavior
 
-1. `BestMultiplayerPlayer.OnEnterWorld` reads live `ServerConfig.Instance.TeamToJoin`.
+1. `DefinitiveMultiplayerPlayer.OnEnterWorld` reads live `ServerConfig.Instance.TeamToJoin`.
 2. If the value maps to a color (`1..5`), set `Player.team` and, when not singleplayer, `NetMessage.SendData(MessageID.PlayerTeam, …, Player.whoAmI)`.
 3. If `None` or unknown → do nothing.
 4. No further enforcement (`CopyClientState` / `SendClientChanges` **not** used).
@@ -35,7 +35,7 @@ Vanilla team ids: None→0, Red→1, Green→2, Blue→3, Yellow→4, Pink→5. 
 
 ## vs Better Multiplayer
 
-| | BestMultiplayer | Better Multiplayer |
+| | DefinitiveMultiplayer | Better Multiplayer |
 |---|---|---|
 | On enter | Assign once | Map team id |
 | Stay on team | Optional (player choice) | Soft-lock via continuous client sync |
@@ -43,7 +43,7 @@ Vanilla team ids: None→0, Red→1, Green→2, Blue→3, Yellow→4, Pink→5. 
 
 ## Code
 
-- `Common/Players/BestMultiplayerPlayer.cs` — `OnEnterWorld` + private `TryTeamId`
+- `Common/Players/DefinitiveMultiplayerPlayer.cs` — `OnEnterWorld` + private `TryTeamId`
 - `Common/Configs/ServerConfig.cs` — field only
 
 ## Related
@@ -51,5 +51,5 @@ Vanilla team ids: None→0, Red→1, Green→2, Blue→3, Yellow→4, Pink→5. 
 - [Multiplayer config rules](multiplayer-config-rules.md)
 - [Better Multiplayer baseline](../entities/better-multiplayer-baseline.md)
 
-[^1]: Common/Players/BestMultiplayerPlayer.cs
+[^1]: Common/Players/DefinitiveMultiplayerPlayer.cs
 [^2]: Vanilla `Player.team` / team UI

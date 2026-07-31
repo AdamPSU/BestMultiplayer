@@ -1,11 +1,11 @@
 ---
 title: Collection add-ons
-description: Multiplayer-tailored Workshop mods recommended beside BestMultiplayer (not reimplemented).
+description: Multiplayer-tailored Workshop mods recommended beside DefinitiveMultiplayer (not reimplemented).
 date: 2026-07-27
 tags: [collection, workshop, add-on, multiplayer]
 ---
 
-Add-ons for a **BestMultiplayer co-op collection**. These stay separate mods — multiplayer-specific, not general QoL (no Magic Storage / Recipe Browser / etc. here).
+Add-ons for a **DefinitiveMultiplayer co-op collection**. These stay separate mods — multiplayer-specific, not general QoL (no Magic Storage / Recipe Browser / etc. here).
 
 ## Primary add-on (pending roadmap decision)
 
@@ -15,7 +15,7 @@ Add-ons for a **BestMultiplayer co-op collection**. These stay separate mods —
 
 ## Collection notes
 
-- BestMultiplayer owns team join, unlimited team TP, boss lives, death spectate, stats, shared HP; next: pings, party UI, IR subset, map path.
+- DefinitiveMultiplayer owns team join, unlimited team TP, boss lives, death spectate, stats, shared HP; next: pings, party UI, IR subset, map path.
 - Other multiplayer-ish mods are [acknowledged](catalog-ack.md) only unless promoted later.
 
 ## Related

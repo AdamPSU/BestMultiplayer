@@ -1,5 +1,12 @@
 Chronological record of ingests, queries, and maintenance passes.
 
+## [2026-07-31] rebrand | The Definitive Multiplayer Mod
+
+- Internal slug: `DefinitiveMultiplayer` (was `BestMultiplayer`)
+- Display name: **The Definitive Multiplayer Mod**
+- Official `icon.png` (80×80) + `icon_small.png` (30×30)
+- Namespace, localization, player class, packaging, wiki entity renamed
+
 ## [2026-07-31] feature | Boss fight stats feed
 - Layout M: head strip (dim non-selected) + selected dealt%/taken%/deaths
 - Left of Settings; boss-only; 5s freeze on end; click head/cycle
@@ -102,15 +109,15 @@ Chronological record of ingests, queries, and maintenance passes.
 - Behavior: on `OnEnterWorld`, if `ServerConfig.TeamToJoin` is a color, set `Player.team` once and `MessageID.PlayerTeam` when not SP
 - Not BM soft-lock: no `CopyClientState` / `SendClientChanges`; players may change teams afterward
 - `None` skips; mid-session config applies on next enter only; default remains `Red`
-- Code: `Common/Players/BestMultiplayerPlayer.cs`
+- Code: `Common/Players/DefinitiveMultiplayerPlayer.cs`
 - Created: [TeamToJoin](concepts/team-to-join.md)
 - Updated: overview, multiplayer config rules, mod anatomy, mod entity, README, localization tooltip
 
 ## [2026-07-27] scaffold | Dual-config Common layout
 - Added `Common/Configs/ServerConfig.cs` (TeamToJoin, NoBossFightRespawn, WitchDoctorWormhole; host-only AcceptClientChanges)
 - Added `Common/Configs/ClientConfig.cs` (SpectateOnDeath, StopSpectateOnRespawn)
-- Added stubs: `BestMultiplayerPlayer`, `BossFightSystem`, `ShopGlobalNPC`
-- Added `Localization/en-US_Mods.BestMultiplayer.hjson`
+- Added stubs: `DefinitiveMultiplayerPlayer`, `BossFightSystem`, `ShopGlobalNPC`
+- Added `Localization/en-US_Mods.DefinitiveMultiplayer.hjson`
 - Created: [Mod anatomy](concepts/mod-anatomy.md)
 - Updated: overview, scaffold conventions, multiplayer config rules, mod entity, README, description
 - Key takeaway: Config surface ready; gameplay/spectate logic still TODO
@@ -127,12 +134,12 @@ Chronological record of ingests, queries, and maintenance passes.
 - Workshop: https://steamcommunity.com/sharedfiles/filedetails/?id=2634682993
 - Source: https://github.com/kittenchilly/BetterMultiplayer
 - Created: [Better Multiplayer baseline](entities/better-multiplayer-baseline.md)
-- Updated: [Overview](overview.md), [BestMultiplayer mod](entities/best-multiplayer-mod.md), README
+- Updated: [Overview](overview.md), [The Definitive Multiplayer Mod](entities/definitive-multiplayer-mod.md), README
 - Key takeaway: Public GitHub exists; baseline = auto team, boss no-respawn, Witch Doctor wormholes (host toggles)
 
-## [2026-07-27] ingest | BestMultiplayer scaffold init
+## [2026-07-27] ingest | DefinitiveMultiplayer scaffold init
 - Initialized llmwiki at repo root (not parent `/Users/adam/dev`)
 - Created: [Scaffold conventions](concepts/scaffold-conventions.md), [Multiplayer config rules](concepts/multiplayer-config-rules.md)
-- Created: [BestMultiplayer mod](entities/best-multiplayer-mod.md), [Build pipeline](entities/build-pipeline.md)
+- Created: [The Definitive Multiplayer Mod](entities/definitive-multiplayer-mod.md), [Build pipeline](entities/build-pipeline.md)
 - Updated: [Overview](overview.md)
 - Key takeaway: Empty tModLoader 1.4.4.9 scaffold with multiplayer-oriented conventions documented in README; no features yet.

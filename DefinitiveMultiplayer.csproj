@@ -1,7 +1,7 @@
 <Project Sdk="Microsoft.NET.Sdk">
   <PropertyGroup>
-    <AssemblyName>BestMultiplayer</AssemblyName>
-    <RootNamespace>BestMultiplayer</RootNamespace>
+    <AssemblyName>DefinitiveMultiplayer</AssemblyName>
+    <RootNamespace>DefinitiveMultiplayer</RootNamespace>
   </PropertyGroup>
 
   <!-- Regenerate this project with tModLoader's Create Mod UI when moving machines. -->

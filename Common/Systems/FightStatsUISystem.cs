@@ -1,12 +1,12 @@
 using System.Collections.Generic;
-using BestMultiplayer.Common.Configs;
-using BestMultiplayer.Common.UI;
+using DefinitiveMultiplayer.Common.Configs;
+using DefinitiveMultiplayer.Common.UI;
 using Microsoft.Xna.Framework;
 using Terraria;
 using Terraria.ModLoader;
 using Terraria.UI;
 
-namespace BestMultiplayer.Common.Systems;
+namespace DefinitiveMultiplayer.Common.Systems;
 
 /// <summary>Client host for the boss-fight stats feed (layout M).</summary>
 [Autoload(Side = ModSide.Client)]
@@ -27,7 +27,7 @@ public sealed class FightStatsUISystem : ModSystem
 		_ui = new UserInterface();
 		_ui.SetState(_state);
 		_feedLayer = new LegacyGameInterfaceLayer(
-			"BestMultiplayer: FightStatsFeed",
+			"DefinitiveMultiplayer: FightStatsFeed",
 			delegate
 			{
 				if (ShouldShow())

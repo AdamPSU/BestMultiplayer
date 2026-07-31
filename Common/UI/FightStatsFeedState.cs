@@ -1,6 +1,6 @@
 using System;
 using System.Collections.Generic;
-using BestMultiplayer.Common.Systems;
+using DefinitiveMultiplayer.Common.Systems;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using Terraria;
@@ -9,7 +9,7 @@ using Terraria.GameContent.UI.Elements;
 using Terraria.Localization;
 using Terraria.UI;
 
-namespace BestMultiplayer.Common.UI;
+namespace DefinitiveMultiplayer.Common.UI;
 
 /// <summary>
 /// Layout M: settings-style UIPanel, vanilla-ish heads + health bars, selected stats.
@@ -353,7 +353,7 @@ public sealed class FightStatsFeedState : UIState
 	{
 		Main.LocalPlayer.mouseInterface = true;
 		string label = whoAmI == Main.myPlayer
-			? $"{player.name} ({Language.GetTextValue("Mods.BestMultiplayer.UI.Spectate.You")})"
+			? $"{player.name} ({Language.GetTextValue("Mods.DefinitiveMultiplayer.UI.Spectate.You")})"
 			: player.name;
 
 		if (player.dead)

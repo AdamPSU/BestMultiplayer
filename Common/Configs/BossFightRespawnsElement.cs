@@ -6,7 +6,7 @@ using Terraria.ModLoader.Config;
 using Terraria.ModLoader.Config.UI;
 using Terraria.UI;
 
-namespace BestMultiplayer.Common.Configs;
+namespace DefinitiveMultiplayer.Common.Configs;
 
 /// <summary>
 /// PerPlayer: editable 0–99 budget (+/−). PerTeam: read-only "team size at fight start". Off: hidden.

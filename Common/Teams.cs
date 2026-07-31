@@ -1,4 +1,4 @@
-namespace BestMultiplayer.Common;
+namespace DefinitiveMultiplayer.Common;
 
 /// <summary>Single source of truth for the real (non-zero) team ID range, shared by BossFightSystem and SharedHealthSystem.</summary>
 internal static class Teams

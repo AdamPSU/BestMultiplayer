@@ -1,13 +1,13 @@
 ---
 title: Multiplayer catalog acknowledgements
-description: Researched multiplayer mods/features not scheduled for BestMultiplayer implementation (2026-07-27 pass).
+description: Researched multiplayer mods/features not scheduled for DefinitiveMultiplayer implementation (2026-07-27 pass).
 date: 2026-07-27
 tags: [research, catalogue, acknowledgement, multiplayer]
 ---
 
 Expansive catalog pass (Workshop, GitHub, guides, local subscriptions). **Acknowledgement only** — no implement commitment unless moved to [roadmap](roadmap.md) or [collection add-ons](collection-addons.md).
 
-## Already covered by BestMultiplayer
+## Already covered by DefinitiveMultiplayer
 
 | Topic | Notes |
 |---|---|
@@ -74,7 +74,7 @@ Respawn-at-teammate (boss deaths only); boss spectate targets; camera lerp; dama
 
 ## Explicitly out of MP collection (general QoL / content)
 
-Magic Storage, Recipe Browser, Boss Checklist, Census, Ore Excavator, Shop Expander, AlchemistNPC, Fargo’s, Calamity/Thorium/content packs, cheat mods — fine in a playthrough pack, **not** BestMultiplayer’s multiplayer-purpose collection.
+Magic Storage, Recipe Browser, Boss Checklist, Census, Ore Excavator, Shop Expander, AlchemistNPC, Fargo’s, Calamity/Thorium/content packs, cheat mods — fine in a playthrough pack, **not** DefinitiveMultiplayer’s multiplayer-purpose collection.
 
 ## Research sources (non-exhaustive)
 

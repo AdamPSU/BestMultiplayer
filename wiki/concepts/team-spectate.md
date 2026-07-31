@@ -46,6 +46,6 @@ Preferred respawn whoAmI is set only while spectating a **player**. Boss or corp
 - `Common/Players/SpectatePlayer.cs` — kind, step ring, lerp, hotkeys, section packet; nested `SpectateKeybinds`
 - `Common/Systems/DeathScreenSystem.cs` — death text + grid UI host
 - `Common/UI/SpectateGridState.cs` — player + boss head buttons
-- `BestMultiplayer.HandlePacket` / `Packets` — section + preferred respawn
+- `DefinitiveMultiplayer.HandlePacket` / `Packets` — section + preferred respawn
 
 [^1]: Team Spectate Workshop 2563098343; Multiplayer Boss Spectator 2822925665; BM design 2026-07-27

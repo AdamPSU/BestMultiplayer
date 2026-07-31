@@ -1,10 +1,10 @@
 using System.Collections.Generic;
-using BestMultiplayer.Common.Configs;
-using BestMultiplayer.Common.Players;
+using DefinitiveMultiplayer.Common.Configs;
+using DefinitiveMultiplayer.Common.Players;
 using Terraria;
 using Terraria.ModLoader;
 
-namespace BestMultiplayer.Common.Systems;
+namespace DefinitiveMultiplayer.Common.Systems;
 
 /// <summary>
 /// Boss-fight detection and respawn-budget pools for wormhole / lives rules.
@@ -148,7 +148,7 @@ public sealed class BossFightSystem : ModSystem
 			if (!p.active)
 				continue;
 
-			BestMultiplayerPlayer mp = p.GetModPlayer<BestMultiplayerPlayer>();
+			DefinitiveMultiplayerPlayer mp = p.GetModPlayer<DefinitiveMultiplayerPlayer>();
 			if (mp.LivesInitialized)
 				continue;
 
@@ -164,7 +164,7 @@ public sealed class BossFightSystem : ModSystem
 
 	private static void AssignPlayer(Player player, ServerConfig config)
 	{
-		BestMultiplayerPlayer mp = player.GetModPlayer<BestMultiplayerPlayer>();
+		DefinitiveMultiplayerPlayer mp = player.GetModPlayer<DefinitiveMultiplayerPlayer>();
 		mp.LivesInitialized = true;
 		// Already dead at fight start / join: finish vanilla respawn without spending.
 		mp.RespawnAllowedThisDeath = player.dead;
@@ -190,7 +190,7 @@ public sealed class BossFightSystem : ModSystem
 			if (!p.active)
 				continue;
 
-			BestMultiplayerPlayer mp = p.GetModPlayer<BestMultiplayerPlayer>();
+			DefinitiveMultiplayerPlayer mp = p.GetModPlayer<DefinitiveMultiplayerPlayer>();
 			mp.RespawnsRemaining = 0;
 			mp.RespawnAllowedThisDeath = false;
 			mp.LivesInitialized = false;
@@ -202,7 +202,7 @@ public sealed class BossFightSystem : ModSystem
 		if (!IsLivesModeActive())
 			return;
 
-		BestMultiplayerPlayer mp = player.GetModPlayer<BestMultiplayerPlayer>();
+		DefinitiveMultiplayerPlayer mp = player.GetModPlayer<DefinitiveMultiplayerPlayer>();
 		mp.RespawnAllowedThisDeath = false;
 
 		ServerConfig config = ServerConfig.Instance;

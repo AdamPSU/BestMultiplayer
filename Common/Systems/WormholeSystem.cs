@@ -1,8 +1,8 @@
-using BestMultiplayer.Common.Configs;
+using DefinitiveMultiplayer.Common.Configs;
 using Terraria;
 using Terraria.ModLoader;
 
-namespace BestMultiplayer.Common.Systems;
+namespace DefinitiveMultiplayer.Common.Systems;
 
 /// <summary>
 /// Pretends the player has a wormhole potion so vanilla map team-teleport works without inventory stock.

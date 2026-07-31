@@ -1,13 +1,13 @@
 using System;
 using System.IO;
-using BestMultiplayer.Common;
-using BestMultiplayer.Common.Configs;
+using DefinitiveMultiplayer.Common;
+using DefinitiveMultiplayer.Common.Configs;
 using Microsoft.Xna.Framework;
 using Terraria;
 using Terraria.ID;
 using Terraria.ModLoader;
 
-namespace BestMultiplayer.Common.Systems;
+namespace DefinitiveMultiplayer.Common.Systems;
 
 /// <summary>
 /// Per-player boss-fight stats.
@@ -211,7 +211,7 @@ public sealed class FightStatsSystem : ModSystem
 
 	private static void SendDelta(int dealtAdd, int takenAdd)
 	{
-		ModPacket packet = ModContent.GetInstance<BestMultiplayer>().GetPacket();
+		ModPacket packet = ModContent.GetInstance<DefinitiveMultiplayer>().GetPacket();
 		packet.Write(Packets.FightStatsDelta);
 		packet.Write(dealtAdd);
 		packet.Write(takenAdd);
@@ -284,7 +284,7 @@ public sealed class FightStatsSystem : ModSystem
 		if (Main.netMode != NetmodeID.Server)
 			return;
 
-		ModPacket packet = ModContent.GetInstance<BestMultiplayer>().GetPacket();
+		ModPacket packet = ModContent.GetInstance<DefinitiveMultiplayer>().GetPacket();
 		packet.Write(Packets.FightStatsSnapshot);
 
 		int count = 0;

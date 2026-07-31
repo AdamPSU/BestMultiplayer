@@ -2,7 +2,7 @@ using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using Terraria.ModLoader.Config.UI;
 
-namespace BestMultiplayer.Common.Configs;
+namespace DefinitiveMultiplayer.Common.Configs;
 
 /// <summary>Float slider that collapses when <see cref="ConfigGateAttribute"/> is not satisfied.</summary>
 public sealed class GatedFloatElement : FloatElement

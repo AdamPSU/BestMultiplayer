@@ -78,5 +78,5 @@ Implemented with `ConfigGateAttribute` + `GatedBooleanElement` / `GatedFloatElem
 - [Scaffold conventions](scaffold-conventions.md)
 - [Better Multiplayer baseline](../entities/better-multiplayer-baseline.md)
 
-[^1]: Common/Configs/ServerConfig.cs, Common/Configs/ClientConfig.cs, Common/Configs/ConfigUiStyle.cs, Common/Configs/ConfigGateAttribute.cs, Common/Configs/GatedBooleanElement.cs, Common/Configs/GatedFloatElement.cs, Common/Players/BestMultiplayerPlayer.cs
+[^1]: Common/Configs/ServerConfig.cs, Common/Configs/ClientConfig.cs, Common/Configs/ConfigUiStyle.cs, Common/Configs/ConfigGateAttribute.cs, Common/Configs/GatedBooleanElement.cs, Common/Configs/GatedFloatElement.cs, Common/Players/DefinitiveMultiplayerPlayer.cs
 [^2]: build.txt

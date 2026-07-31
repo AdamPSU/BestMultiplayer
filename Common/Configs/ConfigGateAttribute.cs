@@ -3,7 +3,7 @@ using System.Reflection;
 using Terraria.GameContent.UI.Elements;
 using Terraria.UI;
 
-namespace BestMultiplayer.Common.Configs;
+namespace DefinitiveMultiplayer.Common.Configs;
 
 /// <summary>Hide this config row unless a sibling bool member on the same config object is true.</summary>
 [AttributeUsage(AttributeTargets.Field | AttributeTargets.Property)]

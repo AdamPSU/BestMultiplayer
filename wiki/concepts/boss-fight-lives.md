@@ -61,7 +61,7 @@ When shared team health is on and a team wipes **during a boss**, that team is h
 
 ## vs Better Multiplayer
 
-| | BestMultiplayer | Better Multiplayer |
+| | DefinitiveMultiplayer | Better Multiplayer |
 |---|---|---|
 | Default | 1 respawn then lock | Always lock |
 | Modes | Off / PerPlayer / PerTeam | Ban only |
@@ -71,7 +71,7 @@ When shared team health is on and a team wipes **during a boss**, that team is h
 
 - `Common/Systems/BossFightSystem.cs` — detect, pools, death edges
 - `Common/Systems/DeathScreenSystem.cs` — replace death text while hard-locked
-- `Common/Players/BestMultiplayerPlayer.cs` — `UpdateDead` clamp; teammate respawn teleport
+- `Common/Players/DefinitiveMultiplayerPlayer.cs` — `UpdateDead` clamp; teammate respawn teleport
 - `Common/Players/SpectatePlayer.cs` — preferred target for teammate respawn
 - `Common/Configs/ServerConfig.cs`
 
@@ -81,4 +81,4 @@ When shared team health is on and a team wipes **during a boss**, that team is h
 - [Unlimited team teleport](unlimited-team-teleport.md) (shared boss detect)
 - [Better Multiplayer baseline](../entities/better-multiplayer-baseline.md)
 
-[^1]: Common/Systems/BossFightSystem.cs; Common/Players/BestMultiplayerPlayer.cs
+[^1]: Common/Systems/BossFightSystem.cs; Common/Players/DefinitiveMultiplayerPlayer.cs

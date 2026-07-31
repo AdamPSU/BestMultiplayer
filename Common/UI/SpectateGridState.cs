@@ -1,7 +1,7 @@
 using System;
 using System.Collections.Generic;
-using BestMultiplayer.Common.Players;
-using BestMultiplayer.Common.Systems;
+using DefinitiveMultiplayer.Common.Players;
+using DefinitiveMultiplayer.Common.Systems;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using ReLogic.Content;
@@ -11,7 +11,7 @@ using Terraria.GameContent.UI.Elements;
 using Terraria.Localization;
 using Terraria.UI;
 
-namespace BestMultiplayer.Common.UI;
+namespace DefinitiveMultiplayer.Common.UI;
 
 /// <summary>
 /// Teammate + boss head grid while dead. Above bottom respawn-timer band.
@@ -171,9 +171,9 @@ public sealed class SpectateHeadButton : UIElement
 		{
 			Main.LocalPlayer.mouseInterface = true;
 			Main.hoverItemName = _whoAmI == Main.myPlayer
-				? $"{player.name} ({Language.GetTextValue("Mods.BestMultiplayer.UI.Spectate.You")})"
+				? $"{player.name} ({Language.GetTextValue("Mods.DefinitiveMultiplayer.UI.Spectate.You")})"
 				: player.dead
-					? Language.GetTextValue("Mods.BestMultiplayer.UI.Spectate.Dead", player.name)
+					? Language.GetTextValue("Mods.DefinitiveMultiplayer.UI.Spectate.Dead", player.name)
 					: player.name;
 		}
 	}
@@ -238,7 +238,7 @@ public sealed class SpectateBossButton : UIElement
 		if (IsMouseHovering)
 		{
 			Main.LocalPlayer.mouseInterface = true;
-			Main.hoverItemName = Language.GetTextValue("Mods.BestMultiplayer.UI.Spectate.Boss", npc.FullName);
+			Main.hoverItemName = Language.GetTextValue("Mods.DefinitiveMultiplayer.UI.Spectate.Boss", npc.FullName);
 		}
 	}
 }

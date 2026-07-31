@@ -1,6 +1,6 @@
 ---
 title: Feature roadmap
-description: Planned BestMultiplayer features after multiplayer pain-point research (2026-07-31).
+description: Planned DefinitiveMultiplayer features after multiplayer pain-point research (2026-07-31).
 date: 2026-07-31
 tags: [roadmap, planned, multiplayer]
 ---
@@ -31,7 +31,7 @@ Planned work only — **not implemented yet**. Active todo from the 2026-07-31 r
 
 - Exploration fog sync for co-op (live and/or share/request).
 - **Open decision:** absorb a minimal in-mod path vs keep [collection add-on](collection-addons.md) ([Shared World Map](https://steamcommunity.com/sharedfiles/filedetails/?id=2815010161)).
-- Ship whichever path closes the fog gap for BestMultiplayer players.
+- Ship whichever path closes the fog gap for DefinitiveMultiplayer players.
 
 ### Improved Respawning (subset)
 

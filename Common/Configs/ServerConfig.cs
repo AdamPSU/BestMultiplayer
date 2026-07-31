@@ -4,7 +4,7 @@ using Terraria.Localization;
 using Terraria.ModLoader;
 using Terraria.ModLoader.Config;
 
-namespace BestMultiplayer.Common.Configs;
+namespace DefinitiveMultiplayer.Common.Configs;
 
 public enum TeamToJoinOption
 {

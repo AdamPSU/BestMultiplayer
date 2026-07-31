@@ -1,6 +1,6 @@
 using System.Collections.Generic;
-using BestMultiplayer.Common.Players;
-using BestMultiplayer.Common.UI;
+using DefinitiveMultiplayer.Common.Players;
+using DefinitiveMultiplayer.Common.UI;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using ReLogic.Graphics;
@@ -11,7 +11,7 @@ using Terraria.Localization;
 using Terraria.ModLoader;
 using Terraria.UI;
 
-namespace BestMultiplayer.Common.Systems;
+namespace DefinitiveMultiplayer.Common.Systems;
 
 /// <summary>
 /// Client death chrome: custom death text + dead-only teammate head grid (MP).
@@ -42,7 +42,7 @@ public sealed class DeathScreenSystem : ModSystem
 		_gridUi.SetState(_gridState);
 
 		_deathTextLayer = new LegacyGameInterfaceLayer(
-			"BestMultiplayer: DeathText",
+			"DefinitiveMultiplayer: DeathText",
 			delegate
 			{
 				if (Main.LocalPlayer is { active: true, dead: true })
@@ -52,7 +52,7 @@ public sealed class DeathScreenSystem : ModSystem
 			InterfaceScaleType.UI);
 
 		_spectateGridLayer = new LegacyGameInterfaceLayer(
-			"BestMultiplayer: SpectateGrid",
+			"DefinitiveMultiplayer: SpectateGrid",
 			delegate
 			{
 				if (ShouldShowGrid())
@@ -110,7 +110,7 @@ public sealed class DeathScreenSystem : ModSystem
 		{
 			string title = Language.GetTextValue(TitleKey(lockReason));
 			string subtitle = Language.GetTextValue(
-				"Mods.BestMultiplayer.UI.Death.SpectatingIn",
+				"Mods.DefinitiveMultiplayer.UI.Death.SpectatingIn",
 				SpectatePlayer.IntroSeconds);
 
 			DrawCentered(font, title, Main.screenHeight / 2f - 60f, color, TitleScale);
@@ -122,15 +122,15 @@ public sealed class DeathScreenSystem : ModSystem
 			return;
 
 		int seconds = (player.respawnTimer + 59) / 60;
-		string text = Language.GetTextValue("Mods.BestMultiplayer.UI.Death.RespawnIn", seconds);
+		string text = Language.GetTextValue("Mods.DefinitiveMultiplayer.UI.Death.RespawnIn", seconds);
 		DrawCentered(font, text, RespawnTextY, color, SmallScale);
 	}
 
 	private static string TitleKey(RespawnGate.LockReason reason) => reason switch
 	{
-		RespawnGate.LockReason.SharedHealthWipe => "Mods.BestMultiplayer.UI.Death.SharedHealthWipe",
-		RespawnGate.LockReason.OutOfLives => "Mods.BestMultiplayer.UI.Death.OutOfLives",
-		_ => "Mods.BestMultiplayer.UI.Death.Slain",
+		RespawnGate.LockReason.SharedHealthWipe => "Mods.DefinitiveMultiplayer.UI.Death.SharedHealthWipe",
+		RespawnGate.LockReason.OutOfLives => "Mods.DefinitiveMultiplayer.UI.Death.OutOfLives",
+		_ => "Mods.DefinitiveMultiplayer.UI.Death.Slain",
 	};
 
 	private static void DrawCentered(DynamicSpriteFont font, string text, float y, Color color, float scale)

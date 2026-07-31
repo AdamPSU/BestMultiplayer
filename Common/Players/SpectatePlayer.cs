@@ -1,6 +1,6 @@
 using System.Collections.Generic;
-using BestMultiplayer.Common;
-using BestMultiplayer.Common.Configs;
+using DefinitiveMultiplayer.Common;
+using DefinitiveMultiplayer.Common.Configs;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Input;
 using Terraria;
@@ -9,7 +9,7 @@ using Terraria.GameInput;
 using Terraria.ID;
 using Terraria.ModLoader;
 
-namespace BestMultiplayer.Common.Players;
+namespace DefinitiveMultiplayer.Common.Players;
 
 internal enum SpectateKind : byte
 {
@@ -158,7 +158,7 @@ public sealed class SpectatePlayer : ModPlayer
 	}
 
 	internal static bool IsValidPlayer(int whoAmI) =>
-		BestMultiplayerPlayer.IsLivingTeammate(Main.LocalPlayer, whoAmI);
+		DefinitiveMultiplayerPlayer.IsLivingTeammate(Main.LocalPlayer, whoAmI);
 
 	internal static bool IsValidBoss(int npcIndex)
 	{
@@ -286,7 +286,7 @@ public sealed class SpectatePlayer : ModPlayer
 			return;
 
 		int preferred = Kind == SpectateKind.Player && Target is int p ? p : -1;
-		BestMultiplayerPlayer.SetPreferredRespawnTarget(preferred);
+		DefinitiveMultiplayerPlayer.SetPreferredRespawnTarget(preferred);
 	}
 
 	private static bool IsCurrentValid() => TryGetCenter(out _);

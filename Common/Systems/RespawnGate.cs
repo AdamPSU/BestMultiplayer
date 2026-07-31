@@ -1,7 +1,7 @@
-using BestMultiplayer.Common.Players;
+using DefinitiveMultiplayer.Common.Players;
 using Terraria;
 
-namespace BestMultiplayer.Common.Systems;
+namespace DefinitiveMultiplayer.Common.Systems;
 
 /// <summary>Single source of truth for whether — and why — a dead player can't respawn yet.</summary>
 internal static class RespawnGate
@@ -14,7 +14,7 @@ internal static class RespawnGate
 			return LockReason.SharedHealthWipe;
 
 		if (BossFightSystem.IsBossFightActive() && BossFightSystem.IsLivesModeActive()
-		    && !player.GetModPlayer<BestMultiplayerPlayer>().RespawnAllowedThisDeath)
+		    && !player.GetModPlayer<DefinitiveMultiplayerPlayer>().RespawnAllowedThisDeath)
 			return LockReason.OutOfLives;
 
 		return LockReason.None;

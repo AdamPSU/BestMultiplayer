@@ -15,7 +15,7 @@
 - Countdown bar: **white** fill, same rect as HP bar, full at death → empty when about to respawn.
 - Head: **true grayscale** (luma desaturate per layer), not only `Color.Gray` multiply.
 - X: vanilla `TextureAssets.MapDeath`, **red tint**, centered over the 32×32 head slot, drawn after the portrait.
-- Prefer Build+Reload; ModSources → `/Users/adam/dev/BestMultiplayer`. Packaging may fail with TML003 if tML holds the `.tmod` — DLL compile success is enough; reload in-game.
+- Prefer Build+Reload; ModSources → `/Users/adam/dev/DefinitiveMultiplayer`. Packaging may fail with TML003 if tML holds the `.tmod` — DLL compile success is enough; reload in-game.
 - No automated test project in-repo — verify with `dotnet build` + in-game smoke checklist.
 - Do not commit unless the user asks.
 - No new comments unless needed for non-obvious vanilla constants already in file style.
@@ -152,7 +152,7 @@ private static void SetHover(int whoAmI, Player player)
 {
 	Main.LocalPlayer.mouseInterface = true;
 	string label = whoAmI == Main.myPlayer
-		? $"{player.name} ({Language.GetTextValue("Mods.BestMultiplayer.UI.Spectate.You")})"
+		? $"{player.name} ({Language.GetTextValue("Mods.DefinitiveMultiplayer.UI.Spectate.You")})"
 		: player.name;
 
 	if (player.dead)

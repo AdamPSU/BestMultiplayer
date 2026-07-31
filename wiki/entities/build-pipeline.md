@@ -18,16 +18,16 @@ flowchart LR
 
 1. Launch tModLoader; Create Mod once to init `ModSources`.
 2. Open Sources; copy scaffold in or merge into generated project.
-3. Open **`BestMultiplayer.csproj`** in VS Code (not a lone `.cs` file).[^1]
+3. Open **`DefinitiveMultiplayer.csproj`** in VS Code (not a lone `.cs` file).[^1]
 
 ## VS Code
 
 | Setting | Value |
 |---|---|
 | Default task | `tModLoader: build mod` |
-| Command | `${workspaceFolder}/.dotnet/dotnet build BestMultiplayer.csproj` |
+| Command | `${workspaceFolder}/.dotnet/dotnet build DefinitiveMultiplayer.csproj` |
 | PATH | Prefixed with workspace `.dotnet` |
-| defaultSolution | `BestMultiplayer.csproj` |
+| defaultSolution | `DefinitiveMultiplayer.csproj` |
 | Hidden | `bin/`, `obj/` |
 
 ## Machine-local pieces
@@ -38,7 +38,7 @@ flowchart LR
 
 ## Related
 
-- [BestMultiplayer mod](best-multiplayer-mod.md)
+- [The Definitive Multiplayer Mod](definitive-multiplayer-mod.md)
 
 [^1]: README.md
-[^2]: BestMultiplayer.csproj
+[^2]: DefinitiveMultiplayer.csproj

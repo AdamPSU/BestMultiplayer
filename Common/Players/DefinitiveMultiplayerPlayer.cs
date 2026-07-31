@@ -1,15 +1,15 @@
-using BestMultiplayer.Common;
-using BestMultiplayer.Common.Configs;
-using BestMultiplayer.Common.Systems;
+using DefinitiveMultiplayer.Common;
+using DefinitiveMultiplayer.Common.Configs;
+using DefinitiveMultiplayer.Common.Systems;
 using Microsoft.Xna.Framework;
 using Terraria;
 using Terraria.DataStructures;
 using Terraria.ID;
 using Terraria.ModLoader;
 
-namespace BestMultiplayer.Common.Players;
+namespace DefinitiveMultiplayer.Common.Players;
 
-public sealed class BestMultiplayerPlayer : ModPlayer
+public sealed class DefinitiveMultiplayerPlayer : ModPlayer
 {
 	internal int RespawnsRemaining;
 	internal bool RespawnAllowedThisDeath;
@@ -121,7 +121,7 @@ public sealed class BestMultiplayerPlayer : ModPlayer
 		if (!local.active)
 			return;
 
-		BestMultiplayerPlayer mp = local.GetModPlayer<BestMultiplayerPlayer>();
+		DefinitiveMultiplayerPlayer mp = local.GetModPlayer<DefinitiveMultiplayerPlayer>();
 		int value = whoAmI >= 0 && IsLivingTeammate(local, whoAmI) ? whoAmI : -1;
 		if (mp.PreferredRespawnWhoAmI == value)
 			return;
@@ -145,7 +145,7 @@ public sealed class BestMultiplayerPlayer : ModPlayer
 		if (!player.active)
 			return;
 
-		player.GetModPlayer<BestMultiplayerPlayer>().PreferredRespawnWhoAmI =
+		player.GetModPlayer<DefinitiveMultiplayerPlayer>().PreferredRespawnWhoAmI =
 			whoAmI >= 0 && IsLivingTeammate(player, whoAmI) ? whoAmI : -1;
 	}
 }

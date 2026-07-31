@@ -1,16 +1,16 @@
 using System.IO;
-using BestMultiplayer.Common;
-using BestMultiplayer.Common.Players;
-using BestMultiplayer.Common.Systems;
+using DefinitiveMultiplayer.Common;
+using DefinitiveMultiplayer.Common.Players;
+using DefinitiveMultiplayer.Common.Systems;
 using Microsoft.Xna.Framework;
 using Terraria;
 using Terraria.ID;
 using Terraria.ModLoader;
 
-namespace BestMultiplayer;
+namespace DefinitiveMultiplayer;
 
 /// <summary>Thin Mod entry: lifecycle and custom packets only.</summary>
-public sealed class BestMultiplayer : Mod
+public sealed class DefinitiveMultiplayer : Mod
 {
 	public override void HandlePacket(BinaryReader reader, int whoAmI)
 	{
@@ -25,7 +25,7 @@ public sealed class BestMultiplayer : Mod
 			case Packets.PreferredRespawn:
 				byte raw = reader.ReadByte();
 				if (Main.netMode == NetmodeID.Server)
-					BestMultiplayerPlayer.HandlePreferredRespawnPacket(whoAmI, raw == 255 ? -1 : raw);
+					DefinitiveMultiplayerPlayer.HandlePreferredRespawnPacket(whoAmI, raw == 255 ? -1 : raw);
 				break;
 
 			case Packets.SharedHealthPool:

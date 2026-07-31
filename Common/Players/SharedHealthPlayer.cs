@@ -1,10 +1,10 @@
-using BestMultiplayer.Common.Systems;
+using DefinitiveMultiplayer.Common.Systems;
 using Terraria;
 using Terraria.DataStructures;
 using Terraria.ID;
 using Terraria.ModLoader;
 
-namespace BestMultiplayer.Common.Players;
+namespace DefinitiveMultiplayer.Common.Players;
 
 public sealed class SharedHealthPlayer : ModPlayer
 {

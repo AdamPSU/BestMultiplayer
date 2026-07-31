@@ -1,11 +1,11 @@
 ---
 title: Mod Anatomy
-description: How BestMultiplayer splits server policy vs client presentation — grounded in real tModLoader mods.
+description: How DefinitiveMultiplayer splits server policy vs client presentation — grounded in real tModLoader mods.
 date: 2026-07-27
 tags: [architecture, multiplayer, config, conventions]
 ---
 
-BestMultiplayer is one package (`side = Both`). It loads on host, joiners, and dedicated server. Features differ by **authority**, not by shipping two DLLs.[^1]
+DefinitiveMultiplayer is one package (`side = Both`). It loads on host, joiners, and dedicated server. Features differ by **authority**, not by shipping two DLLs.[^1]
 
 ## Authority split
 
@@ -20,11 +20,11 @@ Rule: if two players disagreeing would cause **desync or unfairness** → server
 ## Folder map
 
 ```text
-BestMultiplayer.cs
+DefinitiveMultiplayer.cs
 Common/Packets.cs
 Common/Configs/ServerConfig.cs
 Common/Configs/ClientConfig.cs
-Common/Players/BestMultiplayerPlayer.cs
+Common/Players/DefinitiveMultiplayerPlayer.cs
 Common/Players/SpectatePlayer.cs
 Common/Systems/BossFightSystem.cs
 Common/Systems/FightStatsSystem.cs
@@ -34,14 +34,14 @@ Common/Systems/WormholeSystem.cs
 Common/Players/FightStatsPlayer.cs
 Common/UI/SpectateGridState.cs
 Common/UI/FightStatsFeedState.cs
-Localization/en-US_Mods.BestMultiplayer.hjson
+Localization/en-US_Mods.DefinitiveMultiplayer.hjson
 ```
 
 | Path | Role |
 |---|---|
 | `ServerConfig` | Host toggles + host `AcceptClientChanges` |
 | `ClientConfig` | Spectate + show fight stats |
-| `BestMultiplayerPlayer` | Team on enter; lives lock; boss-death respawn at spectate target |
+| `DefinitiveMultiplayerPlayer` | Team on enter; lives lock; boss-death respawn at spectate target |
 | `SpectatePlayer` (+ keybinds) | Death camera (players + bosses), lerp, hotkeys, section packet |
 | `FightStatsPlayer` / `FightStatsSystem` | Boss-fight dealt/taken/deaths + snapshot packet |
 | `FightStatsUISystem` / `FightStatsFeedState` | Layout-M live feed (left of Settings) |

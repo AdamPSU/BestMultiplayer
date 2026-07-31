@@ -1,15 +1,15 @@
 using System;
 using System.Collections.Generic;
 using System.IO;
-using BestMultiplayer.Common;
-using BestMultiplayer.Common.Configs;
-using BestMultiplayer.Common.Players;
+using DefinitiveMultiplayer.Common;
+using DefinitiveMultiplayer.Common.Configs;
+using DefinitiveMultiplayer.Common.Players;
 using Terraria;
 using Terraria.DataStructures;
 using Terraria.ID;
 using Terraria.ModLoader;
 
-namespace BestMultiplayer.Common.Systems;
+namespace DefinitiveMultiplayer.Common.Systems;
 
 /// <summary>
 /// Per-team shared HP pools (teams 1–5). Server/SP authoritative; clients mirror via packet.
@@ -553,7 +553,7 @@ public sealed class SharedHealthSystem : ModSystem
 				continue;
 
 			if (hardLock)
-				p.GetModPlayer<BestMultiplayerPlayer>().RespawnAllowedThisDeath = false;
+				p.GetModPlayer<DefinitiveMultiplayerPlayer>().RespawnAllowedThisDeath = false;
 
 			// Player already inside their own PreKill/Kill — don't re-enter KillMe.
 			if (p.whoAmI == _wipeIgnoreWhoAmI)
@@ -573,7 +573,7 @@ public sealed class SharedHealthSystem : ModSystem
 		if (Main.netMode != NetmodeID.Server)
 			return;
 
-		ModPacket packet = ModContent.GetInstance<BestMultiplayer>().GetPacket();
+		ModPacket packet = ModContent.GetInstance<DefinitiveMultiplayer>().GetPacket();
 		packet.Write(Packets.SharedHealthPool);
 		if (!_armed)
 		{

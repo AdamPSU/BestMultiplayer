@@ -1,7 +1,7 @@
 using System;
 using Terraria;
 
-namespace BestMultiplayer.Common.Systems;
+namespace DefinitiveMultiplayer.Common.Systems;
 
 /// <summary>Detects per-player dead-since-last-tick transitions for a single ModSystem's own bookkeeping.</summary>
 internal sealed class DeathEdgeTracker

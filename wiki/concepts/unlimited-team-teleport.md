@@ -32,7 +32,7 @@ Vanilla map TP checks legacy names:
 
 ## vs Better Multiplayer
 
-| | BestMultiplayer | Better Multiplayer |
+| | DefinitiveMultiplayer | Better Multiplayer |
 |---|---|---|
 | Approach | Unlimited virtual potion | Witch Doctor sells potions |
 | Inventory | No slot needed | Must buy/carry stacks |

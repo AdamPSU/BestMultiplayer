@@ -1,4 +1,4 @@
-namespace BestMultiplayer.Common;
+namespace DefinitiveMultiplayer.Common;
 
 internal static class Packets
 {

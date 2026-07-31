@@ -1,4 +1,4 @@
-displayName = BestMultiplayer
+displayName = The Definitive Multiplayer Mod
 author = Your Name
 version = 0.1
 side = Both

@@ -1,4 +1,4 @@
-namespace BestMultiplayer.Common.Configs;
+namespace DefinitiveMultiplayer.Common.Configs;
 
 /// <summary>Purple theme for ModConfig UI (Calamity-style attributes, purple instead of red).</summary>
 internal static class ConfigUiStyle

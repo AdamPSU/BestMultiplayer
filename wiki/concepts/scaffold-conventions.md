@@ -1,6 +1,6 @@
 ---
 title: Scaffold Conventions
-description: How features are added to BestMultiplayer without bloating the Mod entry class.
+description: How features are added to DefinitiveMultiplayer without bloating the Mod entry class.
 date: 2026-07-27
 tags: [conventions, architecture, tmodloader, scaffold]
 ---
@@ -9,7 +9,7 @@ New work goes into typed folders under `Common/` (and later `Content/` if needed
 
 ```mermaid
 flowchart TB
-  Mod["BestMultiplayer : Mod"]
+  Mod["DefinitiveMultiplayer : Mod"]
   Mod --> Configs["Common/Configs"]
   Mod --> Systems["Common/Systems"]
   Mod --> Players["Common/Players"]
@@ -37,8 +37,8 @@ On rename, keep aligned: mod folder, `build.txt`, main `.cs` type/namespace, `.c
 
 - [Mod anatomy](mod-anatomy.md)
 - [Multiplayer config rules](multiplayer-config-rules.md)
-- [BestMultiplayer mod](../entities/best-multiplayer-mod.md)
+- [The Definitive Multiplayer Mod](../entities/definitive-multiplayer-mod.md)
 
 [^1]: README.md
-[^2]: BestMultiplayer.cs
-[^3]: BestMultiplayer.csproj
+[^2]: DefinitiveMultiplayer.cs
+[^3]: DefinitiveMultiplayer.csproj

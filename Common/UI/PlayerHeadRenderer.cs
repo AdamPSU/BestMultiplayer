@@ -4,7 +4,7 @@ using ReLogic.Content;
 using Terraria;
 using Terraria.GameContent;
 
-namespace BestMultiplayer.Common.UI;
+namespace DefinitiveMultiplayer.Common.UI;
 
 /// <summary>Shared skin/eyes/body/hair portrait draw, used by the fight-stats feed and the spectate grid.</summary>
 internal static class PlayerHeadRenderer

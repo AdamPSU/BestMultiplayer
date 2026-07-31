@@ -18,7 +18,7 @@
 - **Any heal tops the pool** — potions, regen, nurse, lifesteal, etc. (detect life increases; don’t double-apply).
 - Pool max at fight start = **sum of living teammates’ `statLifeMax2`**; current starts **full** (`= max`).
 - Clean-room vs Workshop Shared Health mods — do not copy code.
-- Prefer Build+Reload; ModSources → `/Users/adam/dev/BestMultiplayer`. Packaging may fail with TML003 if tML holds the `.tmod` — DLL compile success is enough; reload in-game.
+- Prefer Build+Reload; ModSources → `/Users/adam/dev/DefinitiveMultiplayer`. Packaging may fail with TML003 if tML holds the `.tmod` — DLL compile success is enough; reload in-game.
 - No automated test project in-repo — verify with `dotnet build` + in-game smoke checklist per task.
 - Do not commit unless the user asks.
 
@@ -39,12 +39,12 @@
 | File | Role |
 |---|---|
 | `Common/Configs/ServerConfig.cs` | `SharedBossHealth` bool (default `false`) under BossFights |
-| `Localization/en-US_Mods.BestMultiplayer.hjson` | Config label/tooltip; optional death string |
+| `Localization/en-US_Mods.DefinitiveMultiplayer.hjson` | Config label/tooltip; optional death string |
 | `Common/Systems/SharedHealthSystem.cs` | **New.** Pool arm/disarm, damage/heal reconcile, mirror, wipe |
 | `Common/Players/SharedHealthPlayer.cs` | **New.** Snapshot real max; `OnHurt` notify; help restore |
 | `Common/Systems/BossFightSystem.cs` | `MayRespawnThisDeath` / hard-lock honor shared wipe |
 | `Common/Systems/DeathScreenSystem.cs` | Optional: reuse/out-of-lives copy for shared wipe |
-| `Common/Packets.cs` + `BestMultiplayer.cs` | Only if a custom pool-sync packet is required after smoke (prefer vanilla life sync first) |
+| `Common/Packets.cs` + `DefinitiveMultiplayer.cs` | Only if a custom pool-sync packet is required after smoke (prefer vanilla life sync first) |
 | `wiki/concepts/shared-boss-health.md` | Concept page |
 | `wiki/concepts/roadmap.md`, `overview.md`, `multiplayer-config-rules.md`, `boss-fight-lives.md`, `log.md` | Mark planned → done; cross-links |
 
@@ -77,7 +77,7 @@ sequenceDiagram
 
 **Files:**
 - Modify: `Common/Configs/ServerConfig.cs`
-- Modify: `Localization/en-US_Mods.BestMultiplayer.hjson`
+- Modify: `Localization/en-US_Mods.DefinitiveMultiplayer.hjson`
 
 **Interfaces:**
 - Produces: `ServerConfig.SharedBossHealth` (`bool`, default `false`)
@@ -104,14 +104,14 @@ SharedBossHealth: {
 
 - [ ] **Step 3: Build**
 
-Run: `/Users/adam/dev/BestMultiplayer/.dotnet/dotnet build /Users/adam/dev/BestMultiplayer/BestMultiplayer.csproj --nologo`
+Run: `/Users/adam/dev/DefinitiveMultiplayer/.dotnet/dotnet build /Users/adam/dev/DefinitiveMultiplayer/DefinitiveMultiplayer.csproj --nologo`
 
-Expected: `BestMultiplayer.dll` builds. Packaging may hit TML003 if tML is open — acceptable if DLL line succeeded.
+Expected: `DefinitiveMultiplayer.dll` builds. Packaging may hit TML003 if tML is open — acceptable if DLL line succeeded.
 
 - [ ] **Step 4: Commit** (only if user asked to commit)
 
 ```bash
-git add Common/Configs/ServerConfig.cs Localization/en-US_Mods.BestMultiplayer.hjson
+git add Common/Configs/ServerConfig.cs Localization/en-US_Mods.DefinitiveMultiplayer.hjson
 git commit -m "feat: add SharedBossHealth server config (default off)"
 ```
 
@@ -135,11 +135,11 @@ git commit -m "feat: add SharedBossHealth server config (default off)"
 
 ```csharp
 using System.Collections.Generic;
-using BestMultiplayer.Common.Configs;
+using DefinitiveMultiplayer.Common.Configs;
 using Terraria;
 using Terraria.ModLoader;
 
-namespace BestMultiplayer.Common.Systems;
+namespace DefinitiveMultiplayer.Common.Systems;
 
 /// <summary>
 /// Boss-only shared HP pools per team (1–5). Server/SP authoritative.
@@ -285,11 +285,11 @@ git commit -m "feat: SharedHealthSystem arm/disarm per-team boss pools"
 - [ ] **Step 1: Add ModPlayer**
 
 ```csharp
-using BestMultiplayer.Common.Systems;
+using DefinitiveMultiplayer.Common.Systems;
 using Terraria;
 using Terraria.ModLoader;
 
-namespace BestMultiplayer.Common.Players;
+namespace DefinitiveMultiplayer.Common.Players;
 
 public sealed class SharedHealthPlayer : ModPlayer
 {
@@ -403,7 +403,7 @@ Pools.Clear();
 _armed = false;
 ```
 
-Add usings: `Terraria.ID`, `BestMultiplayer.Common.Players`.
+Add usings: `Terraria.ID`, `DefinitiveMultiplayer.Common.Players`.
 
 - [ ] **Step 3: Build + smoke (SP)**
 
@@ -608,7 +608,7 @@ Potions: `GetHealLife` unchanged; life increase flows through reconcile.
 **Files:**
 - Modify: `Common/Systems/SharedHealthSystem.cs` — `WipeTeam`
 - Modify: `Common/Systems/BossFightSystem.cs` — `MayRespawnThisDeath` / `IsLocalHardLocked`
-- Modify: `Localization/en-US_Mods.BestMultiplayer.hjson` — optional death title
+- Modify: `Localization/en-US_Mods.DefinitiveMultiplayer.hjson` — optional death title
 - Modify: `Common/Systems/DeathScreenSystem.cs` — show shared-wipe copy if distinct
 
 **Interfaces:**
@@ -632,7 +632,7 @@ private static void WipeTeam(int team)
 		if (!p.active || p.team != team)
 			continue;
 
-		var bmp = p.GetModPlayer<BestMultiplayerPlayer>();
+		var bmp = p.GetModPlayer<DefinitiveMultiplayerPlayer>();
 		bmp.RespawnAllowedThisDeath = false;
 
 		if (!p.dead)
@@ -668,7 +668,7 @@ internal static bool MayRespawnThisDeath(Player player)
 	if (!IsBossFightActive() || !IsLivesModeActive())
 		return true;
 
-	return player.GetModPlayer<BestMultiplayerPlayer>().RespawnAllowedThisDeath;
+	return player.GetModPlayer<DefinitiveMultiplayerPlayer>().RespawnAllowedThisDeath;
 }
 ```
 
@@ -754,7 +754,7 @@ No max top-up code.
 - Modify: `wiki/concepts/multiplayer-config-rules.md` — table row
 - Modify: `wiki/concepts/boss-fight-lives.md` — note override when shared on
 - Modify: `wiki/log.md` — short entry
-- Modify: `wiki/entities/best-multiplayer-mod.md` if it lists features
+- Modify: `wiki/entities/definitive-multiplayer-mod.md` if it lists features
 
 - [ ] **Step 1: Concept page** covering config, pool math, mirror, wipe/hard-lock, interaction with lives + instant respawn, code pointers.
 

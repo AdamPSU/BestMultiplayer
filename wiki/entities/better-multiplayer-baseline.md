@@ -135,7 +135,7 @@ Useful product gaps; **not** Better Multiplayer features:
 
 ## Related
 
-- [BestMultiplayer mod](best-multiplayer-mod.md)
+- [The Definitive Multiplayer Mod](definitive-multiplayer-mod.md)
 - [Multiplayer config rules](../concepts/multiplayer-config-rules.md)
 
 [^1]: Local inventory from `https://github.com/kittenchilly/BetterMultiplayer` clone; files `BMConfig.cs`, `BMPlayer.cs`, `BMGlobalNPC.cs`, `BetterMultiplayer.cs`, `build.txt`, `description.txt`, `Localization/en-US_Mods.BetterMultiplayer.hjson`.

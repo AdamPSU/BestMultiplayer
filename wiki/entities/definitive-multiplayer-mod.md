@@ -1,19 +1,19 @@
 ---
-title: BestMultiplayer Mod
+title: The Definitive Multiplayer Mod
 description: Concrete mod identity — entry class, packaging metadata, and feature surface.
 date: 2026-07-27
 tags: [mod, entity, tmodloader, terraria]
 ---
 
-**BestMultiplayer** is a tModLoader mod package. Version **0.1**, author placeholder **Your Name**, display name **BestMultiplayer**.[^1][^2]
+**The Definitive Multiplayer Mod** (`DefinitiveMultiplayer`) is a tModLoader mod package. Version **0.1**, author placeholder **Your Name**, display name **The Definitive Multiplayer Mod**.[^1][^2]
 
 **Goal:** surpass [Better Multiplayer](better-multiplayer-baseline.md) (kittenchilly) — Workshop + [source](https://github.com/kittenchilly/BetterMultiplayer).
 
 ## Entry class
 
 ```text
-namespace BestMultiplayer
-public sealed class BestMultiplayer : Mod { }
+namespace DefinitiveMultiplayer
+public sealed class DefinitiveMultiplayer : Mod { }
 ```
 
 Thin sealed `Mod` subclass. Features live under `Common/`.[^1]
@@ -22,7 +22,8 @@ Thin sealed `Mod` subclass. Features live under `Common/`.[^1]
 
 | Field | Value |
 |---|---|
-| displayName | BestMultiplayer |
+| displayName | The Definitive Multiplayer Mod |
+| internalName | DefinitiveMultiplayer |
 | author | Your Name |
 | version | 0.1 |
 | side | Both |
@@ -48,7 +49,7 @@ Thin sealed `Mod` subclass. Features live under `Common/`.[^1]
 |---|---|
 | Server policy config | `Common/Configs/ServerConfig.cs` |
 | Client UX config | `Common/Configs/ClientConfig.cs` |
-| Player hooks | `Common/Players/BestMultiplayerPlayer.cs`, `SpectatePlayer.cs`, `SharedHealthPlayer.cs`, `FightStatsPlayer.cs` |
+| Player hooks | `Common/Players/DefinitiveMultiplayerPlayer.cs`, `SpectatePlayer.cs`, `SharedHealthPlayer.cs`, `FightStatsPlayer.cs` |
 | Shared HP | `Common/Systems/SharedHealthSystem.cs` |
 | Boss session | `Common/Systems/BossFightSystem.cs` |
 | Fight stats | `Common/Systems/FightStatsSystem.cs`, `FightStatsUISystem.cs`, `Common/UI/FightStatsFeedState.cs` |
@@ -56,7 +57,7 @@ Thin sealed `Mod` subclass. Features live under `Common/`.[^1]
 | Wormhole hooks | `Common/Systems/WormholeSystem.cs` |
 | Spectate grid | `Common/UI/SpectateGridState.cs` |
 | Packet ids | `Common/Packets.cs` |
-| Localization | `Localization/en-US_Mods.BestMultiplayer.hjson` |
+| Localization | `Localization/en-US_Mods.DefinitiveMultiplayer.hjson` |
 
 ## Related
 
@@ -66,6 +67,6 @@ Thin sealed `Mod` subclass. Features live under `Common/`.[^1]
 - [Better Multiplayer baseline](better-multiplayer-baseline.md)
 - [Build pipeline](build-pipeline.md)
 
-[^1]: BestMultiplayer.cs
+[^1]: DefinitiveMultiplayer.cs
 [^2]: build.txt
 [^3]: description.txt

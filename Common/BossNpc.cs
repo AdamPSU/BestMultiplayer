@@ -1,7 +1,7 @@
 using Terraria;
 using Terraria.ID;
 
-namespace BestMultiplayer.Common;
+namespace DefinitiveMultiplayer.Common;
 
 /// <summary>
 /// Single source of truth for "which NPC type IDs are boss segments", shared by

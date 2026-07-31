@@ -7,7 +7,7 @@
       "command": "${workspaceFolder}/.dotnet/dotnet",
       "args": [
         "build",
-        "${workspaceFolder}/BestMultiplayer.csproj"
+        "${workspaceFolder}/DefinitiveMultiplayer.csproj"
       ],
       "options": {
         "cwd": "${workspaceFolder}",

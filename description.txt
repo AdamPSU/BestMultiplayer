@@ -1,4 +1,4 @@
-BestMultiplayer — multiplayer QoL for Terraria (tModLoader).
+The Definitive Multiplayer Mod — multiplayer QoL for Terraria (tModLoader).
 
 Server (host): auto team join, boss fight lives (per-player/per-team then lock), unlimited team teleport, optional boss-death respawn at spectate target, instant respawn when boss ends.
 Client (local): custom death screen, dead-only spectate of teammates and bosses (hotkeys + head grid, smooth camera).

@@ -7,7 +7,7 @@ using Terraria.ModLoader.Config.UI;
 using Terraria.UI;
 using Terraria.UI.Chat;
 
-namespace BestMultiplayer.Common.Configs;
+namespace DefinitiveMultiplayer.Common.Configs;
 
 /// <summary>
 /// Stock bool toggle UI that collapses when <see cref="ConfigGateAttribute"/> is not satisfied.

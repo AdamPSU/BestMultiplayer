@@ -31,8 +31,8 @@ public sealed class SpectateGridState : UIState
 	public override void OnInitialize()
 	{
 		_panel.SetPadding(8f);
-		_panel.BackgroundColor = new Color(33, 43, 79) * 0.85f;
-		_panel.BorderColor = new Color(89, 116, 213) * 0.9f;
+		_panel.BackgroundColor = UiStyle.PanelBg;
+		_panel.BorderColor = UiStyle.PanelBorder;
 		_panel.HAlign = 0.5f;
 		Append(_panel);
 
@@ -156,9 +156,7 @@ public sealed class SpectateHeadButton : UIElement
 			|| (SpectatePlayer.Kind == SpectateKind.None && _whoAmI == Main.myPlayer);
 
 		Rectangle rect = d.ToRectangle();
-		Utils.DrawInvBG(spriteBatch, rect, selected
-			? new Color(80, 160, 80, 180)
-			: new Color(40, 50, 80, 160));
+		PlayerHeadRenderer.DrawSelectableBackground(spriteBatch, rect, selected);
 
 		if (selected)
 			DrawSelectionBorder(spriteBatch, rect, Color.LightGreen);

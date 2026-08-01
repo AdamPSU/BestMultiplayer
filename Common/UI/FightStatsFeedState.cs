@@ -39,9 +39,8 @@ public sealed class FightStatsFeedState : UIState
 	private const float DimAlpha = 0.72f; // non-selected only; selected = 1
 	private const float TextScale = 0.85f;
 
-	// Match SpectateGridState chrome.
-	private static readonly Color PanelBg = new Color(33, 43, 79) * 0.85f;
-	private static readonly Color PanelBorder = new Color(89, 116, 213) * 0.9f;
+	private static readonly Color PanelBg = UiStyle.PanelBg;
+	private static readonly Color PanelBorder = UiStyle.PanelBorder;
 
 	private readonly UIPanel _panel = new();
 	private readonly List<int> _roster = new(8);
@@ -278,9 +277,7 @@ public sealed class FightStatsFeedState : UIState
 	private static void DrawHead(SpriteBatch sb, int whoAmI, Rectangle rect, float opacity, bool selected)
 	{
 		Player player = Main.player[whoAmI];
-		Utils.DrawInvBG(sb, rect, selected
-			? new Color(80, 160, 80, 180)
-			: new Color(40, 50, 80, 160));
+		PlayerHeadRenderer.DrawSelectableBackground(sb, rect, selected);
 
 		if (selected)
 			SpectateHeadButton.DrawSelectionBorder(sb, rect, Color.LightGreen);

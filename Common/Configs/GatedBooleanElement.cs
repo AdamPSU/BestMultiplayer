@@ -29,13 +29,13 @@ public sealed class GatedBooleanElement : ConfigElement<bool>
 			Value = !Value;
 		};
 		_lastShown = null;
-		ConfigVisibility.Apply(this, ConfigVisibility.IsVisible(Item, MemberInfo.MemberInfo), ref _lastShown);
+		ConfigVisibility.Refresh(this, Item, MemberInfo.MemberInfo, ref _lastShown);
 	}
 
 	public override void Update(GameTime gameTime)
 	{
 		base.Update(gameTime);
-		ConfigVisibility.Apply(this, ConfigVisibility.IsVisible(Item, MemberInfo.MemberInfo), ref _lastShown);
+		ConfigVisibility.Refresh(this, Item, MemberInfo.MemberInfo, ref _lastShown);
 	}
 
 	protected override void DrawSelf(SpriteBatch spriteBatch)

@@ -84,12 +84,7 @@ public sealed class DefinitiveMultiplayerPlayer : ModPlayer
 		if (RespawnGate.MayRespawnThisDeath(Player))
 			return;
 
-		int t = 1200;
-		if (Main.expertMode)
-			t = 1800;
-		if (Main.getGoodWorld)
-			t = 3600;
-		Player.respawnTimer = t;
+		Player.respawnTimer = Main.getGoodWorld ? 3600 : Main.expertMode ? 1800 : 1200;
 	}
 
 	private int ResolveTeammate(int preferred) =>
@@ -130,8 +125,7 @@ public sealed class DefinitiveMultiplayerPlayer : ModPlayer
 		if (Main.netMode != NetmodeID.MultiplayerClient)
 			return;
 
-		ModPacket packet = mp.Mod.GetPacket();
-		packet.Write(Packets.PreferredRespawn);
+		ModPacket packet = Packets.Begin(Packets.PreferredRespawn);
 		packet.Write((byte)(value < 0 ? 255 : value));
 		packet.Send();
 	}

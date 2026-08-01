@@ -1,0 +1,10 @@
+Initial public release (0.1)
+
+- Auto team join
+- Boss fight lives (per-player / per-team)
+- Respawn at spectate target during bosses
+- Instant respawn when boss ends
+- Unlimited team teleport (+ optional boss block)
+- Shared team health mode
+- Custom death UI + teammate/boss spectate
+- Boss fight stats feed

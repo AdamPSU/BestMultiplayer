@@ -30,8 +30,6 @@ public sealed class FightStatsSystem : ModSystem
 	private static bool _dirty;
 	private static bool _clientHadFight;
 
-	public static bool IsTracking => _tracking;
-
 	public static bool ShouldShowFeed =>
 		ServerConfig.Instance.BossFightStatsEnabled
 		&& (_tracking || _freezeLeft > 0);
@@ -211,8 +209,7 @@ public sealed class FightStatsSystem : ModSystem
 
 	private static void SendDelta(int dealtAdd, int takenAdd)
 	{
-		ModPacket packet = ModContent.GetInstance<DefinitiveMultiplayer>().GetPacket();
-		packet.Write(Packets.FightStatsDelta);
+		ModPacket packet = Packets.Begin(Packets.FightStatsDelta);
 		packet.Write(dealtAdd);
 		packet.Write(takenAdd);
 		packet.Send();
@@ -284,8 +281,7 @@ public sealed class FightStatsSystem : ModSystem
 		if (Main.netMode != NetmodeID.Server)
 			return;
 
-		ModPacket packet = ModContent.GetInstance<DefinitiveMultiplayer>().GetPacket();
-		packet.Write(Packets.FightStatsSnapshot);
+		ModPacket packet = Packets.Begin(Packets.FightStatsSnapshot);
 
 		int count = 0;
 		for (int i = 0; i < Main.maxPlayers; i++)

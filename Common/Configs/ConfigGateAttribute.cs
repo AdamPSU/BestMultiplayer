@@ -1,4 +1,5 @@
 using System;
+using System.Collections.Generic;
 using System.Reflection;
 using Terraria.GameContent.UI.Elements;
 using Terraria.UI;
@@ -18,11 +19,23 @@ internal static class ConfigVisibility
 {
 	public const float RowHeight = 30f;
 
+	private static readonly Dictionary<MemberInfo, ConfigGateAttribute> GateCache = new();
+	private static readonly Dictionary<(Type, string), MemberInfo> MemberCache = new();
+
 	public static bool IsVisible(object item, MemberInfo gatedMember)
 	{
-		var gate = gatedMember.GetCustomAttribute<ConfigGateAttribute>(inherit: true);
+		if (!GateCache.TryGetValue(gatedMember, out ConfigGateAttribute gate))
+		{
+			gate = gatedMember.GetCustomAttribute<ConfigGateAttribute>(inherit: true);
+			GateCache[gatedMember] = gate;
+		}
+
 		return gate is null || (item is not null && ReadMember(item, gate.MemberName) is true);
 	}
+
+	/// <summary>Resolves the gate visibility for <paramref name="element"/> and applies it, tracking reflow state in <paramref name="lastShown"/>.</summary>
+	public static void Refresh(UIElement element, object item, MemberInfo gatedMember, ref bool? lastShown) =>
+		Apply(element, IsVisible(item, gatedMember), ref lastShown);
 
 	/// <summary>True when the element is currently collapsed (hidden by a gate) and shouldn't draw.</summary>
 	public static bool IsCollapsed(UIElement element) =>
@@ -80,11 +93,19 @@ internal static class ConfigVisibility
 	private static object ReadMember(object item, string name)
 	{
 		Type type = item.GetType();
-		FieldInfo field = type.GetField(name, BindingFlags.Instance | BindingFlags.Public | BindingFlags.NonPublic);
-		if (field is not null)
-			return field.GetValue(item);
+		(Type, string) key = (type, name);
+		if (!MemberCache.TryGetValue(key, out MemberInfo member))
+		{
+			member = (MemberInfo)type.GetField(name, BindingFlags.Instance | BindingFlags.Public | BindingFlags.NonPublic)
+				?? type.GetProperty(name, BindingFlags.Instance | BindingFlags.Public | BindingFlags.NonPublic);
+			MemberCache[key] = member;
+		}
 
-		PropertyInfo prop = type.GetProperty(name, BindingFlags.Instance | BindingFlags.Public | BindingFlags.NonPublic);
-		return prop?.GetValue(item);
+		return member switch
+		{
+			FieldInfo field => field.GetValue(item),
+			PropertyInfo prop => prop.GetValue(item),
+			_ => null,
+		};
 	}
 }

@@ -331,8 +331,7 @@ public sealed class SpectatePlayer : ModPlayer
 		if (Main.GameUpdateCount % 10 != 0)
 			return;
 
-		ModPacket packet = Mod.GetPacket();
-		packet.Write(Packets.Section);
+		ModPacket packet = Packets.Begin(Packets.Section);
 		packet.WriteVector2(Main.screenPosition);
 		packet.Send();
 	}

@@ -1,4 +1,17 @@
-The Definitive Multiplayer Mod — multiplayer QoL for Terraria (tModLoader).
+The Definitive Multiplayer Mod: multiplayer QoL for Terraria (tModLoader).
 
-Server (host): auto team join, boss fight lives (per-player/per-team then lock), unlimited team teleport, optional boss-death respawn at spectate target, instant respawn when boss ends.
-Client (local): custom death screen, dead-only spectate of teammates and bosses (hotkeys + head grid, smooth camera).
+[c/FFD700:Features]
+• Auto team join (host-chosen team)
+• Boss fight lives (per-player or per-team, then hard lock)
+• Respawn next to spectate target during bosses
+• Instant respawn when the boss fight ends
+• Unlimited team teleport (map-click, no Wormhole Potion)
+• Optional block free teleport during bosses
+• Shared team health (optional; always on or bosses only)
+• Custom death screen
+• Death-only spectate: teammates and bosses (hotkeys + head grid, smooth camera)
+• Live boss fight stats feed (damage dealt/taken, deaths, party HP)
+• Host-only server config; client toggles for spectate and stats
+
+Host settings: Mod Config → Server Config
+Local prefs: Mod Config → Client Config

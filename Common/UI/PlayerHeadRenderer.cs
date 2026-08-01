@@ -10,6 +10,12 @@ namespace DefinitiveMultiplayer.Common.UI;
 internal static class PlayerHeadRenderer
 {
 	private static readonly Rectangle Src = new(0, 0, 40, 56);
+	private static readonly Color SelectedBg = new(80, 160, 80, 180);
+	private static readonly Color UnselectedBg = new(40, 50, 80, 160);
+
+	/// <summary>Shared selected/unselected cell background for player-head grids (fight-stats feed, spectate grid).</summary>
+	internal static void DrawSelectableBackground(SpriteBatch sb, Rectangle rect, bool selected) =>
+		Utils.DrawInvBG(sb, rect, selected ? SelectedBg : UnselectedBg);
 
 	internal static void Draw(SpriteBatch sb, Player player, Vector2 pos, Color tint, float scale = 1f, bool grayscale = false)
 	{

@@ -120,7 +120,7 @@ public sealed class BossFightSystem : ModSystem
 
 	private static void SeedTeamPools()
 	{
-		int[] counts = new int[6];
+		int[] counts = new int[Teams.Max + 1];
 		for (int i = 0; i < Main.maxPlayers; i++)
 		{
 			Player p = Main.player[i];

@@ -41,8 +41,6 @@ public sealed class SharedHealthSystem : ModSystem
 	public static bool ShouldBeActive() =>
 		IsEnabled() && (!IsBossesOnly() || BossFightSystem.IsBossFightActive());
 
-	public static bool IsArmed() => _armed;
-
 	public static bool IsLinked(Player player) =>
 		ShouldBeActive()
 		&& _armed
@@ -261,6 +259,8 @@ public sealed class SharedHealthSystem : ModSystem
 		BroadcastPools();
 	}
 
+	private static bool IsLivingTeamMember(Player p, int team) => p.active && !p.dead && p.team == team;
+
 	private static int SumNaturalMax(int team, out int mask)
 	{
 		int sum = 0;
@@ -268,7 +268,7 @@ public sealed class SharedHealthSystem : ModSystem
 		for (int i = 0; i < Main.maxPlayers; i++)
 		{
 			Player p = Main.player[i];
-			if (!p.active || p.dead || p.team != team)
+			if (!IsLivingTeamMember(p, team))
 				continue;
 			mask |= 1 << i;
 			sum += Math.Max(1, NaturalMax(p));
@@ -285,9 +285,10 @@ public sealed class SharedHealthSystem : ModSystem
 		// Ensure teams with living members have a pool (first join after empty / post-wipe).
 		for (int team = Teams.Min; team <= Teams.Max; team++)
 		{
-			if (Pools.TryGetValue(team, out Pool existing) && !existing.Wiped)
+			bool found = Pools.TryGetValue(team, out Pool existing);
+			if (found && !existing.Wiped)
 				continue;
-			if (Pools.TryGetValue(team, out existing) && existing.Wiped)
+			if (found)
 			{
 				// Outside boss: wiped teams re-arm once someone is living again.
 				if (!BossFightSystem.IsBossFightActive() && HasLivingMember(team))
@@ -319,7 +320,7 @@ public sealed class SharedHealthSystem : ModSystem
 			for (int i = 0; i < Main.maxPlayers; i++)
 			{
 				Player p = Main.player[i];
-				if (!p.active || p.dead || p.team != team)
+				if (!IsLivingTeamMember(p, team))
 					continue;
 
 				living++;
@@ -405,8 +406,7 @@ public sealed class SharedHealthSystem : ModSystem
 	{
 		for (int i = 0; i < Main.maxPlayers; i++)
 		{
-			Player p = Main.player[i];
-			if (p.active && !p.dead && p.team == team)
+			if (IsLivingTeamMember(Main.player[i], team))
 				return true;
 		}
 
@@ -486,7 +486,7 @@ public sealed class SharedHealthSystem : ModSystem
 		for (int i = 0; i < Main.maxPlayers; i++)
 		{
 			Player p = Main.player[i];
-			if (!p.active || p.dead || p.team != team)
+			if (!IsLivingTeamMember(p, team))
 				continue;
 
 			p.statLifeMax2 = pool.Max;
@@ -549,7 +549,7 @@ public sealed class SharedHealthSystem : ModSystem
 		for (int i = 0; i < Main.maxPlayers; i++)
 		{
 			Player p = Main.player[i];
-			if (!p.active || p.dead || p.team != team)
+			if (!IsLivingTeamMember(p, team))
 				continue;
 
 			if (hardLock)
@@ -573,8 +573,7 @@ public sealed class SharedHealthSystem : ModSystem
 		if (Main.netMode != NetmodeID.Server)
 			return;
 
-		ModPacket packet = ModContent.GetInstance<DefinitiveMultiplayer>().GetPacket();
-		packet.Write(Packets.SharedHealthPool);
+		ModPacket packet = Packets.Begin(Packets.SharedHealthPool);
 		if (!_armed)
 		{
 			packet.Write((byte)0);

@@ -1,0 +1,158 @@
+Keybinds: {
+	PreviousPlayer.DisplayName: Наблюдать предыдущую цель
+	NextPlayer.DisplayName: Наблюдать следующую цель
+	StopSpectating.DisplayName: Прекратить наблюдение
+}
+
+UI: {
+	Death: {
+		Slain: Вы погибли...
+		OutOfLives: Жизней не осталось...
+		SharedHealthWipe: Ваша команда пала вместе...
+		SpectatingIn: Наблюдение через {0}
+		RespawnIn: Возрождение через {0}
+	}
+
+	Spectate: {
+		You: Вы
+		Dead: "{0} мёртв"
+		Boss: "{0} (босс)"
+		OtherTeam: "{0} в другой команде"
+		Unavailable: Недоступно
+	}
+}
+
+Configs: {
+	ServerConfig: {
+		DisplayName: Настройки сервера
+
+		Headers: {
+			Teams: Команды
+			BossFights: Бои с боссами
+			SharedHealth: Режим общего здоровья
+			Wormholes: Зелья червоточины
+		}
+
+		TeamToJoin: {
+			Label: "[i:TeamBlockWhite] Команда при входе"
+			Tooltip: Автоматически назначать эту команду при входе в мир.
+		}
+
+		BossFightLivesMode: {
+			Label: "[i:LifeCrystal] Режим жизней в бою с боссом"
+			Tooltip: Сколько раз можно возродиться во время боя с боссом.
+		}
+
+		BossFightRespawns: {
+			Label: "[i:Tombstone] Возрождения в бою с боссом"
+			Tooltip: Дополнительные жизни на игрока (0 = только одна жизнь).
+		}
+
+		RespawnAtTeammateDuringBoss: {
+			Label: "[i:MagicMirror] Возрождаться рядом с союзником у босса"
+			Tooltip: Возрождаться рядом с живым союзником, а не у кровати.
+		}
+
+		BossFightStatsEnabled: {
+			Label: "[i:DPSMeter] Лента статистики босса"
+			Tooltip: Показывать живую статистику урона во время боёв с боссами.
+		}
+
+		SharedHealthEnabled: {
+			Label: "[i:CrossNecklace] Общее здоровье команды"
+			Tooltip: Команда делит одну полоску ОЗ. Пустая полоска = вся команда умирает.
+		}
+
+		SharedHealthBossesOnly: {
+			Label: "[i:SlimeCrown] Только у боссов"
+			Tooltip: Общее ОЗ только во время боёв с боссами.
+		}
+
+		SharedHealthMultiplier: {
+			Label: "[i:LifeFruit] Множитель ОЗ команды"
+			Tooltip: Размер общей полоски ОЗ относительно суммарного макс. ОЗ команды.
+		}
+
+		UnlimitedTeamTeleport: {
+			Label: "[i:WormholePotion] Безлимитная командная телепортация"
+			Tooltip: Телепорт к союзникам кликом по карте без зелий червоточины.
+		}
+
+		BlockUnlimitedTeleportDuringBoss: {
+			Label: "[i:PortalGun] Блокировать безлимитный телепорт у боссов"
+			Tooltip: Отключает бесплатную командную телепортацию, пока жив босс.
+		}
+	}
+
+	ClientConfig: {
+		DisplayName: Настройки клиента
+
+		Headers: {
+			Spectate: Наблюдение
+			FightStats: Боевая статистика
+		}
+
+		SpectateOnDeath: {
+			Label: "[i:Binoculars] Наблюдение после смерти"
+			Tooltip: Автоматически наблюдать за союзниками после смерти.
+		}
+
+		ShowBossFightStats: {
+			Label: "[i:Radar] Показывать статистику босса"
+			Tooltip: Показывать ленту статистики боя с боссом на экране.
+		}
+	}
+
+	TeamToJoinOption: {
+		Tooltip: ""
+
+		None: {
+			Label: Нет
+			Tooltip: ""
+		}
+
+		Red: {
+			Label: "[i:RedDye] Красный"
+			Tooltip: ""
+		}
+
+		Green: {
+			Label: "[i:GreenDye] Зелёный"
+			Tooltip: ""
+		}
+
+		Blue: {
+			Label: "[i:BlueDye] Синий"
+			Tooltip: ""
+		}
+
+		Yellow: {
+			Label: "[i:YellowDye] Жёлтый"
+			Tooltip: ""
+		}
+
+		Pink: {
+			Label: "[i:PinkDye] Розовый"
+			Tooltip: ""
+		}
+	}
+
+	BossFightLivesMode: {
+		Tooltip: ""
+
+		Off: {
+			Label: Выкл.
+			Tooltip: ""
+		}
+
+		PerPlayer: {
+			Label: "[i:HealingPotion] На игрока"
+			Tooltip: ""
+		}
+
+		PerTeam: {
+			Label: "[i:SuperHealingPotion] На команду"
+			Tooltip: ""
+		}
+	}
+}

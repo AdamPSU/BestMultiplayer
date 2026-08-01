@@ -1,0 +1,158 @@
+Keybinds: {
+	PreviousPlayer.DisplayName: 观战上一个目标
+	NextPlayer.DisplayName: 观战下一个目标
+	StopSpectating.DisplayName: 停止观战
+}
+
+UI: {
+	Death: {
+		Slain: 你被杀死了……
+		OutOfLives: 没有剩余生命……
+		SharedHealthWipe: 你们的队伍一同倒下了……
+		SpectatingIn: {0} 后开始观战
+		RespawnIn: {0} 后复活
+	}
+
+	Spectate: {
+		You: 你
+		Dead: "{0} 已死亡"
+		Boss: "{0}（Boss）"
+		OtherTeam: "{0} 在其他队伍"
+		Unavailable: 不可用
+	}
+}
+
+Configs: {
+	ServerConfig: {
+		DisplayName: 服务器设置
+
+		Headers: {
+			Teams: 队伍
+			BossFights: Boss 战
+			SharedHealth: 共享生命模式
+			Wormholes: 虫洞药水
+		}
+
+		TeamToJoin: {
+			Label: "[i:TeamBlockWhite] 加入的队伍"
+			Tooltip: 进入世界时自动分配到此队伍。
+		}
+
+		BossFightLivesMode: {
+			Label: "[i:LifeCrystal] Boss 战生命模式"
+			Tooltip: 在 Boss 战期间可以复活的次数。
+		}
+
+		BossFightRespawns: {
+			Label: "[i:Tombstone] Boss 战复活次数"
+			Tooltip: 每位玩家的额外生命（0 = 仅一条命）。
+		}
+
+		RespawnAtTeammateDuringBoss: {
+			Label: "[i:MagicMirror] Boss 战时在队友旁复活"
+			Tooltip: 在存活的队友旁边复活，而不是在床上。
+		}
+
+		BossFightStatsEnabled: {
+			Label: "[i:DPSMeter] Boss 战数据面板"
+			Tooltip: 在 Boss 战期间显示实时伤害数据。
+		}
+
+		SharedHealthEnabled: {
+			Label: "[i:CrossNecklace] 队伍共享生命"
+			Tooltip: 队伍共用一条生命条。生命条清空 = 全队死亡。
+		}
+
+		SharedHealthBossesOnly: {
+			Label: "[i:SlimeCrown] 仅限 Boss 战"
+			Tooltip: 仅在 Boss 战期间启用共享生命。
+		}
+
+		SharedHealthMultiplier: {
+			Label: "[i:LifeFruit] 队伍生命倍率"
+			Tooltip: 共享生命条相对于队伍合计最大生命值的大小。
+		}
+
+		UnlimitedTeamTeleport: {
+			Label: "[i:WormholePotion] 无限队伍传送"
+			Tooltip: 点击地图传送到队友，无需虫洞药水。
+		}
+
+		BlockUnlimitedTeleportDuringBoss: {
+			Label: "[i:PortalGun] Boss 战时禁止无限传送"
+			Tooltip: 有 Boss 存活时禁用免费队伍传送。
+		}
+	}
+
+	ClientConfig: {
+		DisplayName: 客户端设置
+
+		Headers: {
+			Spectate: 观战
+			FightStats: 战斗数据
+		}
+
+		SpectateOnDeath: {
+			Label: "[i:Binoculars] 死亡后观战"
+			Tooltip: 死亡后自动观战队友。
+		}
+
+		ShowBossFightStats: {
+			Label: "[i:Radar] 显示 Boss 战数据"
+			Tooltip: 在屏幕上显示 Boss 战数据面板。
+		}
+	}
+
+	TeamToJoinOption: {
+		Tooltip: ""
+
+		None: {
+			Label: 无
+			Tooltip: ""
+		}
+
+		Red: {
+			Label: "[i:RedDye] 红色"
+			Tooltip: ""
+		}
+
+		Green: {
+			Label: "[i:GreenDye] 绿色"
+			Tooltip: ""
+		}
+
+		Blue: {
+			Label: "[i:BlueDye] 蓝色"
+			Tooltip: ""
+		}
+
+		Yellow: {
+			Label: "[i:YellowDye] 黄色"
+			Tooltip: ""
+		}
+
+		Pink: {
+			Label: "[i:PinkDye] 粉色"
+			Tooltip: ""
+		}
+	}
+
+	BossFightLivesMode: {
+		Tooltip: ""
+
+		Off: {
+			Label: 关闭
+			Tooltip: ""
+		}
+
+		PerPlayer: {
+			Label: "[i:HealingPotion] 按玩家"
+			Tooltip: ""
+		}
+
+		PerTeam: {
+			Label: "[i:SuperHealingPotion] 按队伍"
+			Tooltip: ""
+		}
+	}
+}

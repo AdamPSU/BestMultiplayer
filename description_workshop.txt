@@ -4,18 +4,17 @@ Multiplayer QoL for Terraria on tModLoader. Aimed to replace Better Multiplayer 
 [h2]Features[/h2]
 [list]
 [*][b]Auto team join[/b]: assign a host-chosen team when players join the world
-[*][b]Boss fight lives[/b]: per-player or per-team respawn limit, then hard lock until the fight ends
+[*][b]Boss fight lives[/b]: per-player or per-team respawn limit
 [*][b]Death-only spectate[/b]: teammates and bosses via hotkeys and a head grid, with smooth camera
 [*][b]Respawn at spectate target[/b]: during boss fights, respawn next to the teammate you were watching
-[*][b]Instant respawn when the boss ends[/b]: clears waiting and hard-locked death timers
+[*][b]Instant respawn when the boss ends[/b]: clears death timers
 [*][b]Unlimited team teleport[/b]: map-click teleport to teammates without Wormhole Potions
-[*][b]Optional block free teleport during bosses[/b]
 [*][b]Shared team health mode[/b]: optional shared HP pool (always on, or bosses only), with a configurable pool multiplier
 [*][b]Custom death screen[/b]: separate copy for slain, out of lives, and team wipe
-[*][b]Boss fight stats feed[/b]: live party heads, HP under heads, damage dealt/taken, deaths
-[*][b]Host-only server config[/b]: clients cannot change shared policy mid-session
-[*][b]Client toggles[/b]: spectate on death, show or hide the stats feed
-[/list]
+[*][b]Boss fight stats feed[/b]: live party heads, view teammates' HP, damage dealt/taken, deaths
+
+[h2]Languages[/h2]
+English, German, Italian, French, Spanish, Russian, Simplified Chinese, Brazilian Portuguese, Polish
 
 [h2]Contribute[/h2]
 Looking to add even more features. Bug reports, ideas, and PRs welcome on GitHub (pls star it too):

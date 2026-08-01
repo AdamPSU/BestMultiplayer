@@ -1,0 +1,158 @@
+Keybinds: {
+	PreviousPlayer.DisplayName: Obserwuj poprzedni cel
+	NextPlayer.DisplayName: Obserwuj następny cel
+	StopSpectating.DisplayName: Zakończ obserwację
+}
+
+UI: {
+	Death: {
+		Slain: Zostałeś pokonany...
+		OutOfLives: Brak żyć...
+		SharedHealthWipe: Wasza drużyna padła razem...
+		SpectatingIn: Obserwacja za {0}
+		RespawnIn: Odrodzenie za {0}
+	}
+
+	Spectate: {
+		You: Ty
+		Dead: "{0} nie żyje"
+		Boss: "{0} (Boss)"
+		OtherTeam: "{0} jest w innej drużynie"
+		Unavailable: Niedostępne
+	}
+}
+
+Configs: {
+	ServerConfig: {
+		DisplayName: Konfiguracja serwera
+
+		Headers: {
+			Teams: Drużyny
+			BossFights: Walki z bossami
+			SharedHealth: Tryb wspólnego zdrowia
+			Wormholes: Eliksiry tunelu czasoprzestrzennego
+		}
+
+		TeamToJoin: {
+			Label: "[i:TeamBlockWhite] Drużyna do dołączenia"
+			Tooltip: Automatycznie przypisuje tę drużynę przy dołączaniu do świata.
+		}
+
+		BossFightLivesMode: {
+			Label: "[i:LifeCrystal] Tryb żyć w walce z bossem"
+			Tooltip: Ile razy możesz się odrodzić podczas walki z bossem.
+		}
+
+		BossFightRespawns: {
+			Label: "[i:Tombstone] Odrodzenia w walce z bossem"
+			Tooltip: Dodatkowe życia na gracza (0 = tylko jedno życie).
+		}
+
+		RespawnAtTeammateDuringBoss: {
+			Label: "[i:MagicMirror] Odrodź się przy sojuszniku u bossa"
+			Tooltip: Odrodzenie obok żywego sojusznika zamiast przy łóżku.
+		}
+
+		BossFightStatsEnabled: {
+			Label: "[i:DPSMeter] Panel statystyk bossa"
+			Tooltip: Pokazuje na żywo statystyki obrażeń podczas walk z bossami.
+		}
+
+		SharedHealthEnabled: {
+			Label: "[i:CrossNecklace] Wspólne zdrowie drużyny"
+			Tooltip: Drużyna dzieli jeden pasek PŻ. Pusty pasek = cała drużyna ginie.
+		}
+
+		SharedHealthBossesOnly: {
+			Label: "[i:SlimeCrown] Tylko u bossów"
+			Tooltip: Wspólne PŻ tylko podczas walk z bossami.
+		}
+
+		SharedHealthMultiplier: {
+			Label: "[i:LifeFruit] Mnożnik PŻ drużyny"
+			Tooltip: Rozmiar wspólnego paska PŻ względem łącznego maks. PŻ drużyny.
+		}
+
+		UnlimitedTeamTeleport: {
+			Label: "[i:WormholePotion] Nielimitowana teleportacja drużynowa"
+			Tooltip: Teleport do sojuszników kliknięciem na mapie bez eliksirów tunelu.
+		}
+
+		BlockUnlimitedTeleportDuringBoss: {
+			Label: "[i:PortalGun] Blokuj nielimitowaną teleportację u bossów"
+			Tooltip: Wyłącza darmową teleportację drużynową, gdy boss żyje.
+		}
+	}
+
+	ClientConfig: {
+		DisplayName: Konfiguracja klienta
+
+		Headers: {
+			Spectate: Obserwacja
+			FightStats: Statystyki walki
+		}
+
+		SpectateOnDeath: {
+			Label: "[i:Binoculars] Obserwuj po śmierci"
+			Tooltip: Automatycznie obserwuj sojuszników po śmierci.
+		}
+
+		ShowBossFightStats: {
+			Label: "[i:Radar] Pokaż statystyki bossa"
+			Tooltip: Pokazuje panel statystyk walki z bossem na ekranie.
+		}
+	}
+
+	TeamToJoinOption: {
+		Tooltip: ""
+
+		None: {
+			Label: Brak
+			Tooltip: ""
+		}
+
+		Red: {
+			Label: "[i:RedDye] Czerwony"
+			Tooltip: ""
+		}
+
+		Green: {
+			Label: "[i:GreenDye] Zielony"
+			Tooltip: ""
+		}
+
+		Blue: {
+			Label: "[i:BlueDye] Niebieski"
+			Tooltip: ""
+		}
+
+		Yellow: {
+			Label: "[i:YellowDye] Żółty"
+			Tooltip: ""
+		}
+
+		Pink: {
+			Label: "[i:PinkDye] Różowy"
+			Tooltip: ""
+		}
+	}
+
+	BossFightLivesMode: {
+		Tooltip: ""
+
+		Off: {
+			Label: Wyłączone
+			Tooltip: ""
+		}
+
+		PerPlayer: {
+			Label: "[i:HealingPotion] Na gracza"
+			Tooltip: ""
+		}
+
+		PerTeam: {
+			Label: "[i:SuperHealingPotion] Na drużynę"
+			Tooltip: ""
+		}
+	}
+}

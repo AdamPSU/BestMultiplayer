@@ -13,5 +13,8 @@ The Definitive Multiplayer Mod: multiplayer QoL for Terraria (tModLoader).
 • Live boss fight stats feed (damage dealt/taken, deaths, party HP)
 • Host-only server config; client toggles for spectate and stats
 
+[c/FFD700:Languages]
+English, German, Italian, French, Spanish, Russian, Simplified Chinese, Brazilian Portuguese, Polish
+
 Host settings: Mod Config → Server Config
 Local prefs: Mod Config → Client Config

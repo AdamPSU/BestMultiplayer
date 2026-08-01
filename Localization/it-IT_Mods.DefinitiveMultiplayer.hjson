@@ -1,0 +1,158 @@
+Keybinds: {
+	PreviousPlayer.DisplayName: Osserva bersaglio precedente
+	NextPlayer.DisplayName: Osserva bersaglio successivo
+	StopSpectating.DisplayName: Interrompi osservazione
+}
+
+UI: {
+	Death: {
+		Slain: Sei stato ucciso...
+		OutOfLives: Vite esaurite...
+		SharedHealthWipe: La vostra squadra è caduta insieme...
+		SpectatingIn: Osservazione tra {0}
+		RespawnIn: Rinascita tra {0}
+	}
+
+	Spectate: {
+		You: Tu
+		Dead: "{0} è morto"
+		Boss: "{0} (Boss)"
+		OtherTeam: "{0} è in un'altra squadra"
+		Unavailable: Non disponibile
+	}
+}
+
+Configs: {
+	ServerConfig: {
+		DisplayName: Configurazione server
+
+		Headers: {
+			Teams: Squadre
+			BossFights: Scontri con i boss
+			SharedHealth: Modalità salute condivisa
+			Wormholes: Pozioni buco nero
+		}
+
+		TeamToJoin: {
+			Label: "[i:TeamBlockWhite] Squadra di ingresso"
+			Tooltip: Assegna automaticamente questa squadra all'ingresso nel mondo.
+		}
+
+		BossFightLivesMode: {
+			Label: "[i:LifeCrystal] Modalità vite contro i boss"
+			Tooltip: Quante volte puoi rinascere durante uno scontro con un boss.
+		}
+
+		BossFightRespawns: {
+			Label: "[i:Tombstone] Rinascite contro i boss"
+			Tooltip: Vite extra per giocatore (0 = una sola vita).
+		}
+
+		RespawnAtTeammateDuringBoss: {
+			Label: "[i:MagicMirror] Rinasci accanto a un alleato contro i boss"
+			Tooltip: Rinasci accanto a un alleato vivo invece che al letto.
+		}
+
+		BossFightStatsEnabled: {
+			Label: "[i:DPSMeter] Feed statistiche boss"
+			Tooltip: Mostra le statistiche di danno in tempo reale durante gli scontri con i boss.
+		}
+
+		SharedHealthEnabled: {
+			Label: "[i:CrossNecklace] Salute di squadra condivisa"
+			Tooltip: La squadra condivide una barra PV. Barra vuota = tutta la squadra muore.
+		}
+
+		SharedHealthBossesOnly: {
+			Label: "[i:SlimeCrown] Solo contro i boss"
+			Tooltip: PV condivisi solo durante gli scontri con i boss.
+		}
+
+		SharedHealthMultiplier: {
+			Label: "[i:LifeFruit] Moltiplicatore PV di squadra"
+			Tooltip: Dimensione della barra PV condivisa rispetto ai PV massimi combinati della squadra.
+		}
+
+		UnlimitedTeamTeleport: {
+			Label: "[i:WormholePotion] Teletrasporto di squadra illimitato"
+			Tooltip: Teletrasporto agli alleati cliccando sulla mappa senza Pozioni buco nero.
+		}
+
+		BlockUnlimitedTeleportDuringBoss: {
+			Label: "[i:PortalGun] Blocca teletrasporto illimitato contro i boss"
+			Tooltip: Disattiva il teletrasporto di squadra gratuito mentre un boss è vivo.
+		}
+	}
+
+	ClientConfig: {
+		DisplayName: Configurazione client
+
+		Headers: {
+			Spectate: Osservazione
+			FightStats: Statistiche di combattimento
+		}
+
+		SpectateOnDeath: {
+			Label: "[i:Binoculars] Osserva alla morte"
+			Tooltip: Osserva automaticamente gli alleati dopo la morte.
+		}
+
+		ShowBossFightStats: {
+			Label: "[i:Radar] Mostra statistiche boss"
+			Tooltip: Mostra il feed delle statistiche dello scontro con il boss sullo schermo.
+		}
+	}
+
+	TeamToJoinOption: {
+		Tooltip: ""
+
+		None: {
+			Label: Nessuna
+			Tooltip: ""
+		}
+
+		Red: {
+			Label: "[i:RedDye] Rosso"
+			Tooltip: ""
+		}
+
+		Green: {
+			Label: "[i:GreenDye] Verde"
+			Tooltip: ""
+		}
+
+		Blue: {
+			Label: "[i:BlueDye] Blu"
+			Tooltip: ""
+		}
+
+		Yellow: {
+			Label: "[i:YellowDye] Giallo"
+			Tooltip: ""
+		}
+
+		Pink: {
+			Label: "[i:PinkDye] Rosa"
+			Tooltip: ""
+		}
+	}
+
+	BossFightLivesMode: {
+		Tooltip: ""
+
+		Off: {
+			Label: Disattivato
+			Tooltip: ""
+		}
+
+		PerPlayer: {
+			Label: "[i:HealingPotion] Per giocatore"
+			Tooltip: ""
+		}
+
+		PerTeam: {
+			Label: "[i:SuperHealingPotion] Per squadra"
+			Tooltip: ""
+		}
+	}
+}

@@ -1,0 +1,158 @@
+Keybinds: {
+	PreviousPlayer.DisplayName: Observar alvo anterior
+	NextPlayer.DisplayName: Observar próximo alvo
+	StopSpectating.DisplayName: Parar de observar
+}
+
+UI: {
+	Death: {
+		Slain: Você foi derrotado...
+		OutOfLives: Sem vidas restantes...
+		SharedHealthWipe: Seu time caiu junto...
+		SpectatingIn: Observando em {0}
+		RespawnIn: Renascer em {0}
+	}
+
+	Spectate: {
+		You: Você
+		Dead: "{0} está morto"
+		Boss: "{0} (Chefe)"
+		OtherTeam: "{0} está em outro time"
+		Unavailable: Indisponível
+	}
+}
+
+Configs: {
+	ServerConfig: {
+		DisplayName: Configuração do servidor
+
+		Headers: {
+			Teams: Times
+			BossFights: Lutas de chefes
+			SharedHealth: Modo de vida compartilhada
+			Wormholes: Poções de buraco de minhoca
+		}
+
+		TeamToJoin: {
+			Label: "[i:TeamBlockWhite] Time ao entrar"
+			Tooltip: Atribui automaticamente este time ao entrar no mundo.
+		}
+
+		BossFightLivesMode: {
+			Label: "[i:LifeCrystal] Modo de vidas em lutas de chefes"
+			Tooltip: Quantas vezes você pode renascer durante uma luta de chefe.
+		}
+
+		BossFightRespawns: {
+			Label: "[i:Tombstone] Renascimentos em lutas de chefes"
+			Tooltip: Vidas extras por jogador (0 = apenas uma vida).
+		}
+
+		RespawnAtTeammateDuringBoss: {
+			Label: "[i:MagicMirror] Renascer ao lado de aliado no chefe"
+			Tooltip: Renasce ao lado de um aliado vivo em vez da cama.
+		}
+
+		BossFightStatsEnabled: {
+			Label: "[i:DPSMeter] Painel de estatísticas do chefe"
+			Tooltip: Mostra estatísticas de dano ao vivo durante lutas de chefes.
+		}
+
+		SharedHealthEnabled: {
+			Label: "[i:CrossNecklace] Vida compartilhada do time"
+			Tooltip: Seu time compartilha uma barra de PV. Barra vazia = time inteiro morre.
+		}
+
+		SharedHealthBossesOnly: {
+			Label: "[i:SlimeCrown] Apenas em chefes"
+			Tooltip: PV compartilhado apenas durante lutas de chefes.
+		}
+
+		SharedHealthMultiplier: {
+			Label: "[i:LifeFruit] Multiplicador de PV do time"
+			Tooltip: Tamanho da barra de PV compartilhada em relação ao PV máximo combinado do time.
+		}
+
+		UnlimitedTeamTeleport: {
+			Label: "[i:WormholePotion] Teleporte de time ilimitado"
+			Tooltip: Teleporta para aliados com clique no mapa sem poções de buraco de minhoca.
+		}
+
+		BlockUnlimitedTeleportDuringBoss: {
+			Label: "[i:PortalGun] Bloquear teleporte ilimitado em chefes"
+			Tooltip: Desativa o teleporte gratuito de time enquanto um chefe estiver vivo.
+		}
+	}
+
+	ClientConfig: {
+		DisplayName: Configuração do cliente
+
+		Headers: {
+			Spectate: Observar
+			FightStats: Estatísticas de luta
+		}
+
+		SpectateOnDeath: {
+			Label: "[i:Binoculars] Observar ao morrer"
+			Tooltip: Observa automaticamente os aliados após morrer.
+		}
+
+		ShowBossFightStats: {
+			Label: "[i:Radar] Mostrar estatísticas do chefe"
+			Tooltip: Mostra o painel de estatísticas da luta de chefe na tela.
+		}
+	}
+
+	TeamToJoinOption: {
+		Tooltip: ""
+
+		None: {
+			Label: Nenhum
+			Tooltip: ""
+		}
+
+		Red: {
+			Label: "[i:RedDye] Vermelho"
+			Tooltip: ""
+		}
+
+		Green: {
+			Label: "[i:GreenDye] Verde"
+			Tooltip: ""
+		}
+
+		Blue: {
+			Label: "[i:BlueDye] Azul"
+			Tooltip: ""
+		}
+
+		Yellow: {
+			Label: "[i:YellowDye] Amarelo"
+			Tooltip: ""
+		}
+
+		Pink: {
+			Label: "[i:PinkDye] Rosa"
+			Tooltip: ""
+		}
+	}
+
+	BossFightLivesMode: {
+		Tooltip: ""
+
+		Off: {
+			Label: Desligado
+			Tooltip: ""
+		}
+
+		PerPlayer: {
+			Label: "[i:HealingPotion] Por jogador"
+			Tooltip: ""
+		}
+
+		PerTeam: {
+			Label: "[i:SuperHealingPotion] Por time"
+			Tooltip: ""
+		}
+	}
+}

@@ -1,0 +1,158 @@
+Keybinds: {
+	PreviousPlayer.DisplayName: Vorheriges Ziel beobachten
+	NextPlayer.DisplayName: Nächstes Ziel beobachten
+	StopSpectating.DisplayName: Beobachten beenden
+}
+
+UI: {
+	Death: {
+		Slain: Du wurdest erschlagen...
+		OutOfLives: Keine Leben mehr...
+		SharedHealthWipe: Euer Team ist gemeinsam gefallen...
+		SpectatingIn: Beobachten in {0}
+		RespawnIn: Wiederbelebung in {0}
+	}
+
+	Spectate: {
+		You: Du
+		Dead: "{0} ist tot"
+		Boss: "{0} (Boss)"
+		OtherTeam: "{0} ist in einem anderen Team"
+		Unavailable: Nicht verfügbar
+	}
+}
+
+Configs: {
+	ServerConfig: {
+		DisplayName: Server-Konfiguration
+
+		Headers: {
+			Teams: Teams
+			BossFights: Bosskämpfe
+			SharedHealth: Geteilte-Leben-Modus
+			Wormholes: Wurmloch-Tränke
+		}
+
+		TeamToJoin: {
+			Label: "[i:TeamBlockWhite] Beitritts-Team"
+			Tooltip: Weist dieses Team beim Betreten der Welt automatisch zu.
+		}
+
+		BossFightLivesMode: {
+			Label: "[i:LifeCrystal] Bosskampf-Leben-Modus"
+			Tooltip: Wie oft du dich während eines Bosskampfs wiederbeleben kannst.
+		}
+
+		BossFightRespawns: {
+			Label: "[i:Tombstone] Bosskampf-Wiederbelebungen"
+			Tooltip: Extra-Leben pro Spieler (0 = nur ein Leben).
+		}
+
+		RespawnAtTeammateDuringBoss: {
+			Label: "[i:MagicMirror] Beim Boss neben Teammitglied wiederbeleben"
+			Tooltip: Wiederbelebung neben einem lebenden Teammitglied statt am Bett.
+		}
+
+		BossFightStatsEnabled: {
+			Label: "[i:DPSMeter] Bosskampf-Statistik-Feed"
+			Tooltip: Zeigt Live-Schadensstatistiken während Bosskämpfen.
+		}
+
+		SharedHealthEnabled: {
+			Label: "[i:CrossNecklace] Geteilte Team-LP"
+			Tooltip: Euer Team teilt sich eine LP-Leiste. Leere Leiste = ganzes Team stirbt.
+		}
+
+		SharedHealthBossesOnly: {
+			Label: "[i:SlimeCrown] Nur bei Bossen"
+			Tooltip: Geteilte LP nur während Bosskämpfen.
+		}
+
+		SharedHealthMultiplier: {
+			Label: "[i:LifeFruit] Team-LP-Multiplikator"
+			Tooltip: Größe der geteilten LP-Leiste im Vergleich zur kombinierten Max-LP eures Teams.
+		}
+
+		UnlimitedTeamTeleport: {
+			Label: "[i:WormholePotion] Unbegrenzte Team-Teleportation"
+			Tooltip: Per Kartenklick zu Teammitgliedern teleportieren ohne Wurmloch-Tränke.
+		}
+
+		BlockUnlimitedTeleportDuringBoss: {
+			Label: "[i:PortalGun] Unbegrenzte Teleportation im Bosskampf sperren"
+			Tooltip: Deaktiviert die freie Team-Teleportation, solange ein Boss lebt.
+		}
+	}
+
+	ClientConfig: {
+		DisplayName: Client-Konfiguration
+
+		Headers: {
+			Spectate: Beobachten
+			FightStats: Kampfstatistiken
+		}
+
+		SpectateOnDeath: {
+			Label: "[i:Binoculars] Nach dem Tod beobachten"
+			Tooltip: Teammitglieder nach dem Tod automatisch beobachten.
+		}
+
+		ShowBossFightStats: {
+			Label: "[i:Radar] Bosskampf-Statistiken anzeigen"
+			Tooltip: Zeigt den Bosskampf-Statistik-Feed auf dem Bildschirm.
+		}
+	}
+
+	TeamToJoinOption: {
+		Tooltip: ""
+
+		None: {
+			Label: Keins
+			Tooltip: ""
+		}
+
+		Red: {
+			Label: "[i:RedDye] Rot"
+			Tooltip: ""
+		}
+
+		Green: {
+			Label: "[i:GreenDye] Grün"
+			Tooltip: ""
+		}
+
+		Blue: {
+			Label: "[i:BlueDye] Blau"
+			Tooltip: ""
+		}
+
+		Yellow: {
+			Label: "[i:YellowDye] Gelb"
+			Tooltip: ""
+		}
+
+		Pink: {
+			Label: "[i:PinkDye] Rosa"
+			Tooltip: ""
+		}
+	}
+
+	BossFightLivesMode: {
+		Tooltip: ""
+
+		Off: {
+			Label: Aus
+			Tooltip: ""
+		}
+
+		PerPlayer: {
+			Label: "[i:HealingPotion] Pro Spieler"
+			Tooltip: ""
+		}
+
+		PerTeam: {
+			Label: "[i:SuperHealingPotion] Pro Team"
+			Tooltip: ""
+		}
+	}
+}

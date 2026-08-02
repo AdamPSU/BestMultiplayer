@@ -29,8 +29,7 @@ Configs: {
 		Headers: {
 			Teams: Teams
 			BossFights: Boss Fights
-			SharedHealth: Shared Health Mode
-			Wormholes: Wormholes
+			SharedHealth: Shared Health
 		}
 
 		TeamToJoin: {
@@ -39,13 +38,19 @@ Configs: {
 		}
 
 		BossFightLivesMode: {
-			Label: "[i:LifeCrystal] Boss Fight Lives Mode"
-			Tooltip: How many times you can respawn during a boss fight.
+			Label: "[i:LifeCrystal] Boss Lives Mode"
+			Tooltip: Per Player: each player has their own lives. Per Team: the team shares one life pool.
 		}
 
-		BossFightRespawns: {
-			Label: "[i:Tombstone] Boss Fight Respawns"
-			Tooltip: Extra lives per player (0 = one life only).
+		BossFightLives: {
+			Label: "[i:Tombstone] Player Lives"
+			Tooltip: Lives per player during boss fights (1 = no respawns). Max 5.
+		}
+
+		BossFightTeamLives: {
+			Label: "[i:Tombstone] Team Lives"
+			Tooltip: Shared lives limit. 0 = team size at fight start. 1–20 = fixed count.
+			TeamSize: Team size
 		}
 
 		RespawnAtTeammateDuringBoss: {
@@ -79,18 +84,14 @@ Configs: {
 		}
 
 		BlockUnlimitedTeleportDuringBoss: {
-			Label: "[i:PortalGun] Block Unlimited Teleport During Boss Fights"
+			Label: "[i:PortalGun] Block Teleports on Boss Fights"
 			Tooltip: Disable free team teleport while a boss is alive.
 		}
 	}
 
 	ClientConfig: {
 		DisplayName: Client Config
-
-		Headers: {
-			Spectate: Spectate
-			FightStats: Fight Stats
-		}
+		Headers.Display: Display
 
 		SpectateOnDeath: {
 			Label: "[i:Binoculars] Spectate On Death"

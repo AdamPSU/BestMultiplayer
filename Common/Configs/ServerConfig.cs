@@ -39,17 +39,43 @@ public sealed class ServerConfig : ModConfig
 	[DefaultValue(TeamToJoinOption.Red)]
 	public TeamToJoinOption TeamToJoin;
 
+	[BackgroundColor(ConfigUiStyle.RowR, ConfigUiStyle.RowG, ConfigUiStyle.RowB, ConfigUiStyle.RowA)]
+	[DefaultValue(true)]
+	public bool UnlimitedTeamTeleport;
+
+	[BackgroundColor(ConfigUiStyle.RowR, ConfigUiStyle.RowG, ConfigUiStyle.RowB, ConfigUiStyle.RowA)]
+	[ConfigGate(nameof(UnlimitedTeamTeleport))]
+	[CustomModConfigItem(typeof(GatedBooleanElement))]
+	[DefaultValue(false)]
+	public bool BlockUnlimitedTeleportDuringBoss;
+
 	[Header("BossFights")]
 	[BackgroundColor(ConfigUiStyle.RowR, ConfigUiStyle.RowG, ConfigUiStyle.RowB, ConfigUiStyle.RowA)]
 	[Dropdown]
 	[DefaultValue(BossFightLivesMode.PerPlayer)]
 	public BossFightLivesMode BossFightLivesMode;
 
+	/// <summary>Per-player lives during a boss fight. 1 = no respawns; internal respawn budget is lives − 1.</summary>
 	[BackgroundColor(ConfigUiStyle.RowR, ConfigUiStyle.RowG, ConfigUiStyle.RowB, ConfigUiStyle.RowA)]
-	[CustomModConfigItem(typeof(BossFightRespawnsElement))]
-	[Range(0, 99)]
-	[DefaultValue(1)]
-	public int BossFightRespawns;
+	[ConfigGate(nameof(BossFightLivesMode), (int)BossFightLivesMode.PerPlayer)]
+	[CustomModConfigItem(typeof(GatedIntElement))]
+	[SliderColor(ConfigUiStyle.SliderR, ConfigUiStyle.SliderG, ConfigUiStyle.SliderB, ConfigUiStyle.SliderA)]
+	[Range(1, 5)]
+	[Increment(1)]
+	[DrawTicks]
+	[DefaultValue(2)]
+	public int BossFightLives;
+
+	/// <summary>Per-team shared pool. 0 = team size at fight start; 1–20 = fixed pool size.</summary>
+	[BackgroundColor(ConfigUiStyle.RowR, ConfigUiStyle.RowG, ConfigUiStyle.RowB, ConfigUiStyle.RowA)]
+	[ConfigGate(nameof(BossFightLivesMode), (int)BossFightLivesMode.PerTeam)]
+	[CustomModConfigItem(typeof(BossFightTeamLivesElement))]
+	[SliderColor(ConfigUiStyle.SliderR, ConfigUiStyle.SliderG, ConfigUiStyle.SliderB, ConfigUiStyle.SliderA)]
+	[Range(0, 20)]
+	[Increment(1)]
+	[DrawTicks]
+	[DefaultValue(0)]
+	public int BossFightTeamLives;
 
 	[BackgroundColor(ConfigUiStyle.RowR, ConfigUiStyle.RowG, ConfigUiStyle.RowB, ConfigUiStyle.RowA)]
 	[DefaultValue(true)]
@@ -80,17 +106,6 @@ public sealed class ServerConfig : ModConfig
 	[DrawTicks]
 	[DefaultValue(1.5f)]
 	public float SharedHealthMultiplier;
-
-	[Header("Wormholes")]
-	[BackgroundColor(ConfigUiStyle.RowR, ConfigUiStyle.RowG, ConfigUiStyle.RowB, ConfigUiStyle.RowA)]
-	[DefaultValue(true)]
-	public bool UnlimitedTeamTeleport;
-
-	[BackgroundColor(ConfigUiStyle.RowR, ConfigUiStyle.RowG, ConfigUiStyle.RowB, ConfigUiStyle.RowA)]
-	[ConfigGate(nameof(UnlimitedTeamTeleport))]
-	[CustomModConfigItem(typeof(GatedBooleanElement))]
-	[DefaultValue(false)]
-	public bool BlockUnlimitedTeleportDuringBoss;
 
 	public override bool AcceptClientChanges(ModConfig pendingConfig, int whoAmI, ref NetworkText message)
 	{

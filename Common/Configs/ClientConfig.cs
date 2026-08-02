@@ -12,12 +12,11 @@ public sealed class ClientConfig : ModConfig
 
 	public static ClientConfig Instance => ModContent.GetInstance<ClientConfig>();
 
-	[Header("Spectate")]
+	[Header("Display")]
 	[BackgroundColor(ConfigUiStyle.RowR, ConfigUiStyle.RowG, ConfigUiStyle.RowB, ConfigUiStyle.RowA)]
 	[DefaultValue(true)]
 	public bool SpectateOnDeath;
 
-	[Header("FightStats")]
 	[BackgroundColor(ConfigUiStyle.RowR, ConfigUiStyle.RowG, ConfigUiStyle.RowB, ConfigUiStyle.RowA)]
 	[DefaultValue(true)]
 	public bool ShowBossFightStats;

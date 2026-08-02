@@ -1,3 +1,4 @@
+using System;
 using System.Collections.Generic;
 using DefinitiveMultiplayer.Common.Configs;
 using DefinitiveMultiplayer.Common.Players;
@@ -128,11 +129,12 @@ public sealed class BossFightSystem : ModSystem
 				counts[p.team]++;
 		}
 
-		// Shared pool = players on that team at fight start.
+		// 0 = team size at fight start; >0 = fixed shared pool.
+		int fixedPool = ServerConfig.Instance.BossFightTeamLives;
 		for (int team = Teams.Min; team <= Teams.Max; team++)
 		{
 			if (counts[team] > 0)
-				TeamRespawnsLeft[team] = counts[team];
+				TeamRespawnsLeft[team] = fixedPool > 0 ? fixedPool : counts[team];
 		}
 	}
 
@@ -171,12 +173,14 @@ public sealed class BossFightSystem : ModSystem
 
 		if (config.BossFightLivesMode == BossFightLivesMode.PerPlayer)
 		{
-			mp.RespawnsRemaining = config.BossFightRespawns;
+			// Config is total lives; runtime budget is respawns (lives − 1).
+			mp.RespawnsRemaining = Math.Max(0, config.BossFightLives - 1);
 			return;
 		}
 
-		// PerTeam: teams 1–5 use shared map; unteamed = solo pool of 1.
-		mp.RespawnsRemaining = player.team == 0 ? 1 : 0;
+		// PerTeam: teams 1–5 use shared map; unteamed uses personal pool (fixed or 1).
+		int teamLives = config.BossFightTeamLives;
+		mp.RespawnsRemaining = player.team == 0 ? (teamLives > 0 ? teamLives : 1) : 0;
 	}
 
 	private static void ClearPools()

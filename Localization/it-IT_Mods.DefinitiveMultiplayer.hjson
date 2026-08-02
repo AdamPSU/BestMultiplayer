@@ -29,8 +29,7 @@ Configs: {
 		Headers: {
 			Teams: Squadre
 			BossFights: Scontri con i boss
-			SharedHealth: Modalità salute condivisa
-			Wormholes: Pozioni buco nero
+			SharedHealth: Salute condivisa
 		}
 
 		TeamToJoin: {
@@ -39,13 +38,19 @@ Configs: {
 		}
 
 		BossFightLivesMode: {
-			Label: "[i:LifeCrystal] Modalità vite contro i boss"
-			Tooltip: Quante volte puoi rinascere durante uno scontro con un boss.
+			Label: "[i:LifeCrystal] Modalità vite boss"
+			Tooltip: Per giocatore: vite individuali. Per squadra: un pool di vite condiviso.
 		}
 
-		BossFightRespawns: {
-			Label: "[i:Tombstone] Rinascite contro i boss"
-			Tooltip: Vite extra per giocatore (0 = una sola vita).
+		BossFightLives: {
+			Label: "[i:Tombstone] Vite giocatore"
+			Tooltip: Vite per giocatore contro i boss (1 = nessuna rinascita). Max 5.
+		}
+
+		BossFightTeamLives: {
+			Label: "[i:Tombstone] Vite di squadra"
+			Tooltip: Limite di vite condiviso. 0 = dimensione squadra all'inizio dello scontro. 1–20 = valore fisso.
+			TeamSize: Dimensione squadra
 		}
 
 		RespawnAtTeammateDuringBoss: {
@@ -79,18 +84,14 @@ Configs: {
 		}
 
 		BlockUnlimitedTeleportDuringBoss: {
-			Label: "[i:PortalGun] Blocca teletrasporto illimitato contro i boss"
+			Label: "[i:PortalGun] Blocca teletrasporti contro i boss"
 			Tooltip: Disattiva il teletrasporto di squadra gratuito mentre un boss è vivo.
 		}
 	}
 
 	ClientConfig: {
 		DisplayName: Configurazione client
-
-		Headers: {
-			Spectate: Osservazione
-			FightStats: Statistiche di combattimento
-		}
+		Headers.Display: Visualizzazione
 
 		SpectateOnDeath: {
 			Label: "[i:Binoculars] Osserva alla morte"

@@ -6,13 +6,30 @@ using Terraria.UI;
 
 namespace DefinitiveMultiplayer.Common.Configs;
 
-/// <summary>Hide this config row unless a sibling bool member on the same config object is true.</summary>
+/// <summary>
+/// Hide this config row unless a sibling member matches.
+/// Bool gate (default): sibling must be true.
+/// Int/enum gate: sibling must equal <see cref="ExpectedValue"/>.
+/// </summary>
 [AttributeUsage(AttributeTargets.Field | AttributeTargets.Property)]
 public sealed class ConfigGateAttribute : Attribute
 {
 	public string MemberName { get; }
 
-	public ConfigGateAttribute(string memberName) => MemberName = memberName;
+	/// <summary>When set, compare sibling as int/enum ordinal. When null, require bool true.</summary>
+	public int? ExpectedValue { get; }
+
+	public ConfigGateAttribute(string memberName)
+	{
+		MemberName = memberName;
+		ExpectedValue = null;
+	}
+
+	public ConfigGateAttribute(string memberName, int expectedValue)
+	{
+		MemberName = memberName;
+		ExpectedValue = expectedValue;
+	}
 }
 
 internal static class ConfigVisibility
@@ -30,7 +47,14 @@ internal static class ConfigVisibility
 			GateCache[gatedMember] = gate;
 		}
 
-		return gate is null || (item is not null && ReadMember(item, gate.MemberName) is true);
+		if (gate is null || item is null)
+			return gate is null;
+
+		object value = ReadMember(item, gate.MemberName);
+		if (gate.ExpectedValue is int expected)
+			return value is not null && Convert.ToInt32(value) == expected;
+
+		return value is true;
 	}
 
 	/// <summary>Resolves the gate visibility for <paramref name="element"/> and applies it, tracking reflow state in <paramref name="lastShown"/>.</summary>

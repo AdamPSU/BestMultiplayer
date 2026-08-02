@@ -29,8 +29,7 @@ Configs: {
 		Headers: {
 			Teams: Equipos
 			BossFights: Combates de jefes
-			SharedHealth: Modo de salud compartida
-			Wormholes: Pociones de agujero de gusano
+			SharedHealth: Salud compartida
 		}
 
 		TeamToJoin: {
@@ -39,13 +38,19 @@ Configs: {
 		}
 
 		BossFightLivesMode: {
-			Label: "[i:LifeCrystal] Modo de vidas contra jefes"
-			Tooltip: Cuántas veces puedes reaparecer durante un combate de jefe.
+			Label: "[i:LifeCrystal] Modo de vidas de jefe"
+			Tooltip: Por jugador: vidas individuales. Por equipo: una reserva de vidas compartida.
 		}
 
-		BossFightRespawns: {
-			Label: "[i:Tombstone] Reapariciones contra jefes"
-			Tooltip: Vidas extra por jugador (0 = solo una vida).
+		BossFightLives: {
+			Label: "[i:Tombstone] Vidas del jugador"
+			Tooltip: Vidas por jugador en jefes (1 = sin reapariciones). Máx. 5.
+		}
+
+		BossFightTeamLives: {
+			Label: "[i:Tombstone] Vidas del equipo"
+			Tooltip: Límite de vidas compartido. 0 = tamaño del equipo al inicio del combate. 1–20 = valor fijo.
+			TeamSize: Tamaño del equipo
 		}
 
 		RespawnAtTeammateDuringBoss: {
@@ -79,18 +84,14 @@ Configs: {
 		}
 
 		BlockUnlimitedTeleportDuringBoss: {
-			Label: "[i:PortalGun] Bloquear teletransporte ilimitado en jefes"
+			Label: "[i:PortalGun] Bloquear teletransportes en jefes"
 			Tooltip: Desactiva el teletransporte de equipo gratuito mientras haya un jefe vivo.
 		}
 	}
 
 	ClientConfig: {
 		DisplayName: Configuración del cliente
-
-		Headers: {
-			Spectate: Observar
-			FightStats: Estadísticas de combate
-		}
+		Headers.Display: Pantalla
 
 		SpectateOnDeath: {
 			Label: "[i:Binoculars] Observar al morir"

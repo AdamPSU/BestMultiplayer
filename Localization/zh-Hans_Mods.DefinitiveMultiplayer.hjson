@@ -9,8 +9,8 @@ UI: {
 		Slain: 你被杀死了……
 		OutOfLives: 没有剩余生命……
 		SharedHealthWipe: 你们的队伍一同倒下了……
-		SpectatingIn: {0} 后开始观战
-		RespawnIn: {0} 后复活
+		SpectatingIn: "{0} 后开始观战"
+		RespawnIn: "{0} 后复活"
 	}
 
 	Spectate: {
@@ -29,8 +29,7 @@ Configs: {
 		Headers: {
 			Teams: 队伍
 			BossFights: Boss 战
-			SharedHealth: 共享生命模式
-			Wormholes: 虫洞药水
+			SharedHealth: 共享生命
 		}
 
 		TeamToJoin: {
@@ -39,13 +38,19 @@ Configs: {
 		}
 
 		BossFightLivesMode: {
-			Label: "[i:LifeCrystal] Boss 战生命模式"
-			Tooltip: 在 Boss 战期间可以复活的次数。
+			Label: "[i:LifeCrystal] Boss 生命模式"
+			Tooltip: 按玩家：各自独立生命。按队伍：共享一个生命池。
 		}
 
-		BossFightRespawns: {
-			Label: "[i:Tombstone] Boss 战复活次数"
-			Tooltip: 每位玩家的额外生命（0 = 仅一条命）。
+		BossFightLives: {
+			Label: "[i:Tombstone] 玩家生命"
+			Tooltip: Boss 战中每位玩家的生命数（1 = 无法复活）。最多 5。
+		}
+
+		BossFightTeamLives: {
+			Label: "[i:Tombstone] 队伍生命"
+			Tooltip: 共享生命上限。0 = 开战时的队伍人数。1–20 = 固定次数。
+			TeamSize: 队伍人数
 		}
 
 		RespawnAtTeammateDuringBoss: {
@@ -79,18 +84,14 @@ Configs: {
 		}
 
 		BlockUnlimitedTeleportDuringBoss: {
-			Label: "[i:PortalGun] Boss 战时禁止无限传送"
+			Label: "[i:PortalGun] Boss 战时禁止传送"
 			Tooltip: 有 Boss 存活时禁用免费队伍传送。
 		}
 	}
 
 	ClientConfig: {
 		DisplayName: 客户端设置
-
-		Headers: {
-			Spectate: 观战
-			FightStats: 战斗数据
-		}
+		Headers.Display: 显示
 
 		SpectateOnDeath: {
 			Label: "[i:Binoculars] 死亡后观战"

@@ -1,5 +1,10 @@
-Initial public release (0.1)
+v0.1.1
+- Full localization (9 Terraria languages)
+- Boss fight lives: per-player slider (0–5)
+- Boss fight lives: per-team pool (0 = team size, or fixed 1–20)
+- Config UI polish and packaging fixes
 
+v0.1
 - Auto team join
 - Boss fight lives (per-player / per-team)
 - Respawn at spectate target during bosses

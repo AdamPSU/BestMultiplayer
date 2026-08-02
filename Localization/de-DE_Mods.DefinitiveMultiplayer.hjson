@@ -29,8 +29,7 @@ Configs: {
 		Headers: {
 			Teams: Teams
 			BossFights: Bosskämpfe
-			SharedHealth: Geteilte-Leben-Modus
-			Wormholes: Wurmloch-Tränke
+			SharedHealth: Geteilte Leben
 		}
 
 		TeamToJoin: {
@@ -39,13 +38,19 @@ Configs: {
 		}
 
 		BossFightLivesMode: {
-			Label: "[i:LifeCrystal] Bosskampf-Leben-Modus"
-			Tooltip: Wie oft du dich während eines Bosskampfs wiederbeleben kannst.
+			Label: "[i:LifeCrystal] Boss-Leben-Modus"
+			Tooltip: Pro Spieler: jeder hat eigene Leben. Pro Team: ein gemeinsamer Leben-Pool.
 		}
 
-		BossFightRespawns: {
-			Label: "[i:Tombstone] Bosskampf-Wiederbelebungen"
-			Tooltip: Extra-Leben pro Spieler (0 = nur ein Leben).
+		BossFightLives: {
+			Label: "[i:Tombstone] Spieler-Leben"
+			Tooltip: Leben pro Spieler im Bosskampf (1 = keine Wiederbelebung). Max. 5.
+		}
+
+		BossFightTeamLives: {
+			Label: "[i:Tombstone] Team-Leben"
+			Tooltip: Geteiltes Leben-Limit. 0 = Teamgröße bei Kampfbeginn. 1–20 = fester Wert.
+			TeamSize: Teamgröße
 		}
 
 		RespawnAtTeammateDuringBoss: {
@@ -79,18 +84,14 @@ Configs: {
 		}
 
 		BlockUnlimitedTeleportDuringBoss: {
-			Label: "[i:PortalGun] Unbegrenzte Teleportation im Bosskampf sperren"
+			Label: "[i:PortalGun] Teleportation in Bosskämpfen sperren"
 			Tooltip: Deaktiviert die freie Team-Teleportation, solange ein Boss lebt.
 		}
 	}
 
 	ClientConfig: {
 		DisplayName: Client-Konfiguration
-
-		Headers: {
-			Spectate: Beobachten
-			FightStats: Kampfstatistiken
-		}
+		Headers.Display: Anzeige
 
 		SpectateOnDeath: {
 			Label: "[i:Binoculars] Nach dem Tod beobachten"

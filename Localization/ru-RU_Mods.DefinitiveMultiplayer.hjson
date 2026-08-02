@@ -29,8 +29,7 @@ Configs: {
 		Headers: {
 			Teams: Команды
 			BossFights: Бои с боссами
-			SharedHealth: Режим общего здоровья
-			Wormholes: Зелья червоточины
+			SharedHealth: Общее здоровье
 		}
 
 		TeamToJoin: {
@@ -39,13 +38,19 @@ Configs: {
 		}
 
 		BossFightLivesMode: {
-			Label: "[i:LifeCrystal] Режим жизней в бою с боссом"
-			Tooltip: Сколько раз можно возродиться во время боя с боссом.
+			Label: "[i:LifeCrystal] Режим жизней у босса"
+			Tooltip: На игрока: у каждого свои жизни. На команду: общий запас жизней.
 		}
 
-		BossFightRespawns: {
-			Label: "[i:Tombstone] Возрождения в бою с боссом"
-			Tooltip: Дополнительные жизни на игрока (0 = только одна жизнь).
+		BossFightLives: {
+			Label: "[i:Tombstone] Жизни игрока"
+			Tooltip: Жизни на игрока в бою с боссом (1 = без возрождений). Макс. 5.
+		}
+
+		BossFightTeamLives: {
+			Label: "[i:Tombstone] Жизни команды"
+			Tooltip: Общий лимит жизней. 0 = размер команды в начале боя. 1–20 = фиксированное число.
+			TeamSize: Размер команды
 		}
 
 		RespawnAtTeammateDuringBoss: {
@@ -79,18 +84,14 @@ Configs: {
 		}
 
 		BlockUnlimitedTeleportDuringBoss: {
-			Label: "[i:PortalGun] Блокировать безлимитный телепорт у боссов"
+			Label: "[i:PortalGun] Блокировать телепорты у боссов"
 			Tooltip: Отключает бесплатную командную телепортацию, пока жив босс.
 		}
 	}
 
 	ClientConfig: {
 		DisplayName: Настройки клиента
-
-		Headers: {
-			Spectate: Наблюдение
-			FightStats: Боевая статистика
-		}
+		Headers.Display: Отображение
 
 		SpectateOnDeath: {
 			Label: "[i:Binoculars] Наблюдение после смерти"

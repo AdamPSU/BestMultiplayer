@@ -29,8 +29,7 @@ Configs: {
 		Headers: {
 			Teams: Times
 			BossFights: Lutas de chefes
-			SharedHealth: Modo de vida compartilhada
-			Wormholes: Poções de buraco de minhoca
+			SharedHealth: Vida compartilhada
 		}
 
 		TeamToJoin: {
@@ -39,13 +38,19 @@ Configs: {
 		}
 
 		BossFightLivesMode: {
-			Label: "[i:LifeCrystal] Modo de vidas em lutas de chefes"
-			Tooltip: Quantas vezes você pode renascer durante uma luta de chefe.
+			Label: "[i:LifeCrystal] Modo de vidas no chefe"
+			Tooltip: Por jogador: vidas individuais. Por time: uma reserva de vidas compartilhada.
 		}
 
-		BossFightRespawns: {
-			Label: "[i:Tombstone] Renascimentos em lutas de chefes"
-			Tooltip: Vidas extras por jogador (0 = apenas uma vida).
+		BossFightLives: {
+			Label: "[i:Tombstone] Vidas do jogador"
+			Tooltip: Vidas por jogador em chefes (1 = sem renascimentos). Máx. 5.
+		}
+
+		BossFightTeamLives: {
+			Label: "[i:Tombstone] Vidas do time"
+			Tooltip: Limite de vidas compartilhado. 0 = tamanho do time no início da luta. 1–20 = valor fixo.
+			TeamSize: Tamanho do time
 		}
 
 		RespawnAtTeammateDuringBoss: {
@@ -79,18 +84,14 @@ Configs: {
 		}
 
 		BlockUnlimitedTeleportDuringBoss: {
-			Label: "[i:PortalGun] Bloquear teleporte ilimitado em chefes"
+			Label: "[i:PortalGun] Bloquear teleportes em chefes"
 			Tooltip: Desativa o teleporte gratuito de time enquanto um chefe estiver vivo.
 		}
 	}
 
 	ClientConfig: {
 		DisplayName: Configuração do cliente
-
-		Headers: {
-			Spectate: Observar
-			FightStats: Estatísticas de luta
-		}
+		Headers.Display: Exibição
 
 		SpectateOnDeath: {
 			Label: "[i:Binoculars] Observar ao morrer"

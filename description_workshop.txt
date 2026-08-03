@@ -12,6 +12,7 @@ Multiplayer QoL for Terraria on tModLoader. Aimed to replace Better Multiplayer 
 [*][b]Shared team health mode[/b]: optional shared HP pool (always on, or bosses only), with a configurable pool multiplier
 [*][b]Custom death screen[/b]: separate copy for slain, out of lives, and team wipe
 [*][b]Boss fight stats feed[/b]: live party heads, view teammates' HP, damage dealt/taken, deaths
+[/list]
 
 [h2]Languages[/h2]
 English, German, Italian, French, Spanish, Russian, Simplified Chinese, Brazilian Portuguese, Polish

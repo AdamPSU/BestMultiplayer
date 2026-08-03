@@ -1,8 +1,12 @@
+v0.1.2
+- Config regroup: Teams, Boss Fights, Shared Health; client Display
+- Boss Lives Mode tooltip clarifies Per Player vs Per Team
+- Player Lives (1–5, default 2) and Team Lives (0 = team size, 1–20 fixed)
+- Label polish (Block Teleports on Boss Fights, lives terminology)
+
 v0.1.1
 - Full localization (9 Terraria languages)
-- Boss fight lives: per-player slider (0–5)
-- Boss fight lives: per-team pool (0 = team size, or fixed 1–20)
-- Config UI polish and packaging fixes
+- Boss fight lives sliders and packaging fixes
 
 v0.1
 - Auto team join

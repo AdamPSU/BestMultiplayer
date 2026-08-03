@@ -1,6 +1,6 @@
 displayName = The Definitive Multiplayer Mod
 author = 0xABAN
-version = 0.1.1
+version = 0.1.2
 homepage = https://github.com/AdamPSU/DefinitiveMultiplayer
 side = Both
 buildIgnore = *.csproj, *.user, *.suo, bin/**, obj/**, .vs/**, .git/**, .dotnet/**, .llmwiki/**, .llmwikiignore, .superpowers/**, .vscode/**, docs/**, wiki/**, tools/**, README.md, .gitignore, *.bak, icon_workshop.png, icon_small.png

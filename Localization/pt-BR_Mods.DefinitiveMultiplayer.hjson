@@ -22,6 +22,16 @@ UI: {
 	}
 
 	PlayerSwap.Countdown: Teleporting players in {0}
+
+	Marked: {
+		Countdown: Mark rotates in {0}
+		Assigned: "{0} is marked!"
+	}
+
+	HotPotato: {
+		Status: "{0} has the potato! {1}"
+		Exploded: "{0} couldn't pass the potato..."
+	}
 }
 
 Configs: {
@@ -30,6 +40,7 @@ Configs: {
 
 		Headers: {
 			Teams: Teams
+			Modes: Modes
 			BossLives: Boss Lives
 			BossBalance: Boss Balance
 			Respawn: Respawn
@@ -51,7 +62,7 @@ Configs: {
 		}
 
 		SharedHealthEnabled: {
-			Label: "[i:CrossNecklace] Shared Team Health Mode"
+			Label: "[i:CrossNecklace] Shared Team Health"
 			Tooltip: One shared HP bar for the whole team.
 		}
 
@@ -66,13 +77,58 @@ Configs: {
 		}
 
 		PlayerSwapEnabled: {
-			Label: "[i:TeleportationPotion] Player Swap Mode"
+			Label: "[i:TeleportationPotion] Player Swap"
 			Tooltip: Every so often, living teammates randomly switch places.
 		}
 
 		PlayerSwapIntervalMinutes: {
 			Label: "[i:GoldWatch] Swap Every (Minutes)"
 			Tooltip: How many minutes between teammate position swaps.
+		}
+
+		MarkedEnabled: {
+			Label: "[i:BattlePotion] Marked"
+			Tooltip: During bosses, one living player is marked on a timer. Cannot run with Hot Potato.
+		}
+
+		MarkedIntervalSeconds: {
+			Label: "[i:CopperWatch] Mark Every (Seconds)"
+			Tooltip: How often the mark moves to another living player (15–120).
+		}
+
+		MarkedDamageTakenMult: {
+			Label: "[i:RedPotion] Marked Damage Taken"
+			Tooltip: Extra damage the marked player takes on top of Boss Balance.
+		}
+
+		MarkedDamageDealtMult: {
+			Label: "[i:PsychoKnife] Marked Damage Dealt"
+			Tooltip: Extra damage the marked player deals on top of Boss Balance.
+		}
+
+		HotPotatoEnabled: {
+			Label: "[i:ExplosiveBunny] Hot Potato"
+			Tooltip: Pass the potato by touch or explode when the fuse hits zero. Cannot run with Marked.
+		}
+
+		HotPotatoBossesOnly: {
+			Label: "[i:SlimeCrown] Only During Boss Fights"
+			Tooltip: Hot Potato only while a boss is alive.
+		}
+
+		HotPotatoIntervalSeconds: {
+			Label: "[i:Timer1Second] Potato Fuse (Seconds)"
+			Tooltip: How long until the potato explodes (30–300).
+		}
+
+		HotPotatoSpeedBonusPercent: {
+			Label: "[i:HermesBoots] Potato Speed Bonus %"
+			Tooltip: Extra movement speed for the player holding the potato.
+		}
+
+		HotPotatoTeamOnly: {
+			Label: "[i:TeamBlockRed] Same Team Only"
+			Tooltip: Only teammates can hold or receive the potato.
 		}
 
 		BossFightStatsEnabled: {

@@ -63,6 +63,11 @@ Configs: {
 			Tooltip: Show live damage stats during boss fights.
 		}
 
+		BossFightDefenseMultiplier: {
+			Label: "[i:EndurancePotion] Boss Fight Defense"
+			Tooltip: Fraction of player defense that applies during boss fights. 1.0 = full defense; 0.5 = half defense. All non-PvP damage while a boss is alive.
+		}
+
 		SharedHealthEnabled: {
 			Label: "[i:CrossNecklace] Shared Team Health"
 			Tooltip: Your team shares one HP bar. Empty bar = whole team dies.

@@ -63,6 +63,11 @@ Configs: {
 			Tooltip: Mostra estatísticas de dano ao vivo durante lutas de chefes.
 		}
 
+		BossFightDefenseMultiplier: {
+			Label: "[i:EndurancePotion] Defesa em luta contra chefe"
+			Tooltip: Fração da defesa do jogador aplicada durante lutas contra chefes. 1,0 = defesa total; 0,5 = metade. Todo dano não-PvP enquanto um chefe estiver vivo.
+		}
+
 		SharedHealthEnabled: {
 			Label: "[i:CrossNecklace] Vida compartilhada do time"
 			Tooltip: Seu time compartilha uma barra de PV. Barra vazia = time inteiro morre.

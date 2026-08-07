@@ -63,6 +63,11 @@ Configs: {
 			Tooltip: Zeigt Live-Schadensstatistiken während Bosskämpfen.
 		}
 
+		BossFightDefenseMultiplier: {
+			Label: "[i:EndurancePotion] Bosskampf-Verteidigung"
+			Tooltip: Anteil der Spielerverteidigung während Bosskämpfen. 1,0 = volle Verteidigung; 0,5 = halbe Verteidigung. Gesamter Nicht-PvP-Schaden, solange ein Boss lebt.
+		}
+
 		SharedHealthEnabled: {
 			Label: "[i:CrossNecklace] Geteilte Team-LP"
 			Tooltip: Euer Team teilt sich eine LP-Leiste. Leere Leiste = ganzes Team stirbt.

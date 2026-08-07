@@ -63,6 +63,11 @@ Configs: {
 			Tooltip: Muestra estadísticas de daño en vivo durante los combates de jefes.
 		}
 
+		BossFightDefenseMultiplier: {
+			Label: "[i:EndurancePotion] Defensa en pelea de jefe"
+			Tooltip: Fracción de la defensa del jugador que se aplica en peleas de jefe. 1.0 = defensa completa; 0.5 = mitad. Todo el daño no PvP mientras haya un jefe vivo.
+		}
+
 		SharedHealthEnabled: {
 			Label: "[i:CrossNecklace] Salud de equipo compartida"
 			Tooltip: Tu equipo comparte una barra de PV. Barra vacía = todo el equipo muere.

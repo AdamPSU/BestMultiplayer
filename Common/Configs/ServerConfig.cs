@@ -85,6 +85,15 @@ public sealed class ServerConfig : ModConfig
 	[DefaultValue(true)]
 	public bool BossFightStatsEnabled;
 
+	/// <summary>Fraction of player defense that applies during boss fights. 1 = full; 0.1 = 10%.</summary>
+	[BackgroundColor(ConfigUiStyle.RowR, ConfigUiStyle.RowG, ConfigUiStyle.RowB, ConfigUiStyle.RowA)]
+	[SliderColor(ConfigUiStyle.SliderR, ConfigUiStyle.SliderG, ConfigUiStyle.SliderB, ConfigUiStyle.SliderA)]
+	[Range(0.1f, 1f)]
+	[Increment(0.05f)]
+	[DrawTicks]
+	[DefaultValue(1f)]
+	public float BossFightDefenseMultiplier;
+
 	[Header("SharedHealth")]
 	[BackgroundColor(ConfigUiStyle.RowR, ConfigUiStyle.RowG, ConfigUiStyle.RowB, ConfigUiStyle.RowA)]
 	[DefaultValue(false)]

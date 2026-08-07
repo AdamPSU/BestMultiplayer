@@ -32,6 +32,7 @@ flowchart LR
 | `BossFightRespawns` | `1` | **Done** | PerPlayer budget; `0` = BM first-death lock; ignored in PerTeam (pool = team size) |
 | `RespawnAtTeammateDuringBoss` | `true` | **Done** | Boss-death respawn beside **spectate target** only; else vanilla spawn |
 | `BossFightStatsEnabled` | `true` | **Done** | Live boss-fight stats feed — see [boss fight stats](boss-fight-stats.md) |
+| `BossFightDefenseMultiplier` | `1.0` | **Done** | Fraction of player defense during boss fights (0.1–1.0) — see [boss fight defense](boss-fight-defense.md) |
 | *(always on)* Instant respawn on boss end | — | **Done** | Not configurable; dead players always get `respawnTimer = 0` when the fight ends |
 | `SharedHealthEnabled` | `false` | **Done** | Shared team HP — see [shared team health](shared-boss-health.md) |
 | `SharedHealthBossesOnly` | `false` | **Done** | Limit shared HP to boss fights |
@@ -54,7 +55,7 @@ Calamity-style theming via stock tML attributes (purple instead of red).
 |---|---|
 | Panel | `BackgroundColor(42, 28, 58, 216)` on each `ModConfig` |
 | Rows | `BackgroundColor(110, 62, 168, 192)` on every option |
-| Slider | `SliderColor(224, 165, 56, 128)` on `SharedHealthMultiplier` |
+| Slider | `SliderColor(224, 165, 56, 128)` on `SharedHealthMultiplier`, `BossFightDefenseMultiplier` |
 | Icons | Vanilla `[i:Item]` chat tags in Labels |
 | Display names | `Server Config` / `Client Config` |
 
@@ -73,6 +74,7 @@ Implemented with `ConfigGateAttribute` + `GatedBooleanElement` / `GatedFloatElem
 
 - [TeamToJoin](team-to-join.md)
 - [Boss fight lives](boss-fight-lives.md)
+- [Boss fight defense](boss-fight-defense.md)
 - [Unlimited team teleport](unlimited-team-teleport.md)
 - [Mod anatomy](mod-anatomy.md)
 - [Scaffold conventions](scaffold-conventions.md)

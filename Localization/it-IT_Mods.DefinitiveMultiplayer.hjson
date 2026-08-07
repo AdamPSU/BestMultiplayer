@@ -63,6 +63,11 @@ Configs: {
 			Tooltip: Mostra le statistiche di danno in tempo reale durante gli scontri con i boss.
 		}
 
+		BossFightDefenseMultiplier: {
+			Label: "[i:EndurancePotion] Difesa negli scontri boss"
+			Tooltip: Frazione della difesa del giocatore applicata durante gli scontri boss. 1,0 = difesa piena; 0,5 = metà. Tutto il danno non-PvP mentre un boss è vivo.
+		}
+
 		SharedHealthEnabled: {
 			Label: "[i:CrossNecklace] Salute di squadra condivisa"
 			Tooltip: La squadra condivide una barra PV. Barra vuota = tutta la squadra muore.

@@ -63,6 +63,11 @@ Configs: {
 			Tooltip: 在 Boss 战期间显示实时伤害数据。
 		}
 
+		BossFightDefenseMultiplier: {
+			Label: "[i:EndurancePotion] Boss战防御"
+			Tooltip: Boss战期间生效的玩家防御比例。1.0 = 全额防御；0.5 = 一半防御。Boss存活时所有非PvP伤害均受影响。
+		}
+
 		SharedHealthEnabled: {
 			Label: "[i:CrossNecklace] 队伍共享生命"
 			Tooltip: 队伍共用一条生命条。生命条清空 = 全队死亡。

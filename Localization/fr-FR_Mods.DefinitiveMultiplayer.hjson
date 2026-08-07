@@ -63,6 +63,11 @@ Configs: {
 			Tooltip: Affiche les stats de dégâts en direct pendant les combats de boss.
 		}
 
+		BossFightDefenseMultiplier: {
+			Label: "[i:EndurancePotion] Défense en combat de boss"
+			Tooltip: Fraction de la défense du joueur appliquée pendant les combats de boss. 1,0 = défense complète ; 0,5 = moitié. Tous les dégâts non-PvP tant qu'un boss est vivant.
+		}
+
 		SharedHealthEnabled: {
 			Label: "[i:CrossNecklace] Santé d'équipe partagée"
 			Tooltip: Votre équipe partage une barre de PV. Barre vide = toute l'équipe meurt.

@@ -1,7 +1,10 @@
 Chronological record of ingests, queries, and maintenance passes.
 
-## [2026-08-04] fix | Server config editable by any client
-- `AcceptClientChanges` always true (cloud/dedicated; no in-game host required)
+## [2026-08-04] feature | Boss fight defense multiplier
+- Server `BossFightDefenseMultiplier` (0.1–1.0, default 1.0): fraction of player defense during boss fights
+- `BossFightDefensePlayer.ModifyHurt` → `ScalingArmorPenetration += 1 - mult` (non-PvP, boss active only)
+- Loc (9 langs), concept wiki page
+- Server config `AcceptClientChanges` always true (cloud/dedicated; no in-game host required)
 
 ## [2026-07-31] rebrand | The Definitive Multiplayer Mod
 

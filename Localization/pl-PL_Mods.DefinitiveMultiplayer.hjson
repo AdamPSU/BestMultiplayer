@@ -63,6 +63,11 @@ Configs: {
 			Tooltip: Pokazuje na żywo statystyki obrażeń podczas walk z bossami.
 		}
 
+		BossFightDefenseMultiplier: {
+			Label: "[i:EndurancePotion] Obrona w walce z bossem"
+			Tooltip: Ułamek obrony gracza stosowany podczas walk z bossami. 1,0 = pełna obrona; 0,5 = połowa. Całe obrażenia nie-PvP, gdy boss żyje.
+		}
+
 		SharedHealthEnabled: {
 			Label: "[i:CrossNecklace] Wspólne zdrowie drużyny"
 			Tooltip: Drużyna dzieli jeden pasek PŻ. Pusty pasek = cała drużyna ginie.

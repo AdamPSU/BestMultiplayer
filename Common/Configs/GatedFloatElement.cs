@@ -23,6 +23,15 @@ public sealed class GatedFloatElement : FloatElement
 		ConfigVisibility.Refresh(this, Item, MemberInfo.MemberInfo, ref _lastShown);
 	}
 
+	public override void Recalculate()
+	{
+		if (MemberInfo != null)
+			ConfigVisibility.PrepareRecalculate(this, Item, MemberInfo.MemberInfo);
+		base.Recalculate();
+		if (MemberInfo != null)
+			ConfigVisibility.PinAfterRecalculate(this, Item, MemberInfo.MemberInfo);
+	}
+
 	protected override void DrawSelf(SpriteBatch spriteBatch)
 	{
 		if (ConfigVisibility.IsCollapsed(this))

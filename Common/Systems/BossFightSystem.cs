@@ -9,6 +9,7 @@ namespace DefinitiveMultiplayer.Common.Systems;
 
 /// <summary>
 /// Boss-fight detection and respawn-budget pools for wormhole / lives rules.
+/// Player and team life limits are independent; when both are on, a death must clear both.
 /// </summary>
 public sealed class BossFightSystem : ModSystem
 {
@@ -72,8 +73,19 @@ public sealed class BossFightSystem : ModSystem
 	public override void ClearWorld()
 	{
 		ClearPools();
+		ClearBossDeathCounts();
 		_fightWasActive = false;
 		DeathTracker.Reset();
+	}
+
+	private static void ClearBossDeathCounts()
+	{
+		for (int i = 0; i < Main.maxPlayers; i++)
+		{
+			Player p = Main.player[i];
+			if (p.active)
+				p.GetModPlayer<DefinitiveMultiplayerPlayer>().BossDeathsThisFight = 0;
+		}
 	}
 
 	/// <summary>
@@ -83,21 +95,29 @@ public sealed class BossFightSystem : ModSystem
 	private static void OnBossFightEnded()
 	{
 		// Always instant-respawn when a boss fight ends (no longer a config toggle).
+		// Also reset escalating boss-death counters for the next fight.
 		for (int i = 0; i < Main.maxPlayers; i++)
 		{
 			Player p = Main.player[i];
-			if (p.active && p.dead)
+			if (!p.active)
+				continue;
+
+			p.GetModPlayer<DefinitiveMultiplayerPlayer>().BossDeathsThisFight = 0;
+			if (p.dead)
 				p.respawnTimer = 0;
 		}
 	}
 
-	internal static bool IsLivesModeActive() =>
-		ServerConfig.Instance.BossFightLivesMode is BossFightLivesMode.PerPlayer or BossFightLivesMode.PerTeam;
+	internal static bool IsLivesModeActive()
+	{
+		ServerConfig cfg = ServerConfig.Instance;
+		return cfg.BossFightPlayerLivesEnabled || cfg.BossFightTeamLivesEnabled;
+	}
 
 	private static void InitPools()
 	{
 		TeamRespawnsLeft.Clear();
-		ServerConfig config = ServerConfig.Instance;
+		ServerConfig cfg = ServerConfig.Instance;
 		if (!IsLivesModeActive())
 		{
 			_poolsReady = true;
@@ -105,14 +125,14 @@ public sealed class BossFightSystem : ModSystem
 			return;
 		}
 
-		if (config.BossFightLivesMode == BossFightLivesMode.PerTeam)
+		if (cfg.BossFightTeamLivesEnabled)
 			SeedTeamPools();
 
 		for (int i = 0; i < Main.maxPlayers; i++)
 		{
 			Player p = Main.player[i];
 			if (p.active)
-				AssignPlayer(p, config);
+				AssignPlayer(p, cfg);
 		}
 
 		_poolsReady = true;
@@ -140,7 +160,7 @@ public sealed class BossFightSystem : ModSystem
 
 	private static void EnsureNewPlayers()
 	{
-		ServerConfig config = ServerConfig.Instance;
+		ServerConfig cfg = ServerConfig.Instance;
 		if (!IsLivesModeActive())
 			return;
 
@@ -154,9 +174,9 @@ public sealed class BossFightSystem : ModSystem
 			if (mp.LivesInitialized)
 				continue;
 
-			// Mid-join: PerPlayer full budget; PerTeam does not top up shared pool.
-			AssignPlayer(p, config);
-			if (config.BossFightLivesMode == BossFightLivesMode.PerTeam && Teams.IsReal(p.team)
+			// Mid-join: full personal budget; team pool is not topped up.
+			AssignPlayer(p, cfg);
+			if (cfg.BossFightTeamLivesEnabled && Teams.IsReal(p.team)
 			    && !TeamRespawnsLeft.ContainsKey(p.team))
 				TeamRespawnsLeft[p.team] = 0;
 
@@ -164,23 +184,30 @@ public sealed class BossFightSystem : ModSystem
 		}
 	}
 
-	private static void AssignPlayer(Player player, ServerConfig config)
+	private static void AssignPlayer(Player player, ServerConfig cfg)
 	{
 		DefinitiveMultiplayerPlayer mp = player.GetModPlayer<DefinitiveMultiplayerPlayer>();
 		mp.LivesInitialized = true;
 		// Already dead at fight start / join: finish vanilla respawn without spending.
 		mp.RespawnAllowedThisDeath = player.dead;
 
-		if (config.BossFightLivesMode == BossFightLivesMode.PerPlayer)
+		// Personal budget when player lives are on.
+		// Unteamed + team-only: personal field holds a solo "team" budget.
+		if (cfg.BossFightPlayerLivesEnabled)
 		{
 			// Config is total lives; runtime budget is respawns (lives − 1).
-			mp.RespawnsRemaining = Math.Max(0, config.BossFightLives - 1);
+			mp.RespawnsRemaining = Math.Max(0, cfg.BossFightLives - 1);
 			return;
 		}
 
-		// PerTeam: teams 1–5 use shared map; unteamed uses personal pool (fixed or 1).
-		int teamLives = config.BossFightTeamLives;
-		mp.RespawnsRemaining = player.team == 0 ? (teamLives > 0 ? teamLives : 1) : 0;
+		if (cfg.BossFightTeamLivesEnabled && !Teams.IsReal(player.team))
+		{
+			int teamLives = cfg.BossFightTeamLives;
+			mp.RespawnsRemaining = teamLives > 0 ? teamLives : 1;
+			return;
+		}
+
+		mp.RespawnsRemaining = 0;
 	}
 
 	private static void ClearPools()
@@ -216,22 +243,39 @@ public sealed class BossFightSystem : ModSystem
 		DefinitiveMultiplayerPlayer mp = player.GetModPlayer<DefinitiveMultiplayerPlayer>();
 		mp.RespawnAllowedThisDeath = false;
 
-		ServerConfig config = ServerConfig.Instance;
-		if (config.BossFightLivesMode == BossFightLivesMode.PerPlayer || player.team == 0)
-		{
-			if (mp.RespawnsRemaining > 0)
-			{
-				mp.RespawnsRemaining--;
-				mp.RespawnAllowedThisDeath = true;
-			}
+		ServerConfig cfg = ServerConfig.Instance;
+		bool playerOn = cfg.BossFightPlayerLivesEnabled;
+		bool teamOn = cfg.BossFightTeamLivesEnabled;
+		bool realTeam = Teams.IsReal(player.team);
 
-			return;
+		// Unteamed with team-only lives: solo budget on RespawnsRemaining.
+		bool soloTeamBudget = teamOn && !realTeam && !playerOn;
+
+		if (playerOn || soloTeamBudget)
+		{
+			if (mp.RespawnsRemaining <= 0)
+				return;
 		}
 
-		if (TeamRespawnsLeft.TryGetValue(player.team, out int left) && left > 0)
+		if (teamOn && realTeam)
 		{
-			TeamRespawnsLeft[player.team] = left - 1;
-			mp.RespawnAllowedThisDeath = true;
+			if (!TeamRespawnsLeft.TryGetValue(player.team, out int left) || left <= 0)
+				return;
 		}
+
+		// Both limits cleared — spend what applies.
+		if (playerOn || soloTeamBudget)
+			mp.RespawnsRemaining--;
+
+		if (teamOn && realTeam)
+			TeamRespawnsLeft[player.team] = TeamRespawnsLeft[player.team] - 1;
+
+		mp.RespawnAllowedThisDeath = true;
+
+		// Kill runs before this edge, and UpdateDead may have already forced the hard-lock
+		// timer while RespawnAllowedThisDeath was still false. Re-apply host policy now.
+		// BossDeathsThisFight was incremented in Kill, so prior deaths = count - 1.
+		int priorBossDeaths = Math.Max(0, mp.BossDeathsThisFight - 1);
+		player.respawnTimer = RespawnPolicy.ComputeTimerTicks(priorBossDeaths);
 	}
 }

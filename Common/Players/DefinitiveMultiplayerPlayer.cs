@@ -17,6 +17,9 @@ public sealed class DefinitiveMultiplayerPlayer : ModPlayer
 	internal bool DiedDuringBossFight;
 	internal int PreferredRespawnWhoAmI = -1;
 
+	/// <summary>Boss-fight deaths so far this fight (escalating respawn). Cleared when the fight ends.</summary>
+	internal int BossDeathsThisFight;
+
 	/// <summary>Set in OnRespawn; applied in PostUpdate after Spawn_SetPosition.</summary>
 	private int _pendingTeammate = -1;
 
@@ -33,10 +36,17 @@ public sealed class DefinitiveMultiplayerPlayer : ModPlayer
 
 	public override void Kill(double damage, int hitDirection, bool pvp, PlayerDeathReason damageSource)
 	{
-		DiedDuringBossFight = BossFightSystem.IsBossFightActive();
+		bool boss = BossFightSystem.IsBossFightActive();
+		DiedDuringBossFight = boss;
 		_pendingTeammate = -1;
 		if (Player.whoAmI == Main.myPlayer)
 			SetPreferredRespawnTarget(-1);
+
+		// Vanilla already set respawnTimer; replace with host policy (all sides — same formula).
+		int priorBossDeaths = boss ? BossDeathsThisFight : 0;
+		Player.respawnTimer = RespawnPolicy.ComputeTimerTicks(priorBossDeaths);
+		if (boss)
+			BossDeathsThisFight++;
 	}
 
 	public override void OnRespawn()
@@ -48,6 +58,8 @@ public sealed class DefinitiveMultiplayerPlayer : ModPlayer
 
 		int preferred = PreferredRespawnWhoAmI;
 		PreferredRespawnWhoAmI = -1;
+
+		RespawnPolicy.ApplyVitalsOnRespawn(Player);
 
 		// Spawn_SetPosition runs after OnRespawn — defer teleport to PostUpdate.
 		if (wantTeammate && Main.netMode != NetmodeID.MultiplayerClient)

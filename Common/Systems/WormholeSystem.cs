@@ -42,11 +42,11 @@ public sealed class WormholeSystem : ModSystem
 		if (player.dead)
 			return false;
 
-		ServerConfig config = ServerConfig.Instance;
-		if (!config.UnlimitedTeamTeleport)
+		ServerConfig teams = ServerConfig.Instance;
+		if (!teams.UnlimitedTeamTeleport)
 			return false;
 
-		if (config.BlockUnlimitedTeleportDuringBoss && BossFightSystem.IsBossFightActive())
+		if (teams.BlockUnlimitedTeleportDuringBoss && BossFightSystem.IsBossFightActive())
 			return false;
 
 		return true;

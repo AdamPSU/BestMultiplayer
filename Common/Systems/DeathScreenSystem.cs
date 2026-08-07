@@ -1,3 +1,4 @@
+using System;
 using System.Collections.Generic;
 using DefinitiveMultiplayer.Common.Players;
 using DefinitiveMultiplayer.Common.UI;
@@ -113,8 +114,19 @@ public sealed class DeathScreenSystem : ModSystem
 				"Mods.DefinitiveMultiplayer.UI.Death.SpectatingIn",
 				SpectatePlayer.IntroSeconds);
 
-			DrawCentered(font, title, Main.screenHeight / 2f - 60f, color, TitleScale);
-			DrawCentered(font, subtitle, Main.screenHeight / 2f + 10f, color * 0.85f, SmallScale);
+			float titleY = Main.screenHeight / 2f - 60f;
+			DrawCentered(font, title, titleY, color, TitleScale);
+
+			float subtitleY = Main.screenHeight / 2f + 10f;
+			if (player.lostCoins > 0)
+			{
+				string coins = Language.GetTextValue("Game.DroppedCoins", player.lostCoinString);
+				float coinsY = titleY + 50f;
+				DrawCentered(FontAssets.MouseText.Value, coins, coinsY, color, 1f);
+				subtitleY = Math.Max(subtitleY, coinsY + 28f);
+			}
+
+			DrawCentered(font, subtitle, subtitleY, color * 0.85f, SmallScale);
 			return;
 		}
 

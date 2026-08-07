@@ -24,88 +24,148 @@ UI: {
 
 Configs: {
 	ServerConfig: {
-		DisplayName: Configurazione server
+		DisplayName: Server Config
 
 		Headers: {
-			Teams: Squadre
-			BossFights: Scontri con i boss
-			SharedHealth: Salute condivisa
+			Teams: Teams
+			BossLives: Boss Lives
+			BossBalance: Boss Balance
+			Respawn: Respawn
 		}
 
 		TeamToJoin: {
-			Label: "[i:TeamBlockWhite] Squadra di ingresso"
-			Tooltip: Assegna automaticamente questa squadra all'ingresso nel mondo.
-		}
-
-		BossFightLivesMode: {
-			Label: "[i:LifeCrystal] Modalità vite boss"
-			Tooltip: Per giocatore: vite individuali. Per squadra: un pool di vite condiviso.
-		}
-
-		BossFightLives: {
-			Label: "[i:Tombstone] Vite giocatore"
-			Tooltip: Vite per giocatore contro i boss (1 = nessuna rinascita). Max 5.
-		}
-
-		BossFightTeamLives: {
-			Label: "[i:Tombstone] Vite di squadra"
-			Tooltip: Limite di vite condiviso. 0 = dimensione squadra all'inizio dello scontro. 1–20 = valore fisso.
-			TeamSize: Dimensione squadra
-		}
-
-		RespawnAtTeammateDuringBoss: {
-			Label: "[i:MagicMirror] Rinasci accanto a un alleato contro i boss"
-			Tooltip: Rinasci accanto a un alleato vivo invece che al letto.
-		}
-
-		BossFightStatsEnabled: {
-			Label: "[i:DPSMeter] Statistiche scontro boss"
-			Tooltip: Mostra statistiche danno in tempo reale durante gli scontri con i boss.
-		}
-
-		BossFightDefenseMultiplier: {
-			Label: "[i:EndurancePotion] Difesa negli scontri boss"
-			Tooltip: Frazione della difesa del giocatore applicata durante gli scontri boss. 1,0 = difesa piena; 0,5 = metà. Tutto il danno non-PvP mentre un boss è vivo.
-		}
-
-		SharedHealthEnabled: {
-			Label: "[i:CrossNecklace] Salute di squadra condivisa"
-			Tooltip: La squadra condivide una barra PV. Barra vuota = tutta la squadra muore.
-		}
-
-		SharedHealthBossesOnly: {
-			Label: "[i:SlimeCrown] Solo contro i boss"
-			Tooltip: PV condivisi solo durante gli scontri con i boss.
-		}
-
-		SharedHealthMultiplier: {
-			Label: "[i:LifeFruit] Moltiplicatore PV di squadra"
-			Tooltip: Fraction of combined team max HP (0.5–2, default 0.75).
+			Label: "[i:TeamBlockWhite] Auto-Join Team"
+			Tooltip: Automatically put joining players on this team.
 		}
 
 		UnlimitedTeamTeleport: {
-			Label: "[i:WormholePotion] Teletrasporto di squadra illimitato"
-			Tooltip: Teletrasporto agli alleati cliccando sulla mappa senza Pozioni buco nero.
+			Label: "[i:WormholePotion] Free Teammate Teleport"
+			Tooltip: Map-click to teleport to teammates for free.
 		}
 
 		BlockUnlimitedTeleportDuringBoss: {
-			Label: "[i:PortalGun] Blocca teletrasporti contro i boss"
-			Tooltip: Disattiva il teletrasporto di squadra gratuito mentre un boss è vivo.
+			Label: "[i:PortalGun] Block Free Teleport During Bosses"
+			Tooltip: Disable free teammate teleport during boss fights.
+		}
+
+		SharedHealthEnabled: {
+			Label: "[i:CrossNecklace] Shared Team Health"
+			Tooltip: One shared HP bar for the whole team.
+		}
+
+		SharedHealthBossesOnly: {
+			Label: "[i:SuspiciousLookingEye] Only During Boss Fights"
+			Tooltip: Shared HP only while a boss is alive.
+		}
+
+		SharedHealthMultiplier: {
+			Label: "[i:LifeFruit] Team HP Multiplier"
+			Tooltip: How large the shared HP bar is relative to the team.
+		}
+
+		BossFightStatsEnabled: {
+			Label: "[i:DPSMeter] Allow Boss Stats Feed"
+			Tooltip: Allow the live boss stats overlay (players can still hide it).
+		}
+
+		RespawnBaseSeconds: {
+			Label: "[i:Stopwatch] Respawn Wait (Seconds)"
+			Tooltip: How long you wait to respawn by default.
+		}
+
+		RespawnTimer: {
+			Label: "[i:FastClock] Timer Add-ons"
+			Tooltip: Extra options that change respawn wait in bosses and events.
+		}
+
+		RespawnHealthPercent: {
+			Label: "[i:LifeCrystal] Health on Respawn %"
+			Tooltip: How full your health is when you respawn.
+		}
+
+		RespawnManaPercent: {
+			Label: "[i:ManaCrystal] Mana on Respawn %"
+			Tooltip: How full your mana is when you respawn.
+		}
+
+		RespawnAtTeammateDuringBoss: {
+			Label: "[i:MagicMirror] Respawn Beside Teammate"
+			Tooltip: During bosses, respawn next to the teammate you were watching.
+		}
+
+		BossFightPlayerLivesEnabled: {
+			Label: "[i:HealingPotion] Player Life Limit"
+			Tooltip: Cap how many times each player can die in a boss fight.
+		}
+
+		BossFightLives: {
+			Label: Lives
+			Tooltip: Lives per player before they are locked out of the fight.
+		}
+
+		BossFightTeamLivesEnabled: {
+			Label: "[i:SuperHealingPotion] Team Life Limit"
+			Tooltip: Cap total deaths for the whole team in a boss fight.
+		}
+
+		BossFightTeamLives: {
+			Label: Lives
+			Tooltip: Shared team lives. 0 means one life per teammate at fight start.
+			TeamSize: Team size
+		}
+
+		BossFightDamageMultiplier: {
+			Label: "[i:AvengerEmblem] Damage You Take"
+			Tooltip: How hard bosses hit you. 1 is normal.
+		}
+
+		BossFightDamageDealtMultiplier: {
+			Label: "[i:WarriorEmblem] Damage You Deal"
+			Tooltip: How hard you hit bosses. 1 is normal.
+		}
+
+		BossFightBossHealthMultiplier: {
+			Label: "[i:MechanicalEye] Boss Max Health"
+			Tooltip: Boss health when they spawn. 1 is normal.
 		}
 	}
 
+	RespawnTimerAdjustments: {
+		ExtraSecondsPerPlayer: {
+			Label: "[i:Mannequin] +Sec Per Extra Player"
+			Tooltip: During bosses, add this many seconds for each extra player in the world.
+		}
+
+		BossMultiplier: {
+			Label: "[i:SlimeCrown] Boss Multiplier"
+			Tooltip: Make boss-fight respawns longer or shorter. 1 is unchanged.
+		}
+
+		EventMultiplier: {
+			Label: "[i:BloodMoonStarter] Event Multiplier"
+			Tooltip: Make respawns longer or shorter during events. 1 is unchanged.
+		}
+
+		ExtraSecondsPerBossDeath: {
+			Label: "[i:Tombstone] +Sec Per Boss Death"
+			Tooltip: During the same boss, each death makes your next wait this much longer.
+		}
+
+		// Tooltip: ""
+	}
+
 	ClientConfig: {
-		DisplayName: Configurazione client
-		Headers.Display: Visualizzazione
+		DisplayName: Client Config
+		Headers.Display: Display
 
 		SpectateOnDeath: {
-			Label: "[i:Binoculars] Osserva alla morte"
-			Tooltip: Osserva automaticamente gli alleati dopo la morte.
+			Label: "[i:Binoculars] Spectate When Dead"
+			Tooltip: Auto-spectate teammates after you die.
 		}
 
 		ShowBossFightStats: {
-			Label: "[i:Radar] Mostra statistiche boss"
-			Tooltip: Mostra il feed delle statistiche dello scontro con il boss sullo schermo.
+			Label: "[i:Radar] Show Boss Stats Feed"
+			Tooltip: Show the boss stats overlay (if the server allows it).
 		}
 	}
 
@@ -113,51 +173,32 @@ Configs: {
 		Tooltip: ""
 
 		None: {
-			Label: Nessuna
+			Label: None
 			Tooltip: ""
 		}
 
 		Red: {
-			Label: "[i:RedDye] Rosso"
+			Label: "[i:RedDye] Red"
 			Tooltip: ""
 		}
 
 		Green: {
-			Label: "[i:GreenDye] Verde"
+			Label: "[i:GreenDye] Green"
 			Tooltip: ""
 		}
 
 		Blue: {
-			Label: "[i:BlueDye] Blu"
+			Label: "[i:BlueDye] Blue"
 			Tooltip: ""
 		}
 
 		Yellow: {
-			Label: "[i:YellowDye] Giallo"
+			Label: "[i:YellowDye] Yellow"
 			Tooltip: ""
 		}
 
 		Pink: {
-			Label: "[i:PinkDye] Rosa"
-			Tooltip: ""
-		}
-	}
-
-	BossFightLivesMode: {
-		Tooltip: ""
-
-		Off: {
-			Label: Disattivato
-			Tooltip: ""
-		}
-
-		PerPlayer: {
-			Label: "[i:HealingPotion] Per giocatore"
-			Tooltip: ""
-		}
-
-		PerTeam: {
-			Label: "[i:SuperHealingPotion] Per squadra"
+			Label: "[i:PinkDye] Pink"
 			Tooltip: ""
 		}
 	}

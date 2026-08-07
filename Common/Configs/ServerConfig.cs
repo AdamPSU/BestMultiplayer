@@ -26,7 +26,7 @@ public sealed class ServerConfig : ModConfig
 
 	public static ServerConfig Instance => ModContent.GetInstance<ServerConfig>();
 
-	// --- Teams (join, teleport, shared health) ---
+	// --- Teams (join, teleport, stats) ---
 
 	[Header("Teams")]
 	[BackgroundColor(ConfigUiStyle.RowR, ConfigUiStyle.RowG, ConfigUiStyle.RowB, ConfigUiStyle.RowA)]
@@ -35,12 +35,13 @@ public sealed class ServerConfig : ModConfig
 	public TeamToJoinOption TeamToJoin;
 
 	[BackgroundColor(ConfigUiStyle.RowR, ConfigUiStyle.RowG, ConfigUiStyle.RowB, ConfigUiStyle.RowA)]
+	[ExpandableChildren(nameof(BlockUnlimitedTeleportDuringBoss))]
+	[CustomModConfigItem(typeof(ExpandableToggleElement))]
 	[DefaultValue(true)]
 	public bool UnlimitedTeamTeleport;
 
 	[BackgroundColor(ConfigUiStyle.RowR, ConfigUiStyle.RowG, ConfigUiStyle.RowB, ConfigUiStyle.RowA)]
-	[ConfigGate(nameof(UnlimitedTeamTeleport))]
-	[CustomModConfigItem(typeof(GatedBooleanElement))]
+	[CustomModConfigItem(typeof(NestedChildPlaceholderElement))]
 	[DefaultValue(false)]
 	public bool BlockUnlimitedTeleportDuringBoss;
 
@@ -48,20 +49,23 @@ public sealed class ServerConfig : ModConfig
 	[DefaultValue(true)]
 	public bool BossFightStatsEnabled;
 
+	// --- Modes (shared health, player swap) ---
+
+	[Header("Modes")]
 	[BackgroundColor(ConfigUiStyle.RowR, ConfigUiStyle.RowG, ConfigUiStyle.RowB, ConfigUiStyle.RowA)]
+	[ExpandableChildren(nameof(SharedHealthBossesOnly), nameof(SharedHealthMultiplier))]
+	[CustomModConfigItem(typeof(ExpandableToggleElement))]
 	[DefaultValue(false)]
 	public bool SharedHealthEnabled;
 
 	[BackgroundColor(ConfigUiStyle.RowR, ConfigUiStyle.RowG, ConfigUiStyle.RowB, ConfigUiStyle.RowA)]
-	[ConfigGate(nameof(SharedHealthEnabled))]
-	[CustomModConfigItem(typeof(GatedBooleanElement))]
+	[CustomModConfigItem(typeof(NestedChildPlaceholderElement))]
 	[DefaultValue(false)]
 	public bool SharedHealthBossesOnly;
 
 	/// <summary>Pool max = sum(living max HP) × this when 2+ living. Solo ignores mult. 0.5–2, default 0.75.</summary>
 	[BackgroundColor(ConfigUiStyle.RowR, ConfigUiStyle.RowG, ConfigUiStyle.RowB, ConfigUiStyle.RowA)]
-	[ConfigGate(nameof(SharedHealthEnabled))]
-	[CustomModConfigItem(typeof(GatedFloatElement))]
+	[CustomModConfigItem(typeof(NestedChildPlaceholderElement))]
 	[SliderColor(ConfigUiStyle.SliderR, ConfigUiStyle.SliderG, ConfigUiStyle.SliderB, ConfigUiStyle.SliderA)]
 	[Range(0.5f, 2f)]
 	[Increment(0.05f)]
@@ -70,19 +74,97 @@ public sealed class ServerConfig : ModConfig
 	public float SharedHealthMultiplier;
 
 	[BackgroundColor(ConfigUiStyle.RowR, ConfigUiStyle.RowG, ConfigUiStyle.RowB, ConfigUiStyle.RowA)]
+	[ExpandableChildren(nameof(PlayerSwapIntervalMinutes))]
+	[CustomModConfigItem(typeof(ExpandableToggleElement))]
 	[DefaultValue(false)]
 	public bool PlayerSwapEnabled;
 
 	/// <summary>Minutes between teammate position shuffles. 1–30, default 5.</summary>
 	[BackgroundColor(ConfigUiStyle.RowR, ConfigUiStyle.RowG, ConfigUiStyle.RowB, ConfigUiStyle.RowA)]
-	[ConfigGate(nameof(PlayerSwapEnabled))]
-	[CustomModConfigItem(typeof(GatedIntElement))]
+	[CustomModConfigItem(typeof(NestedChildPlaceholderElement))]
 	[SliderColor(ConfigUiStyle.SliderR, ConfigUiStyle.SliderG, ConfigUiStyle.SliderB, ConfigUiStyle.SliderA)]
 	[Range(1, 30)]
 	[Increment(1)]
 	[DrawTicks]
 	[DefaultValue(5)]
 	public int PlayerSwapIntervalMinutes;
+
+	[BackgroundColor(ConfigUiStyle.RowR, ConfigUiStyle.RowG, ConfigUiStyle.RowB, ConfigUiStyle.RowA)]
+	[ExpandableChildren(nameof(MarkedIntervalSeconds), nameof(MarkedDamageTakenMult), nameof(MarkedDamageDealtMult))]
+	[CustomModConfigItem(typeof(ExpandableToggleElement))]
+	[DefaultValue(false)]
+	public bool MarkedEnabled;
+
+	/// <summary>Seconds between mark rotations during boss fights. 15–120, step 5, default 60.</summary>
+	[BackgroundColor(ConfigUiStyle.RowR, ConfigUiStyle.RowG, ConfigUiStyle.RowB, ConfigUiStyle.RowA)]
+	[CustomModConfigItem(typeof(NestedChildPlaceholderElement))]
+	[SliderColor(ConfigUiStyle.SliderR, ConfigUiStyle.SliderG, ConfigUiStyle.SliderB, ConfigUiStyle.SliderA)]
+	[Range(15, 120)]
+	[Increment(5)]
+	[DrawTicks]
+	[DefaultValue(60)]
+	public int MarkedIntervalSeconds;
+
+	/// <summary>Extra damage-taken mult for the marked player on top of Boss Balance. Default 1.5.</summary>
+	[BackgroundColor(ConfigUiStyle.RowR, ConfigUiStyle.RowG, ConfigUiStyle.RowB, ConfigUiStyle.RowA)]
+	[CustomModConfigItem(typeof(NestedChildPlaceholderElement))]
+	[SliderColor(ConfigUiStyle.SliderR, ConfigUiStyle.SliderG, ConfigUiStyle.SliderB, ConfigUiStyle.SliderA)]
+	[Range(1f, 3f)]
+	[Increment(0.05f)]
+	[DrawTicks]
+	[DefaultValue(1.5f)]
+	public float MarkedDamageTakenMult;
+
+	/// <summary>Extra damage-dealt mult for the marked player on top of Boss Balance. Default 1.15.</summary>
+	[BackgroundColor(ConfigUiStyle.RowR, ConfigUiStyle.RowG, ConfigUiStyle.RowB, ConfigUiStyle.RowA)]
+	[CustomModConfigItem(typeof(NestedChildPlaceholderElement))]
+	[SliderColor(ConfigUiStyle.SliderR, ConfigUiStyle.SliderG, ConfigUiStyle.SliderB, ConfigUiStyle.SliderA)]
+	[Range(1f, 3f)]
+	[Increment(0.05f)]
+	[DrawTicks]
+	[DefaultValue(1.15f)]
+	public float MarkedDamageDealtMult;
+
+	[BackgroundColor(ConfigUiStyle.RowR, ConfigUiStyle.RowG, ConfigUiStyle.RowB, ConfigUiStyle.RowA)]
+	[ExpandableChildren(
+		nameof(HotPotatoBossesOnly),
+		nameof(HotPotatoIntervalSeconds),
+		nameof(HotPotatoSpeedBonusPercent),
+		nameof(HotPotatoTeamOnly))]
+	[CustomModConfigItem(typeof(ExpandableToggleElement))]
+	[DefaultValue(false)]
+	public bool HotPotatoEnabled;
+
+	[BackgroundColor(ConfigUiStyle.RowR, ConfigUiStyle.RowG, ConfigUiStyle.RowB, ConfigUiStyle.RowA)]
+	[CustomModConfigItem(typeof(NestedChildPlaceholderElement))]
+	[DefaultValue(false)]
+	public bool HotPotatoBossesOnly;
+
+	/// <summary>Seconds until potato explodes. 30–300, step 15, default 90.</summary>
+	[BackgroundColor(ConfigUiStyle.RowR, ConfigUiStyle.RowG, ConfigUiStyle.RowB, ConfigUiStyle.RowA)]
+	[CustomModConfigItem(typeof(NestedChildPlaceholderElement))]
+	[SliderColor(ConfigUiStyle.SliderR, ConfigUiStyle.SliderG, ConfigUiStyle.SliderB, ConfigUiStyle.SliderA)]
+	[Range(30, 300)]
+	[Increment(15)]
+	[DrawTicks]
+	[DefaultValue(90)]
+	public int HotPotatoIntervalSeconds;
+
+	/// <summary>Move-speed bonus % for the holder. 0–100, default 25.</summary>
+	[BackgroundColor(ConfigUiStyle.RowR, ConfigUiStyle.RowG, ConfigUiStyle.RowB, ConfigUiStyle.RowA)]
+	[CustomModConfigItem(typeof(NestedChildPlaceholderElement))]
+	[SliderColor(ConfigUiStyle.SliderR, ConfigUiStyle.SliderG, ConfigUiStyle.SliderB, ConfigUiStyle.SliderA)]
+	[Range(0, 100)]
+	[Increment(5)]
+	[DrawTicks]
+	[DefaultValue(25)]
+	public int HotPotatoSpeedBonusPercent;
+
+	/// <summary>When true, only same-team living players are in the pool / pass targets.</summary>
+	[BackgroundColor(ConfigUiStyle.RowR, ConfigUiStyle.RowG, ConfigUiStyle.RowB, ConfigUiStyle.RowA)]
+	[CustomModConfigItem(typeof(NestedChildPlaceholderElement))]
+	[DefaultValue(true)]
+	public bool HotPotatoTeamOnly;
 
 	// --- Boss Lives (player and team limits can both be on; both must allow a respawn) ---
 	// Slider max = Vanilla (off). Lower values = fewer lives.
@@ -194,16 +276,48 @@ public sealed class ServerConfig : ModConfig
 	public override bool AcceptClientChanges(ModConfig pendingConfig, int whoAmI, ref NetworkText message) =>
 		true;
 
+	// Track prior exclusive-mode flags so OnChanged can keep the toggle the user just enabled.
+	private static bool _prevMarkedEnabled;
+	private static bool _prevHotPotatoEnabled;
+
 	public override void OnLoaded()
 	{
 		EnsureRespawnTimer();
 		ClampLivesSliders();
+		EnforceExclusiveChatModes(preferHotPotato: false);
+		_prevMarkedEnabled = MarkedEnabled;
+		_prevHotPotatoEnabled = HotPotatoEnabled;
 	}
 
 	public override void OnChanged()
 	{
 		EnsureRespawnTimer();
 		ClampLivesSliders();
+		EnforceExclusiveChatModes(preferHotPotato: false);
+		_prevMarkedEnabled = MarkedEnabled;
+		_prevHotPotatoEnabled = HotPotatoEnabled;
+	}
+
+	/// <summary>
+	/// Marked and Hot Potato both own an in-place chat line — only one may be on.
+	/// Last-enabled wins when the user toggles; load/migrate with both on drops Hot Potato.
+	/// </summary>
+	internal void EnforceExclusiveChatModes(bool preferHotPotato)
+	{
+		if (!MarkedEnabled || !HotPotatoEnabled)
+			return;
+
+		bool markedJustOn = MarkedEnabled && !_prevMarkedEnabled;
+		bool potatoJustOn = HotPotatoEnabled && !_prevHotPotatoEnabled;
+
+		if (markedJustOn && !potatoJustOn)
+			HotPotatoEnabled = false;
+		else if (potatoJustOn && !markedJustOn)
+			MarkedEnabled = false;
+		else if (preferHotPotato)
+			MarkedEnabled = false;
+		else
+			HotPotatoEnabled = false;
 	}
 
 	internal void EnsureRespawnTimer()
@@ -226,6 +340,12 @@ public sealed class ServerConfig : ModConfig
 
 	internal float ClampedBossHealthMult() =>
 		Utils.Clamp(BossFightBossHealthMultiplier, 0.5f, 3f);
+
+	internal float ClampedMarkedTakenMult() =>
+		Utils.Clamp(MarkedDamageTakenMult, 1f, 3f);
+
+	internal float ClampedMarkedDealtMult() =>
+		Utils.Clamp(MarkedDamageDealtMult, 1f, 3f);
 }
 
 /// <summary>Advanced respawn-timer knobs (collapsed under Respawn).</summary>

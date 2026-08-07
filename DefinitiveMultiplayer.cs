@@ -55,6 +55,22 @@ public sealed class DefinitiveMultiplayer : Mod
 			case Packets.PlayerSwapCountdown:
 				PlayerSwapSystem.HandleCountdownPacket(reader);
 				break;
+
+			case Packets.MarkedState:
+				MarkedSystem.HandleStatePacket(reader);
+				break;
+
+			case Packets.MarkedCountdown:
+				MarkedSystem.HandleCountdownPacket(reader);
+				break;
+
+			case Packets.HotPotatoState:
+				HotPotatoSystem.HandleStatePacket(reader);
+				break;
+
+			case Packets.HotPotatoCountdown:
+				HotPotatoSystem.HandleCountdownPacket(reader);
+				break;
 		}
 	}
 

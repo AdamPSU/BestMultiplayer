@@ -11,7 +11,8 @@ The Definitive Multiplayer Mod: multiplayer QoL for Terraria (tModLoader).
 • Custom death screen
 • Death-only spectate: teammates and bosses (hotkeys + head grid, smooth camera)
 • Live boss fight stats feed (damage dealt/taken, deaths, party HP)
-• Host-only server config; client toggles for spectate and stats
+• Configurable boss-fight defense fraction (how much player defense applies)
+• Server config editable by any player; client toggles for spectate and stats
 
 [c/FFD700:Languages]
 English, German, Italian, French, Spanish, Russian, Simplified Chinese, Brazilian Portuguese, Polish

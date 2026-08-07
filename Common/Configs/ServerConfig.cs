@@ -105,15 +105,15 @@ public sealed class ServerConfig : ModConfig
 	[DefaultValue(false)]
 	public bool SharedHealthBossesOnly;
 
-	/// <summary>Pool max = sum(living max HP) × this. 1–3, default 1.5.</summary>
+	/// <summary>Pool max = sum(living max HP) × this when 2+ living. Solo ignores mult. 0.5–2, default 0.75.</summary>
 	[BackgroundColor(ConfigUiStyle.RowR, ConfigUiStyle.RowG, ConfigUiStyle.RowB, ConfigUiStyle.RowA)]
 	[ConfigGate(nameof(SharedHealthEnabled))]
 	[CustomModConfigItem(typeof(GatedFloatElement))]
 	[SliderColor(ConfigUiStyle.SliderR, ConfigUiStyle.SliderG, ConfigUiStyle.SliderB, ConfigUiStyle.SliderA)]
-	[Range(1f, 3f)]
+	[Range(0.5f, 2f)]
 	[Increment(0.05f)]
 	[DrawTicks]
-	[DefaultValue(1.5f)]
+	[DefaultValue(0.75f)]
 	public float SharedHealthMultiplier;
 
 	// Cloud / dedicated hosts often have no in-game "host" player; allow any client to save.

@@ -80,7 +80,7 @@ Configs: {
 
 		SharedHealthMultiplier: {
 			Label: "[i:LifeFruit] 队伍生命倍率"
-			Tooltip: 共享生命条相对于队伍合计最大生命值的大小。
+			Tooltip: Fraction of combined team max HP (0.5–2, default 0.75).
 		}
 
 		UnlimitedTeamTeleport: {

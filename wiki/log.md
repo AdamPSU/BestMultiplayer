@@ -1,5 +1,10 @@
 Chronological record of ingests, queries, and maintenance passes.
 
+## [2026-08-06] feature | Shared team health v2
+- Event-owned server pool (damage/heal packets + meta seq); no bar-reconcile
+- Solo ignores mult; 2+ → Σ natural × mult, round nearest 5; death freeze; join recomputes
+- Heart UI paint (≤20 hearts); fight feed shows real pool; wipe skips boss lives spend
+
 ## [2026-08-04] feature | Boss fight defense multiplier
 - Server `BossFightDefenseMultiplier` (0.1–1.0, default 1.0): fraction of player defense during boss fights
 - `BossFightDefensePlayer.ModifyHurt` → `ScalingArmorPenetration += 1 - mult` (non-PvP, boss active only)

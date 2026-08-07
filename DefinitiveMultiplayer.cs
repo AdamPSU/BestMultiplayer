@@ -28,16 +28,32 @@ public sealed class DefinitiveMultiplayer : Mod
 					DefinitiveMultiplayerPlayer.HandlePreferredRespawnPacket(whoAmI, raw == 255 ? -1 : raw);
 				break;
 
-			case Packets.SharedHealthPool:
-				SharedHealthSystem.HandlePoolPacket(reader);
-				break;
-
 			case Packets.FightStatsSnapshot:
 				FightStatsSystem.HandleSnapshotPacket(reader);
 				break;
 
 			case Packets.FightStatsDelta:
 				FightStatsSystem.HandleDeltaPacket(reader, whoAmI);
+				break;
+
+			case Packets.SharedHealthMeta:
+				SharedHealthSystem.HandleMetaPacket(reader);
+				break;
+
+			case Packets.SharedHealthPotionSick:
+				SharedHealthSystem.HandlePotionSickRequest(reader, whoAmI);
+				break;
+
+			case Packets.SharedHealthTeamSick:
+				SharedHealthSystem.HandleTeamSickPacket(reader);
+				break;
+
+			case Packets.SharedHealthDamage:
+				SharedHealthSystem.HandleDamagePacket(reader, whoAmI);
+				break;
+
+			case Packets.SharedHealthHeal:
+				SharedHealthSystem.HandleHealPacket(reader, whoAmI);
 				break;
 		}
 	}

@@ -36,7 +36,7 @@ flowchart LR
 | *(always on)* Instant respawn on boss end | — | **Done** | Not configurable; dead players always get `respawnTimer = 0` when the fight ends |
 | `SharedHealthEnabled` | `false` | **Done** | Shared team HP — see [shared team health](shared-boss-health.md) |
 | `SharedHealthBossesOnly` | `false` | **Done** | Limit shared HP to boss fights |
-| `SharedHealthMultiplier` | `1.5` | **Done** | Team HP multiplier — pool max × Σ living max HP (1–3); UI-gated on master |
+| `SharedHealthMultiplier` | `0.75` | **Done** | Team HP multiplier — pool max × Σ living max HP (0.5–2); UI-gated on master |
 | `UnlimitedTeamTeleport` | `true` | **Done** | Virtual wormhole for map team-TP — see [Unlimited team teleport](unlimited-team-teleport.md) |
 | `BlockUnlimitedTeleportDuringBoss` | `false` | **Done** | When true, unlimited rule off during boss/EoW |
 

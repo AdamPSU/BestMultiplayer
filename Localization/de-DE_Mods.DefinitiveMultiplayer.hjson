@@ -80,7 +80,7 @@ Configs: {
 
 		SharedHealthMultiplier: {
 			Label: "[i:LifeFruit] Team-LP-Multiplikator"
-			Tooltip: Größe der geteilten LP-Leiste im Vergleich zur kombinierten Max-LP eures Teams.
+			Tooltip: Fraction of combined team max HP (0.5–2, default 0.75).
 		}
 
 		UnlimitedTeamTeleport: {

@@ -80,7 +80,7 @@ Configs: {
 
 		SharedHealthMultiplier: {
 			Label: "[i:LifeFruit] Multiplicateur de PV d'équipe"
-			Tooltip: Taille de la barre de PV partagée par rapport aux PV max combinés de l'équipe.
+			Tooltip: Fraction of combined team max HP (0.5–2, default 0.75).
 		}
 
 		UnlimitedTeamTeleport: {

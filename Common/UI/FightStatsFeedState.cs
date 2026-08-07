@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using DefinitiveMultiplayer.Common;
 using DefinitiveMultiplayer.Common.Systems;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
@@ -329,6 +330,10 @@ public sealed class FightStatsFeedState : UIState
 				fillColor = Color.White * alpha;
 			}
 		}
+		else if (TrySharedPool(player, out int sharedCur, out int sharedMax))
+		{
+			frac = MathHelper.Clamp(sharedCur / (float)sharedMax, 0f, 1f);
+		}
 		else if (player.statLifeMax2 > 0)
 		{
 			frac = MathHelper.Clamp(player.statLife / (float)player.statLifeMax2, 0f, 1f);
@@ -365,12 +370,25 @@ public sealed class FightStatsFeedState : UIState
 			else
 				label += " (dead)";
 		}
+		else if (TrySharedPool(player, out int sharedCur, out int sharedMax))
+		{
+			label += $" ({sharedCur}/{sharedMax})";
+		}
 		else if (player.statLifeMax2 > 0)
 		{
 			label += $" ({player.statLife}/{player.statLifeMax2})";
 		}
 
 		Main.hoverItemName = label;
+	}
+
+	private static bool TrySharedPool(Player player, out int current, out int max)
+	{
+		current = 0;
+		max = 0;
+		if (!SharedHealthSystem.IsArmed() || !Teams.IsReal(player.team))
+			return false;
+		return SharedHealthSystem.TryGetPool(player.team, out current, out max) && max > 0;
 	}
 
 	/// <summary>Alpha-only scale — keeps RGB (unlike Color * float).</summary>

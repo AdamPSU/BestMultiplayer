@@ -80,7 +80,7 @@ Configs: {
 
 		SharedHealthMultiplier: {
 			Label: "[i:LifeFruit] Множитель ОЗ команды"
-			Tooltip: Размер общей полоски ОЗ относительно суммарного макс. ОЗ команды.
+			Tooltip: Fraction of combined team max HP (0.5–2, default 0.75).
 		}
 
 		UnlimitedTeamTeleport: {

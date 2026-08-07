@@ -80,7 +80,7 @@ Configs: {
 
 		SharedHealthMultiplier: {
 			Label: "[i:LifeFruit] Mnożnik PŻ drużyny"
-			Tooltip: Rozmiar wspólnego paska PŻ względem łącznego maks. PŻ drużyny.
+			Tooltip: Fraction of combined team max HP (0.5–2, default 0.75).
 		}
 
 		UnlimitedTeamTeleport: {

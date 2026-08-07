@@ -80,7 +80,7 @@ Configs: {
 
 		SharedHealthMultiplier: {
 			Label: "[i:LifeFruit] Team HP Multiplier"
-			Tooltip: Size of the shared HP bar vs your team's combined max HP.
+			Tooltip: Fraction of combined team max HP when 2+ teammates (0.5–2, default 0.75). Solo = full personal max.
 		}
 
 		UnlimitedTeamTeleport: {

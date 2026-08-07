@@ -1,45 +1,49 @@
+[img]https://i.imgur.com/W2c5CX6.gif[/img]
+
 [h1]The Definitive Multiplayer Mod[/h1]
-Multiplayer QoL for Terraria on tModLoader. Aimed to replace Better Multiplayer with far more configurable features.
+Multiplayer QoL for Terraria on tModLoader. Built to replace the legacy "Better Multiplayer" mod. EVERYTHING is configurable. 
 
-[h2]Features[/h2]
-[list]
-[*][b]Auto team join[/b]: put joining players on a host-chosen team
-[*][b]Free teammate teleport[/b]: map-click teleport without Wormhole Potions (optional boss block)
-[*][b]Shared team health mode[/b]: one team HP bar, pool multiplier, avg regen, uncapped heart bar
-[*][b]Player swap mode[/b]: every X minutes (default 5), living teammates randomly switch places
-[/list]
+[h2]Teams[/h2]
+[img]https://i.imgur.com/vGxGOqX.png[/img]
+Auto team join puts people on a host-chosen team upon joining. Free teammate teleport lets you map-click to a teammate without burning Wormhole Potions. You can block that during boss fights if you think it's cheaty. 
 
-[list]
-[*][b]Player life limit[/b]: cap how many times each player can die in a fight
-[*][b]Team life limit[/b]: cap total team deaths (stacks with player limit)
-[*][b]Hard lock[/b]: out of lives means you stay dead until the boss ends
-[/list]
+[h2]Modes[/h2]
+[img]https://i.imgur.com/QlZDj4b.jpeg[/img]
+Shared team health gives the party one HP bar. It is the only shared-health option on the workshop that actually works. :) 
 
-[list]
-[*][b]Damage you take / deal[/b]: host sliders, 0.5×–3× (1.0 = normal)
-[*][b]Boss max health[/b]: scale boss HP at spawn, same range
-[/list]
+Player swap shuffles living teammates on a timer (default every 5 minutes). Do with that as you will. 
 
-[list]
-[*][b]Death-only spectate[/b]: teammates and bosses via hotkeys and head grid
-[*][b]Custom death screen[/b]: slain, out of lives, and team wipe copy
-[*][b]Boss stats feed[/b]: party heads, HP, damage dealt/taken, deaths
-[/list]
+Marked picks a living player during boss fights and rotates on an interval. The marked player deals and takes extra damage on top of whatever you set in Boss Balance, with a red glow so everyone can see who has it.
 
-[list]
-[*][b]Respawn wait[/b]: host base seconds instead of vanilla difficulty timers
-[*][b]Timer add-ons[/b]: per-player, boss/event mults, escalate per boss death
-[*][b]Health and mana on respawn[/b]: percent of max when you come back
-[*][b]Respawn beside teammate[/b]: during bosses, next to who you were watching
-[*][b]Instant when the boss ends[/b]: death timers clear as the fight ends
-[/list]
+Hot Potato hands someone a fuse. Pass it by touching another player, or it kills the holder when time runs out. The holder gets a speed bonus. Run it always, or only during bosses.
+
+[h2]Boss Lives[/h2]
+[img]https://i.imgur.com/IjNmHMe.png[/img]
+Player life limit caps how many times each person can die in a fight. Team life limit caps total deaths for the whole team. Once you are out of lives, you stay dead until the boss ends instead of cycling back in.
+
+[h2]Boss Balance[/h2]
+[img]https://i.imgur.com/x4xkwXV.png[/img] 
+Sliders for damage you take and damage you deal, from 0.5x to 3x (1.0 is normal). Boss max health scales the same way when a boss spawns. 
+
+[h2]Spectate and Respawn[/h2]
+[img]https://i.imgur.com/mxQzLjg.png[/img]
+When you die, spectate teammates and bosses instead of staring at dirt. The death screen has separate copy for a normal death, running out of lives, and a full team wipe. The boss stats feed shows party heads, HP, damage dealt and taken, and deaths while you wait.
+
+Respawn wait is a host-set number of seconds, not vanilla difficulty timers. Timer add-ons can scale that per extra player, during bosses or events, and escalate with each death in the fight. Health and mana come back as a percent of max. During bosses you can drop in beside the teammate you were watching, and when the boss ends death timers clear so nobody sits out the loot screen.
 
 [h2]Config[/h2]
-Server Config is editable by any player (handy on cloud/dedicated hosts). Client Config covers spectate and the stats feed.
+Server Config can be edited by any player, which matters on cloud and dedicated hosts where only one person has the real host seat. Mode options nest under each On toggle. Client Config covers spectate and the stats feed.
 
 [h2]Languages[/h2]
-English, German, Italian, French, Spanish, Russian, Simplified Chinese, Brazilian Portuguese, Polish
+English, German, Italian, French, Spanish, Russian, Simplified Chinese, Brazilian Portuguese, Polish.
 
-[h2]Contribute[/h2]
-Looking to add even more features. Bug reports, ideas, and PRs welcome on GitHub (pls star it too):
+[h2]Future Plans[/h2]
+[list]
+[*]More modes
+[*]Disable friendly projectiles
+[*]Better stats UI
+[/list]
+
+[h2]Links[/h2]
+Source and issues on GitHub. Bug reports, ideas, and PRs welcome (star it if you like the mod):
 [url=https://github.com/0xABAN/DefinitiveMultiplayer]github.com/0xABAN/DefinitiveMultiplayer[/url]

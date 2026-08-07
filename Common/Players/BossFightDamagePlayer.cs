@@ -15,11 +15,7 @@ public sealed class BossFightDamagePlayer : ModPlayer
 		if (modifiers.PvP)
 			return;
 
-		if (!BossFightSystem.IsBossFightActive())
-			return;
-
-		float mult = Utils.Clamp(ServerConfig.Instance.BossFightDamageMultiplier, 0.5f, 3f);
-		if (mult == 1f)
+		if (!TryBossMult(ServerConfig.Instance.BossFightDamageMultiplier, out float mult))
 			return;
 
 		modifiers.FinalDamage *= mult;
@@ -27,13 +23,28 @@ public sealed class BossFightDamagePlayer : ModPlayer
 
 	public override void ModifyHitNPC(NPC target, ref NPC.HitModifiers modifiers)
 	{
-		if (!BossFightSystem.IsBossFightActive())
-			return;
-
-		float mult = Utils.Clamp(ServerConfig.Instance.BossFightDamageDealtMultiplier, 0.5f, 3f);
-		if (mult == 1f)
+		if (!TryBossMult(ServerConfig.Instance.BossFightDamageDealtMultiplier, out float mult))
 			return;
 
 		modifiers.FinalDamage *= mult;
+	}
+
+	private static bool TryBossMult(float raw, out float mult)
+	{
+		// Default 1×: skip boss scan entirely.
+		if (raw == 1f)
+		{
+			mult = 1f;
+			return false;
+		}
+
+		if (!BossFightSystem.IsBossFightActive())
+		{
+			mult = 1f;
+			return false;
+		}
+
+		mult = Utils.Clamp(raw, 0.5f, 3f);
+		return mult != 1f;
 	}
 }

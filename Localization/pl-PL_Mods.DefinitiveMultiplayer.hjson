@@ -20,6 +20,8 @@ UI: {
 		OtherTeam: "{0} jest w innej drużynie"
 		Unavailable: Niedostępne
 	}
+
+	PlayerSwap.Countdown: Teleporting players in {0}
 }
 
 Configs: {
@@ -49,7 +51,7 @@ Configs: {
 		}
 
 		SharedHealthEnabled: {
-			Label: "[i:CrossNecklace] Shared Team Health"
+			Label: "[i:CrossNecklace] Shared Team Health Mode"
 			Tooltip: One shared HP bar for the whole team.
 		}
 
@@ -61,6 +63,16 @@ Configs: {
 		SharedHealthMultiplier: {
 			Label: "[i:LifeFruit] Team HP Multiplier"
 			Tooltip: How large the shared HP bar is relative to the team.
+		}
+
+		PlayerSwapEnabled: {
+			Label: "[i:TeleportationPotion] Player Swap Mode"
+			Tooltip: Every so often, living teammates randomly switch places.
+		}
+
+		PlayerSwapIntervalMinutes: {
+			Label: "[i:GoldWatch] Swap Every (Minutes)"
+			Tooltip: How many minutes between teammate position swaps.
 		}
 
 		BossFightStatsEnabled: {
@@ -93,25 +105,17 @@ Configs: {
 			Tooltip: During bosses, respawn next to the teammate you were watching.
 		}
 
-		BossFightPlayerLivesEnabled: {
-			Label: "[i:HealingPotion] Player Life Limit"
-			Tooltip: Cap how many times each player can die in a boss fight.
-		}
-
 		BossFightLives: {
-			Label: Lives
-			Tooltip: Lives per player before they are locked out of the fight.
-		}
-
-		BossFightTeamLivesEnabled: {
-			Label: "[i:SuperHealingPotion] Team Life Limit"
-			Tooltip: Cap total deaths for the whole team in a boss fight.
+			Label: "[i:HealingPotion] Player Life Limit"
+			Tooltip: Lives per player in a boss fight. Vanilla means no limit.
+			Vanilla: Vanilla
 		}
 
 		BossFightTeamLives: {
-			Label: Lives
-			Tooltip: Shared team lives. 0 means one life per teammate at fight start.
+			Label: "[i:SuperHealingPotion] Team Life Limit"
+			Tooltip: Shared team lives in a boss fight. Vanilla means no limit.
 			TeamSize: Team size
+			Vanilla: Vanilla
 		}
 
 		BossFightDamageMultiplier: {

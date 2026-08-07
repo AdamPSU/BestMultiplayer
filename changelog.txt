@@ -1,14 +1,18 @@
 v0.1.5
+- Player swap mode: every X minutes (default 5), living teammates randomly switch places
+- Swap countdown chat (last 5s, in-place gold timer)
+- Boss lives: single Vanilla-max sliders (player default 3, team default Vanilla)
+- Shared Team Health Mode rename; Boss Stats above modes in Teams config
 - Respawn policy (server): base seconds; during bosses +per player +death escalate × boss mult; event mult always
 - Escalating boss death penalty: extra seconds × prior deaths this fight (default off)
 - Health % / mana % on respawn (defaults 100)
 - Replaces vanilla difficulty respawn timers when configured
 - Config UI: clearer sections (Teams, Boss Lives, Boss Balance, Respawn)
 - Shared health listed under Teams; clearer labels, unique icons, plain-language tooltips
-- Boss lives: independent Lives Per Player + Lives Per Team toggles (both can be on; both must allow respawn)
-- Defaults: player lives on (3), team lives off; respawn wait 5s
+- Defaults: player lives 3, team lives Vanilla; respawn wait 5s
 - Timer add-ons defaults: +3s/extra player (boss only), boss mult 1.5×, +3s/boss death; event mult 1×
   (4p boss: ~21s / 25.5s / 30s on 1st–3rd death)
+- Workshop/in-game descriptions updated
 
 v0.1.4
 - Shared health: uncapped pool bar (vanilla fruit-split hearts above 400)

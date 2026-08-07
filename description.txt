@@ -7,7 +7,8 @@ The Definitive Multiplayer Mod: multiplayer QoL for Terraria (tModLoader).
 • Instant respawn when the boss fight ends
 • Unlimited team teleport (map-click, no Wormhole Potion)
 • Optional block free teleport during bosses
-• Shared team health (optional; always on or bosses only; avg team regen; uncapped bar)
+• Shared team health mode (optional; always on or bosses only; avg team regen; uncapped bar)
+• Player swap mode (every X minutes, default 5; living teammates randomly switch places)
 • Custom death screen
 • Death-only spectate: teammates and bosses (hotkeys + head grid, smooth camera)
 • Live boss fight stats feed (damage dealt/taken, deaths, party HP)

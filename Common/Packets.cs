@@ -19,6 +19,8 @@ internal static class Packets
 	internal const byte SharedHealthDamage = 7;
 	/// <summary>Client → server: heal event into shared pool.</summary>
 	internal const byte SharedHealthHeal = 8;
+	/// <summary>Server → clients: player-swap countdown seconds (−1 clears the chat line).</summary>
+	internal const byte PlayerSwapCountdown = 9;
 
 	internal static ModPacket Begin(byte type)
 	{

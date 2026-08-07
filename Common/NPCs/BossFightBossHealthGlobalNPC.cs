@@ -16,7 +16,7 @@ public sealed class BossFightBossHealthGlobalNPC : GlobalNPC
 		if (!BossNpc.IsAnySegment(npc))
 			return;
 
-		float mult = Utils.Clamp(ServerConfig.Instance.BossFightBossHealthMultiplier, 0.5f, 3f);
+		float mult = ServerConfig.Instance.ClampedBossHealthMult();
 		if (mult == 1f)
 			return;
 

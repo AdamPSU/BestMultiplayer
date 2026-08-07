@@ -14,27 +14,26 @@ internal static class RespawnPolicy
 	internal static int ComputeTimerTicks(int bossDeathsBeforeThisDeath)
 	{
 		ServerConfig cfg = ServerConfig.Instance;
-		RespawnTimerAdjustments timer = cfg.RespawnTimer ??= new();
-		timer.Sanitize();
+		RespawnTimerAdjustments timer = cfg.RespawnTimer ?? new();
 		int priorDeaths = Math.Max(0, bossDeathsBeforeThisDeath);
 		bool boss = BossFightSystem.IsBossFightActive();
 
-		// Base always. Party-size and death-escalate only during bosses (co-op boss pacing).
 		double seconds = cfg.RespawnBaseSeconds;
 		if (boss)
 		{
-			seconds += timer.ExtraSecondsPerPlayer * Math.Max(0, CountActivePlayers() - 1);
+			if (timer.ExtraSecondsPerPlayer != 0)
+				seconds += timer.ExtraSecondsPerPlayer * Math.Max(0, NPC.GetActivePlayerCount() - 1);
 			seconds += timer.ExtraSecondsPerBossDeath * priorDeaths;
 			seconds *= timer.BossMultiplier;
 		}
 
-		if (IsEventActive())
+		if (timer.EventMultiplier != 1f && IsEventActive())
 			seconds *= timer.EventMultiplier;
 
 		if (seconds <= 0.0)
 			return 0;
 
-		// Display/UX: whole seconds, rounded up to the next multiple of 5 (e.g. 12 → 15).
+		// Whole seconds, rounded up to the next multiple of 5 (e.g. 12 → 15).
 		int wholeSeconds = Math.Max(1, (int)Math.Ceiling(seconds));
 		int roundedUp = ((wholeSeconds + 4) / 5) * 5;
 		return roundedUp * 60;
@@ -49,26 +48,8 @@ internal static class RespawnPolicy
 		player.statLife = Utils.Clamp(life, 1, lifeMax);
 
 		int manaMax = Math.Max(0, player.statManaMax2);
-		if (manaMax <= 0)
-		{
-			player.statMana = 0;
-			return;
-		}
-
 		int mana = (int)Math.Round(manaMax * (cfg.RespawnManaPercent / 100.0));
 		player.statMana = Utils.Clamp(mana, 0, manaMax);
-	}
-
-	internal static int CountActivePlayers()
-	{
-		int n = 0;
-		for (int i = 0; i < Main.maxPlayers; i++)
-		{
-			if (Main.player[i].active)
-				n++;
-		}
-
-		return n;
 	}
 
 	internal static bool IsEventActive()
@@ -82,9 +63,6 @@ internal static class RespawnPolicy
 		if (DD2Event.Ongoing)
 			return true;
 
-		if (NPC.LunarApocalypseIsUp)
-			return true;
-
-		return false;
+		return NPC.LunarApocalypseIsUp;
 	}
 }

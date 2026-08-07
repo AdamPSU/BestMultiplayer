@@ -51,6 +51,10 @@ public sealed class DefinitiveMultiplayer : Mod
 			case Packets.SharedHealthHeal:
 				SharedHealthSystem.HandleHealPacket(reader, whoAmI);
 				break;
+
+			case Packets.PlayerSwapCountdown:
+				PlayerSwapSystem.HandleCountdownPacket(reader);
+				break;
 		}
 	}
 

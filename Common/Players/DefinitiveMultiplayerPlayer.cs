@@ -20,6 +20,9 @@ public sealed class DefinitiveMultiplayerPlayer : ModPlayer
 	/// <summary>Boss-fight deaths so far this fight (escalating respawn). Cleared when the fight ends.</summary>
 	internal int BossDeathsThisFight;
 
+	/// <summary>Prior deaths used for this death's timer (set in Kill; lives path reapplies with it).</summary>
+	internal int PriorBossDeathsForTimer;
+
 	/// <summary>Set in OnRespawn; applied in PostUpdate after Spawn_SetPosition.</summary>
 	private int _pendingTeammate = -1;
 
@@ -42,11 +45,13 @@ public sealed class DefinitiveMultiplayerPlayer : ModPlayer
 		if (Player.whoAmI == Main.myPlayer)
 			SetPreferredRespawnTarget(-1);
 
-		// Vanilla already set respawnTimer; replace with host policy (all sides — same formula).
-		int priorBossDeaths = boss ? BossDeathsThisFight : 0;
-		Player.respawnTimer = RespawnPolicy.ComputeTimerTicks(priorBossDeaths);
+		PriorBossDeathsForTimer = boss ? BossDeathsThisFight : 0;
 		if (boss)
 			BossDeathsThisFight++;
+
+		// Lives mode applies the policy timer after spend (hard-lock may overwrite until then).
+		if (!(boss && BossFightSystem.IsLivesModeActive()))
+			Player.respawnTimer = RespawnPolicy.ComputeTimerTicks(PriorBossDeathsForTimer);
 	}
 
 	public override void OnRespawn()

@@ -2,7 +2,6 @@ using System;
 using System.Reflection;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
-using ReLogic.Content;
 using Terraria.Audio;
 using Terraria.GameContent.UI.Elements;
 using Terraria.ID;
@@ -18,7 +17,9 @@ namespace DefinitiveMultiplayer.Common.Configs;
 /// </summary>
 public sealed class ExpandableObjectElement : ConfigElement<object>
 {
-	private const float HeaderHeight = 30f;
+	private static readonly MethodInfo GetTotalHeightMethod = typeof(UIList).GetMethod(
+		"GetTotalHeight",
+		BindingFlags.Instance | BindingFlags.Public | BindingFlags.NonPublic);
 
 	private bool _expanded = true;
 	private bool _pending = true;
@@ -34,21 +35,21 @@ public sealed class ExpandableObjectElement : ConfigElement<object>
 		if (expand != null)
 			_expanded = expand.Expand;
 
+		float header = ConfigVisibility.RowHeight;
+
 		_dataList = new UIList();
 		_dataList.Width.Set(-14f, 1f);
 		_dataList.Left.Set(14f, 0f);
-		_dataList.Height.Set(-HeaderHeight, 1f);
-		_dataList.Top.Set(HeaderHeight, 0f);
+		_dataList.Height.Set(-header, 1f);
+		_dataList.Top.Set(header, 0f);
 		_dataList.ListPadding = 5f;
 
-		Asset<Texture2D> tex = _expanded ? ExpandedTexture : CollapsedTexture;
-		_expandButton = new UIImage(tex);
-		// Center on the 30px header band, flush with other right-side controls.
+		_expandButton = new UIImage(CollapsedTexture);
 		_expandButton.Width.Set(22f, 0f);
 		_expandButton.Height.Set(22f, 0f);
 		_expandButton.VAlign = 0f;
 		_expandButton.HAlign = 1f;
-		_expandButton.Top.Set((HeaderHeight - 22f) * 0.5f, 0f);
+		_expandButton.Top.Set((header - 22f) * 0.5f, 0f);
 		// Between stock ObjectElement (-52) and flush-right (-8); aligns with spinner/On cluster.
 		_expandButton.Left.Set(-18f, 0f);
 		_expandButton.OnLeftClick += (_, _) =>
@@ -103,7 +104,6 @@ public sealed class ExpandableObjectElement : ConfigElement<object>
 			    && !Attribute.IsDefined(variable.MemberInfo, typeof(ShowDespiteJsonIgnoreAttribute)))
 				continue;
 
-			// Prefer ConfigManager (public); fall back to UIModConfig via reflection if needed.
 			ConfigManager.WrapIt(_dataList, ref top, variable, data, order++);
 		}
 	}
@@ -112,7 +112,7 @@ public sealed class ExpandableObjectElement : ConfigElement<object>
 	{
 		base.Recalculate();
 
-		float h = HeaderHeight;
+		float h = ConfigVisibility.RowHeight;
 		if (_dataList.Parent != null)
 			h += GetListContentHeight(_dataList) + _dataList.ListPadding;
 
@@ -123,12 +123,8 @@ public sealed class ExpandableObjectElement : ConfigElement<object>
 
 	private static float GetListContentHeight(UIList list)
 	{
-		// UIList.GetTotalHeight is internal on some builds — sum visible children.
-		MethodInfo method = typeof(UIList).GetMethod(
-			"GetTotalHeight",
-			BindingFlags.Instance | BindingFlags.Public | BindingFlags.NonPublic);
-		if (method != null)
-			return Convert.ToSingle(method.Invoke(list, null));
+		if (GetTotalHeightMethod != null)
+			return Convert.ToSingle(GetTotalHeightMethod.Invoke(list, null));
 
 		float total = 0f;
 		foreach (UIElement el in list)

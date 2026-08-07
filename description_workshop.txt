@@ -3,23 +3,43 @@ Multiplayer QoL for Terraria on tModLoader. Aimed to replace Better Multiplayer 
 
 [h2]Features[/h2]
 [list]
-[*][b]Auto team join[/b]: assign a host-chosen team when players join the world
-[*][b]Boss fight lives[/b]: per-player or per-team respawn limit
-[*][b]Death-only spectate[/b]: teammates and bosses via hotkeys and a head grid, with smooth camera
-[*][b]Respawn at spectate target[/b]: during boss fights, respawn next to the teammate you were watching
-[*][b]Instant respawn when the boss ends[/b]: clears death timers
-[*][b]Unlimited team teleport[/b]: map-click teleport to teammates without Wormhole Potions
-[*][b]Shared team health mode[/b]: optional shared HP pool (always on, or bosses only), pool multiplier, average team regen, uncapped vanilla heart bar
-[*][b]Custom death screen[/b]: separate copy for slain, out of lives, and team wipe
-[*][b]Boss fight stats feed[/b]: live party heads, view teammates' HP, damage dealt/taken, deaths
-[*][b]Boss fight damage[/b]: host sliders for damage taken/dealt and boss HP (0.5×–3×, 1.0 = normal)
-[*][b]Respawn timer[/b]: base seconds, extra per player, boss/event scalars, optional escalating seconds per death in the same boss fight
-[*][b]Respawn vitals[/b]: health % and mana % when you come back
+[*][b]Auto team join[/b]: put joining players on a host-chosen team
+[*][b]Free teammate teleport[/b]: map-click teleport without Wormhole Potions (optional boss block)
+[*][b]Shared team health mode[/b]: one team HP bar, pool multiplier, avg regen, uncapped heart bar
+[*][b]Player swap mode[/b]: every X minutes (default 5), living teammates randomly switch places
 [/list]
+
+[list]
+[*][b]Player life limit[/b]: cap how many times each player can die in a fight
+[*][b]Team life limit[/b]: cap total team deaths (stacks with player limit)
+[*][b]Hard lock[/b]: out of lives means you stay dead until the boss ends
+[/list]
+
+[list]
+[*][b]Damage you take / deal[/b]: host sliders, 0.5×–3× (1.0 = normal)
+[*][b]Boss max health[/b]: scale boss HP at spawn, same range
+[/list]
+
+[list]
+[*][b]Death-only spectate[/b]: teammates and bosses via hotkeys and head grid
+[*][b]Custom death screen[/b]: slain, out of lives, and team wipe copy
+[*][b]Boss stats feed[/b]: party heads, HP, damage dealt/taken, deaths
+[/list]
+
+[list]
+[*][b]Respawn wait[/b]: host base seconds instead of vanilla difficulty timers
+[*][b]Timer add-ons[/b]: per-player, boss/event mults, escalate per boss death
+[*][b]Health and mana on respawn[/b]: percent of max when you come back
+[*][b]Respawn beside teammate[/b]: during bosses, next to who you were watching
+[*][b]Instant when the boss ends[/b]: death timers clear as the fight ends
+[/list]
+
+[h2]Config[/h2]
+Server Config is editable by any player (handy on cloud/dedicated hosts). Client Config covers spectate and the stats feed.
 
 [h2]Languages[/h2]
 English, German, Italian, French, Spanish, Russian, Simplified Chinese, Brazilian Portuguese, Polish
 
 [h2]Contribute[/h2]
 Looking to add even more features. Bug reports, ideas, and PRs welcome on GitHub (pls star it too):
-[url=https://github.com/AdamPSU/DefinitiveMultiplayer]github.com/AdamPSU/DefinitiveMultiplayer[/url]
+[url=https://github.com/0xABAN/DefinitiveMultiplayer]github.com/0xABAN/DefinitiveMultiplayer[/url]

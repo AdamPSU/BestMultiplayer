@@ -9,6 +9,8 @@ The Definitive Multiplayer Mod: multiplayer QoL for Terraria (tModLoader).
 • Optional block free teleport during bosses
 • Shared team health mode (optional; always on or bosses only; avg team regen; uncapped bar)
 • Player swap mode (every X minutes, default 5; living teammates randomly switch places)
+• Marked (bosses: rotate living mark; deal/take mults stack on Boss Balance)
+• Hot Potato (always or bosses; touch-pass; fuse kill; holder speed bonus)
 • Custom death screen
 • Death-only spectate: teammates and bosses (hotkeys + head grid, smooth camera)
 • Live boss fight stats feed (damage dealt/taken, deaths, party HP)

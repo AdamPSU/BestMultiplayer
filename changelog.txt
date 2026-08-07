@@ -1,3 +1,10 @@
+v0.1.6
+- Hot Potato mode: touch-pass fuse (30–300s step 15, default 90s); holder +0–100% speed (default 25%); team-only or free-for-all; always or bosses-only; orange FX; live status line "{name} has the potato! {timer}"
+- Marked mode: boss-only living mark rotation (15–120s step 5, default 60s); deal/take mults stack on Boss Balance (1.15/1.5); red glow/outline; last-5s chat countdown
+- Marked and Hot Potato are mutually exclusive (shared chat line)
+- Config UI: mode toggles expand indented children when On (Timer Add-ons style); collapsed gated rows no longer leave gaps
+- Workshop description updated
+
 v0.1.5
 - Player swap mode: every X minutes (default 5), living teammates randomly switch places
 - Swap countdown chat (last 5s, in-place gold timer)

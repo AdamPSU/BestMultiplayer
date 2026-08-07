@@ -37,12 +37,16 @@ Planned work only — **not implemented yet**. Active todo from the 2026-07-31 r
 
 Cherry-pick remaining IR features — **not** full Improved Respawning. Already covered elsewhere: boss lives, respawn-at-spectate-target (boss), instant respawn on boss end.
 
-Candidates still open (confirm when implementing):
+**Done (v0.1.5):**
+
+- Configurable respawn timer (base + per extra player + boss/event scalars)
+- Escalating seconds per death during the same boss fight (default off)
+- HP% / mana% on respawn
+
+Candidates still open:
 
 - Ghost free-move while waiting to respawn
 - Respawn near living teammate outside boss fights (distance + team gates)
-- Configurable respawn timer (boss / non-boss)
-- HP% / mana% on respawn
 - Keep buffs on death (optional multiplier)
 - Freeze respawn timer while hard-locked (lives lock UX)
 - Lives remaining HUD

@@ -43,6 +43,8 @@ Server config edits are allowed from any client (`AcceptClientChanges` always ac
 | Respawn at spectate target (boss deaths) | Done |
 | Instant respawn when boss ends | Done |
 | Boss fight stats feed (live) | Done |
+| Respawn timer policy + boss-death escalate | Done |
+| HP% / mana% on respawn | Done |
 
 ## Build
 

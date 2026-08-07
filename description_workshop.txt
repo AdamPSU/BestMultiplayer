@@ -9,10 +9,12 @@ Multiplayer QoL for Terraria on tModLoader. Aimed to replace Better Multiplayer 
 [*][b]Respawn at spectate target[/b]: during boss fights, respawn next to the teammate you were watching
 [*][b]Instant respawn when the boss ends[/b]: clears death timers
 [*][b]Unlimited team teleport[/b]: map-click teleport to teammates without Wormhole Potions
-[*][b]Shared team health mode[/b]: optional shared HP pool (always on, or bosses only), with a configurable pool multiplier
+[*][b]Shared team health mode[/b]: optional shared HP pool (always on, or bosses only), pool multiplier, average team regen, uncapped vanilla heart bar
 [*][b]Custom death screen[/b]: separate copy for slain, out of lives, and team wipe
 [*][b]Boss fight stats feed[/b]: live party heads, view teammates' HP, damage dealt/taken, deaths
-[*][b]Boss fight defense[/b]: host slider for how much player defense applies during boss fights (1.0 = full)
+[*][b]Boss fight damage[/b]: host sliders for damage taken/dealt and boss HP (0.5×–3×, 1.0 = normal)
+[*][b]Respawn timer[/b]: base seconds, extra per player, boss/event scalars, optional escalating seconds per death in the same boss fight
+[*][b]Respawn vitals[/b]: health % and mana % when you come back
 [/list]
 
 [h2]Languages[/h2]

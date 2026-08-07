@@ -1,5 +1,12 @@
 Chronological record of ingests, queries, and maintenance passes.
 
+## [2026-08-07] feature | Boss fight damage / HP multipliers
+- Damage taken: `BossFightDamageMultiplier` (0.5–3.0, step 0.1, default 1.0)
+- Damage dealt: `BossFightDamageDealtMultiplier` — all hits while fight active
+- Boss HP: `BossFightBossHealthMultiplier` — segment `lifeMax`/`life` at `OnSpawn`
+- `BossFightDamagePlayer` + `BossFightBossHealthGlobalNPC`; loc (9 langs); wiki
+
+
 ## [2026-08-06] feature | Shared team health v2
 - Event-owned server pool (damage/heal packets + meta seq); no bar-reconcile
 - Solo ignores mult; 2+ → Σ natural × mult, round nearest 5; death freeze; join recomputes
@@ -10,6 +17,7 @@ Chronological record of ingests, queries, and maintenance passes.
 - `BossFightDefensePlayer.ModifyHurt` → `ScalingArmorPenetration += 1 - mult` (non-PvP, boss active only)
 - Loc (9 langs), concept wiki page
 - Server config `AcceptClientChanges` always true (cloud/dedicated; no in-game host required)
+- Superseded 2026-08-07 by boss fight damage multiplier
 
 ## [2026-07-31] rebrand | The Definitive Multiplayer Mod
 

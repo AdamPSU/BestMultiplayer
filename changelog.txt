@@ -1,3 +1,22 @@
+v0.1.5
+- Respawn policy (server): base seconds; during bosses +per player +death escalate × boss mult; event mult always
+- Escalating boss death penalty: extra seconds × prior deaths this fight (default off)
+- Health % / mana % on respawn (defaults 100)
+- Replaces vanilla difficulty respawn timers when configured
+- Config UI: clearer sections (Teams, Boss Lives, Boss Balance, Respawn)
+- Shared health listed under Teams; clearer labels, unique icons, plain-language tooltips
+- Boss lives: independent Lives Per Player + Lives Per Team toggles (both can be on; both must allow respawn)
+- Defaults: player lives on (3), team lives off; respawn wait 5s
+- Timer add-ons defaults: +3s/extra player (boss only), boss mult 1.5×, +3s/boss death; event mult 1×
+  (4p boss: ~21s / 25.5s / 30s on 1st–3rd death)
+
+v0.1.4
+- Shared health: uncapped pool bar (vanilla fruit-split hearts above 400)
+- Team average natural regen/DoT on the pool; fix regen capture after UpdateLifeRegen
+- Shared health simplify: cleaner meta/pending paths, feed uses predicted local pool
+- Boss Fight Damage Taken replaces defense fraction: 0.5×–3× (default 1.0, step 0.1)
+- Boss Fight Damage Dealt + Boss HP multipliers (0.5×–3×, step 0.1, default 1.0)
+
 v0.1.3
 - Shared team health v2: event pool, heart UI (≤20), solo full max / team × mult (0.5–2, default 0.75), round nearest 5
 - Boss Fight Defense slider (0.1–1.0, default 1.0): fraction of player defense during boss fights

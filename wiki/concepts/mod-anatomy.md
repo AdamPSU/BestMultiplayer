@@ -44,7 +44,8 @@ Localization/en-US_Mods.DefinitiveMultiplayer.hjson
 | `DefinitiveMultiplayerPlayer` | Team on enter; lives lock; boss-death respawn at spectate target |
 | `SpectatePlayer` (+ keybinds) | Death camera (players + bosses), lerp, hotkeys, section packet |
 | `FightStatsPlayer` / `FightStatsSystem` | Boss-fight dealt/taken/deaths + snapshot packet |
-| `BossFightDefensePlayer` | Boss-fight defense fraction on incoming non-PvP hurts |
+| `BossFightDamagePlayer` | Boss-fight damage taken/dealt multipliers |
+| `BossFightBossHealthGlobalNPC` | Boss-segment HP multiplier at spawn |
 | `FightStatsUISystem` / `FightStatsFeedState` | Layout-M live feed (left of Settings) |
 | `DeathScreenSystem` | Custom death text + MP player/boss head grid |
 | `BossFightSystem` | Boss detect + lives pools |

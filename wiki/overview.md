@@ -10,7 +10,7 @@ This wiki covers **only** The Definitive Multiplayer Mod repository — a Terrar
 ## Key Findings
 
 - **Goal:** better multiplayer QoL than [Better Multiplayer](entities/better-multiplayer-baseline.md) (Workshop `2634682993`, [GitHub](https://github.com/kittenchilly/BetterMultiplayer)).
-- **Implemented:** [TeamToJoin](concepts/team-to-join.md); [Unlimited team teleport](concepts/unlimited-team-teleport.md); [Boss fight lives](concepts/boss-fight-lives.md) (+ teammate respawn); [team spectate](concepts/team-spectate.md); [shared team health](concepts/shared-boss-health.md); [boss fight stats feed](concepts/boss-fight-stats.md); [boss fight defense](concepts/boss-fight-defense.md).
+- **Implemented:** [TeamToJoin](concepts/team-to-join.md); [Unlimited team teleport](concepts/unlimited-team-teleport.md); [Boss fight lives](concepts/boss-fight-lives.md) (+ teammate respawn); [team spectate](concepts/team-spectate.md); [shared team health](concepts/shared-boss-health.md); [boss fight stats feed](concepts/boss-fight-stats.md); [boss fight damage](concepts/boss-fight-damage.md).
 - **Roadmap:** [roadmap](concepts/roadmap.md) — 2026-07-27 planned set complete.
 - **Collection:** [Shared World Map](concepts/collection-addons.md) as primary add-on; [catalog ack](concepts/catalog-ack.md) for the rest.
 - Baseline is tiny (v1.6.3 source): **exactly 3** ServerSide features — see [full inventory](entities/better-multiplayer-baseline.md).
@@ -20,13 +20,14 @@ This wiki covers **only** The Definitive Multiplayer Mod repository — a Terrar
 
 | Area | Pages |
 |---|---|
-| Concepts | [Mod anatomy](concepts/mod-anatomy.md) · [TeamToJoin](concepts/team-to-join.md) · [Unlimited team teleport](concepts/unlimited-team-teleport.md) · [Boss fight lives](concepts/boss-fight-lives.md) · [Shared team health](concepts/shared-boss-health.md) · [Boss fight stats](concepts/boss-fight-stats.md) · [Boss fight defense](concepts/boss-fight-defense.md) · [Team spectate](concepts/team-spectate.md) · [Scaffold conventions](concepts/scaffold-conventions.md) · [Multiplayer config rules](concepts/multiplayer-config-rules.md) |
+| Concepts | [Mod anatomy](concepts/mod-anatomy.md) · [TeamToJoin](concepts/team-to-join.md) · [Unlimited team teleport](concepts/unlimited-team-teleport.md) · [Boss fight lives](concepts/boss-fight-lives.md) · [Shared team health](concepts/shared-boss-health.md) · [Boss fight stats](concepts/boss-fight-stats.md) · [Boss fight damage](concepts/boss-fight-damage.md) · [Team spectate](concepts/team-spectate.md) · [Scaffold conventions](concepts/scaffold-conventions.md) · [Multiplayer config rules](concepts/multiplayer-config-rules.md) |
 | Planning | [Roadmap](concepts/roadmap.md) · [Collection add-ons](concepts/collection-addons.md) · [Catalog acknowledgements](concepts/catalog-ack.md) |
 | Entities | [The Definitive Multiplayer Mod](entities/definitive-multiplayer-mod.md) · [Better Multiplayer baseline](entities/better-multiplayer-baseline.md) · [Build pipeline](entities/build-pipeline.md) |
 
 ## Recent Updates
 
-- 2026-08-04 — Boss fight defense multiplier (0.1–1.0, default 1.0).
+- 2026-08-07 — Boss fight damage multiplier (0.5–3.0, default 1.0); replaces defense fraction.
+- 2026-08-04 — Boss fight defense multiplier (0.1–1.0, default 1.0) — superseded.
 - 2026-07-31 — Boss fight stats feed (layout M, left of Settings).
 - 2026-07-27 — Catalog pass: roadmap + Shared World Map collection + acknowledgements (wiki only).
 - 2026-07-27 — Boss fight lives: PerPlayer/PerTeam budget then BM hard lock; no UX v1.

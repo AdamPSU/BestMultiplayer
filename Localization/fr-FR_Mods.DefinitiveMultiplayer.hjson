@@ -59,7 +59,7 @@ Configs: {
 		}
 
 		BossFightStatsEnabled: {
-			Label: "[i:DPSMeter] Flux de stats de boss"
+			Label: "[i:DPSMeter] Stats de combat de boss"
 			Tooltip: Affiche les stats de dégâts en direct pendant les combats de boss.
 		}
 

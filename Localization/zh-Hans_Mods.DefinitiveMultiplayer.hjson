@@ -59,8 +59,8 @@ Configs: {
 		}
 
 		BossFightStatsEnabled: {
-			Label: "[i:DPSMeter] Boss 战数据面板"
-			Tooltip: 在 Boss 战期间显示实时伤害数据。
+			Label: "[i:DPSMeter] Boss战数据面板"
+			Tooltip: 在Boss战期间显示实时伤害数据。
 		}
 
 		BossFightDefenseMultiplier: {

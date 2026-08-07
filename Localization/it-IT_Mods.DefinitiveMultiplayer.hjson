@@ -59,8 +59,8 @@ Configs: {
 		}
 
 		BossFightStatsEnabled: {
-			Label: "[i:DPSMeter] Feed statistiche boss"
-			Tooltip: Mostra le statistiche di danno in tempo reale durante gli scontri con i boss.
+			Label: "[i:DPSMeter] Statistiche scontro boss"
+			Tooltip: Mostra statistiche danno in tempo reale durante gli scontri con i boss.
 		}
 
 		BossFightDefenseMultiplier: {

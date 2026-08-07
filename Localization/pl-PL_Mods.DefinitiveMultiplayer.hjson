@@ -59,7 +59,7 @@ Configs: {
 		}
 
 		BossFightStatsEnabled: {
-			Label: "[i:DPSMeter] Panel statystyk bossa"
+			Label: "[i:DPSMeter] Statystyki walki z bossem"
 			Tooltip: Pokazuje na żywo statystyki obrażeń podczas walk z bossami.
 		}
 

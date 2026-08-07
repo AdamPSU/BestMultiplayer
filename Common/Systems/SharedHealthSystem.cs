@@ -15,13 +15,12 @@ internal enum SharedHealCause : byte
 {
 	Other = 0,
 	Potion = 1,
-	Heart = 2,
 }
 
 /// <summary>
 /// Per-team shared HP pools (teams 1–5). Server/SP authoritative.
 /// Clients predict via unacked event ids; meta carries poolSeq + ack id.
-/// Bars are projectors only — never sensors. No per-tick PlayerLifeMana.
+/// Bars are projectors only — never sensors.
 /// </summary>
 public sealed class SharedHealthSystem : ModSystem
 {
@@ -30,6 +29,8 @@ public sealed class SharedHealthSystem : ModSystem
 	private const int MaxDamageEvent = 10_000;
 	private const int MaxHealEvent = 500;
 	private const int RecentEventCapacity = 64;
+	/// <summary>Vanilla: lifeRegenCount threshold per 1 HP (≈ lifeRegen/2 HP per second at 60fps).</summary>
+	private const int RegenCountsPerHp = 120;
 
 	private struct Pool
 	{
@@ -37,15 +38,14 @@ public sealed class SharedHealthSystem : ModSystem
 		public int Max;
 		public bool Wiped;
 		public uint Seq;
-		/// <summary>Bitmask of living contributor slots at last max sync.</summary>
 		public int MemberMask;
 	}
 
+	/// <summary>Signed pending delta: damage negative, heal positive.</summary>
 	private struct PendingEvent
 	{
 		public ushort Id;
-		public int Amount;
-		public bool IsHeal;
+		public int Delta;
 	}
 
 	private struct SickJob
@@ -56,26 +56,46 @@ public sealed class SharedHealthSystem : ModSystem
 		public int SkipWho;
 	}
 
+	private struct ClientMirror
+	{
+		public bool Armed;
+		public bool Wiped;
+		public int Team;
+		public int Current;
+		public int Max;
+		public uint Seq;
+
+		public void Clear()
+		{
+			Armed = false;
+			Wiped = false;
+			Team = 0;
+			Current = 0;
+			Max = 0;
+			Seq = 0;
+		}
+	}
+
 	private static readonly Dictionary<int, Pool> Pools = new();
+	/// <summary>Per-team lifeRegen accumulators (vanilla units; index = team 1–5).</summary>
+	private static readonly float[] RegenCounts = new float[Teams.Max + 1];
 	private static readonly List<SickJob> SickJobs = new();
 	private static readonly HashSet<uint>[] RecentEvents = new HashSet<uint>[Main.maxPlayers];
 	private static readonly Queue<uint>[] RecentEventOrder = new Queue<uint>[Main.maxPlayers];
+	private static readonly List<PendingEvent> LocalPending = new();
 
 	private static bool _armed;
 	private static bool _wiping;
+	private static bool _metaDirty;
 	private static int _wipeIgnoreWhoAmI = -1;
 	private static int _heartbeat;
 	private static ushort _nextEventId = 1;
-	/// <summary>Monotonic pool seq — never resets on wipe re-arm (clients drop meta if seq goes backwards).</summary>
 	private static uint _poolSeqCounter;
+	private static ClientMirror _client;
+	private static int _pendingDelta;
 
-	private static uint _lastSeq;
-	private static int _serverCurrent;
-	private static int _serverMax;
-	private static bool _clientArmed;
-	private static bool _clientWiped;
-	private static int _clientTeam;
-	private static readonly List<PendingEvent> LocalPending = new();
+	private static float Multiplier =>
+		Utils.Clamp(ServerConfig.Instance.SharedHealthMultiplier, 0.5f, 2f);
 
 	static SharedHealthSystem()
 	{
@@ -88,13 +108,11 @@ public sealed class SharedHealthSystem : ModSystem
 
 	public static bool IsEnabled() => ServerConfig.Instance.SharedHealthEnabled;
 
-	public static bool IsBossesOnly() => ServerConfig.Instance.SharedHealthBossesOnly;
-
 	public static bool ShouldBeActive() =>
-		IsEnabled() && (!IsBossesOnly() || BossFightSystem.IsBossFightActive());
+		IsEnabled() && (!ServerConfig.Instance.SharedHealthBossesOnly || BossFightSystem.IsBossFightActive());
 
 	public static bool IsArmed() =>
-		Main.netMode == NetmodeID.MultiplayerClient ? _clientArmed : _armed;
+		Main.netMode == NetmodeID.MultiplayerClient ? _client.Armed : _armed;
 
 	public static bool IsLinked(Player player) =>
 		IsArmed()
@@ -106,7 +124,7 @@ public sealed class SharedHealthSystem : ModSystem
 	public static bool IsTeamWiped(int team)
 	{
 		if (Main.netMode == NetmodeID.MultiplayerClient)
-			return _clientArmed && _clientWiped && _clientTeam == team;
+			return _client.Armed && _client.Wiped && _client.Team == team;
 
 		return _armed && Pools.TryGetValue(team, out Pool p) && p.Wiped;
 	}
@@ -118,22 +136,14 @@ public sealed class SharedHealthSystem : ModSystem
 		&& IsTeamWiped(player.team)
 		&& BossFightSystem.IsBossFightActive();
 
-	/// <summary>True when a death should not spend boss-fight lives (shared wipe).</summary>
-	public static bool SuppressLivesSpend(Player player) =>
-		player.active
-		&& Teams.IsReal(player.team)
-		&& (Main.netMode == NetmodeID.MultiplayerClient
-			? _clientArmed && _clientWiped && _clientTeam == player.team
-			: _armed && Pools.TryGetValue(player.team, out Pool pool) && pool.Wiped);
-
 	public static bool TryGetPool(int team, out int current, out int max)
 	{
 		if (Main.netMode == NetmodeID.MultiplayerClient)
 		{
-			if (_clientArmed && _clientTeam == team && _serverMax > 0)
+			if (_client.Armed && _client.Team == team && _client.Max > 0)
 			{
-				current = _serverCurrent;
-				max = _serverMax;
+				current = _client.Current;
+				max = _client.Max;
 				return true;
 			}
 
@@ -154,7 +164,21 @@ public sealed class SharedHealthSystem : ModSystem
 		return false;
 	}
 
-	/// <summary>Bar projector value: server current ± local unacked prediction.</summary>
+	/// <summary>UI pool for a player. Local body uses predicted current.</summary>
+	public static bool TryGetPoolForPlayer(Player player, out int current, out int max)
+	{
+		current = 0;
+		max = 0;
+		if (!IsArmed() || !Teams.IsReal(player.team))
+			return false;
+		if (!TryGetPool(player.team, out current, out max) || max <= 0)
+			return false;
+		if (player.whoAmI == Main.myPlayer)
+			current = GetDisplayCurrent(player.team);
+		return true;
+	}
+
+	/// <summary>Bar projector: server current + local unacked prediction.</summary>
 	public static int GetDisplayCurrent(int team)
 	{
 		if (!TryGetPool(team, out int serverCur, out int max) || max <= 0)
@@ -163,39 +187,18 @@ public sealed class SharedHealthSystem : ModSystem
 		if (Main.netMode != NetmodeID.MultiplayerClient || Main.LocalPlayer.team != team)
 			return Utils.Clamp(serverCur, 0, max);
 
-		int pendingDmg = 0;
-		int pendingHeal = 0;
-		for (int i = 0; i < LocalPending.Count; i++)
-		{
-			PendingEvent e = LocalPending[i];
-			if (e.IsHeal)
-				pendingHeal += e.Amount;
-			else
-				pendingDmg += e.Amount;
-		}
-
-		return Utils.Clamp(serverCur - pendingDmg + pendingHeal, 0, max);
+		return Utils.Clamp(serverCur + _pendingDelta, 0, max);
 	}
 
-	/// <summary>
-	/// Vanilla heart UI values: at most 20 hearts (≤400). Heart count = poolMax/20 (e.g. 365 → 18).
-	/// Fill % matches the real pool so 300/600 paints as 200/400.
-	/// Both statLifeMax and statLifeMax2 must be set to visualMax (see SharedHealthPlayer.ApplyVisualLifePaint).
-	/// </summary>
-	public static void GetVisualLife(int poolCurrent, int poolMax, out int visualCurrent, out int visualMax)
+	public static void PaintLocalBar(Player player, int team)
 	{
-		if (poolMax <= 0)
-		{
-			visualCurrent = 0;
-			visualMax = 20;
+		if (!TryGetPool(team, out int cur, out int max) || max <= 0)
 			return;
-		}
 
-		// 20 HP per heart; never more than 20 hearts (no extra rows / life-fruit tier).
-		int hearts = Utils.Clamp(poolMax / 20, 1, 20);
-		visualMax = hearts * 20;
-		visualCurrent = (int)Math.Round(poolCurrent * (double)visualMax / poolMax);
-		visualCurrent = Utils.Clamp(visualCurrent, 0, visualMax);
+		if (Main.netMode == NetmodeID.MultiplayerClient && player.whoAmI == Main.myPlayer)
+			cur = Utils.Clamp(cur + _pendingDelta, 0, max);
+
+		player.GetModPlayer<SharedHealthPlayer>().ApplyPoolLifePaint(cur, max);
 	}
 
 	public override void PostUpdatePlayers()
@@ -216,6 +219,7 @@ public sealed class SharedHealthSystem : ModSystem
 		else
 			RefreshRosters();
 
+		TickTeamRegen();
 		EnforceWipedTeams();
 		PaintServerMembers();
 		TickSickJobs();
@@ -223,68 +227,56 @@ public sealed class SharedHealthSystem : ModSystem
 		if (++_heartbeat >= HeartbeatTicks)
 		{
 			_heartbeat = 0;
-			if (_armed)
-				BroadcastMetaAll();
+			_metaDirty = true;
 		}
+
+		FlushMeta();
 	}
 
 	public override void ClearWorld() => ResetAll();
 
 	internal static void NotifyDamage(Player victim, int amount)
 	{
-		if (amount <= 0 || !IsLinked(victim))
+		if (amount <= 0 || !IsLinked(victim) || !IsLocalAuthority(victim))
 			return;
 
-		// Clients: predict + packet only. Server never applies from their OnHurt.
+		int capped = Math.Min(amount, MaxDamageEvent);
 		if (Main.netMode == NetmodeID.MultiplayerClient)
 		{
-			if (victim.whoAmI != Main.myPlayer)
-				return;
-
 			ushort id = NextEventId();
-			int capped = Math.Min(amount, MaxDamageEvent);
-			LocalPending.Add(new PendingEvent { Id = id, Amount = capped, IsHeal = false });
+			PushPending(id, -capped);
 			SendDamage(id, capped);
 			return;
 		}
 
-		// Dedicated/remote server copies: owning client sends Damage packet (avoid double-apply).
-		// SP + listen-host local player: apply here (no client packet path).
-		if (Main.netMode == NetmodeID.Server && victim.whoAmI != Main.myPlayer)
-			return;
-
-		ApplyDamage(victim.team, amount, eventId: 0, sender: victim.whoAmI);
+		ApplyDamage(victim.team, capped, eventId: 0, sender: victim.whoAmI);
 	}
 
-	internal static void NotifyHeal(Player healer, int amount, SharedHealCause cause)
+	internal static void NotifyHeal(Player healer, int amount, SharedHealCause cause = SharedHealCause.Other)
 	{
-		if (amount <= 0 || !IsLinked(healer))
+		if (amount <= 0 || !IsLinked(healer) || !IsLocalAuthority(healer))
 			return;
 
+		int capped = Math.Min(amount, MaxHealEvent);
 		if (Main.netMode == NetmodeID.MultiplayerClient)
 		{
-			if (healer.whoAmI != Main.myPlayer)
-				return;
-
 			ushort id = NextEventId();
-			int capped = Math.Min(amount, MaxHealEvent);
-			LocalPending.Add(new PendingEvent { Id = id, Amount = capped, IsHeal = true });
+			PushPending(id, capped);
 			SendHeal(id, capped, cause);
 			return;
 		}
 
-		// Same authority split as damage — remotes use Heal packet only.
-		if (Main.netMode == NetmodeID.Server && healer.whoAmI != Main.myPlayer)
-			return;
-
-		ApplyHeal(healer.team, amount, cause, eventId: 0, sender: healer.whoAmI);
+		ApplyHeal(healer.team, capped, cause, eventId: 0, sender: healer.whoAmI);
 	}
 
-	/// <summary>Client respawn: drop stale prediction so the bar snaps to the shared pool.</summary>
+	/// <summary>SP always; MP only the local body (client or listen-host).</summary>
+	private static bool IsLocalAuthority(Player player) =>
+		Main.netMode == NetmodeID.SinglePlayer || player.whoAmI == Main.myPlayer;
+
 	internal static void NotifyLocalRespawn()
 	{
 		if (Main.netMode == NetmodeID.MultiplayerClient)
-			LocalPending.Clear();
+			ClearPending();
 	}
 
 	internal static void NotifyMemberDeath(Player player)
@@ -296,7 +288,6 @@ public sealed class SharedHealthSystem : ModSystem
 		if (!Pools.TryGetValue(player.team, out Pool pool) || pool.Wiped)
 			return;
 
-		// One-shot / missed PreKill: any real death while pool live wipes the organism.
 		BeginWipe(player.team, player.whoAmI);
 	}
 
@@ -306,14 +297,13 @@ public sealed class SharedHealthSystem : ModSystem
 			return;
 
 		byte flags = reader.ReadByte();
-		bool armed = (flags & 1) != 0;
-		if (!armed)
+		if ((flags & 1) == 0)
 		{
 			DisarmClientOnly();
 			return;
 		}
 
-		_clientArmed = true;
+		_client.Armed = true;
 		int count = reader.ReadByte();
 		int localTeam = Main.LocalPlayer.team;
 		bool sawLocal = false;
@@ -330,20 +320,18 @@ public sealed class SharedHealthSystem : ModSystem
 				continue;
 
 			sawLocal = true;
-			bool wasWiped = _clientWiped;
-			// Accept newer seq, or wipe→live re-arm even if seq ever went backwards.
-			if (seq < _lastSeq && !(wasWiped && !wiped))
+			bool wasWiped = _client.Wiped;
+			if (seq < _client.Seq && !(wasWiped && !wiped))
 				continue;
 
-			if (seq >= _lastSeq)
-				_lastSeq = seq;
-			_serverCurrent = current;
-			_serverMax = max;
-			_clientWiped = wiped;
-			_clientTeam = team;
-			// Wipe or re-arm: drop prediction tied to the previous organism.
+			if (seq >= _client.Seq)
+				_client.Seq = seq;
+			_client.Current = current;
+			_client.Max = max;
+			_client.Wiped = wiped;
+			_client.Team = team;
 			if (wiped || wasWiped)
-				LocalPending.Clear();
+				ClearPending();
 		}
 
 		ushort ack = reader.ReadUInt16();
@@ -352,50 +340,30 @@ public sealed class SharedHealthSystem : ModSystem
 
 		if (!sawLocal && Teams.IsReal(localTeam))
 		{
-			_serverCurrent = 0;
-			_serverMax = 0;
-			_clientWiped = false;
-			_clientTeam = localTeam;
+			_client.Current = 0;
+			_client.Max = 0;
+			_client.Wiped = false;
+			_client.Team = localTeam;
 		}
 	}
 
 	internal static void HandleDamagePacket(BinaryReader reader, int sender)
 	{
-		if (Main.netMode != NetmodeID.Server)
-			return;
-
 		ushort eventId = reader.ReadUInt16();
 		int amount = reader.ReadInt32();
-		if (sender is < 0 or >= Main.maxPlayers)
+		if (!TryGetSenderTeam(sender, out Player p))
 			return;
-
-		Player p = Main.player[sender];
-		if (!p.active || !Teams.IsReal(p.team))
-			return;
-
 		ApplyDamage(p.team, amount, eventId, sender);
 	}
 
 	internal static void HandleHealPacket(BinaryReader reader, int sender)
 	{
-		if (Main.netMode != NetmodeID.Server)
-			return;
-
 		ushort eventId = reader.ReadUInt16();
 		int amount = reader.ReadInt32();
 		SharedHealCause cause = (SharedHealCause)reader.ReadByte();
-		if (sender is < 0 or >= Main.maxPlayers)
+		if (!TryGetSenderTeam(sender, out Player p))
 			return;
-
-		Player p = Main.player[sender];
-		if (!p.active || !Teams.IsReal(p.team))
-			return;
-
 		ApplyHeal(p.team, amount, cause, eventId, sender);
-	}
-
-	internal static void HandlePotionSickRequest(BinaryReader reader, int sender)
-	{
 	}
 
 	internal static void HandleTeamSickPacket(BinaryReader reader)
@@ -412,13 +380,31 @@ public sealed class SharedHealthSystem : ModSystem
 		ApplyTeamSickLocal(team, duration, skipWho);
 	}
 
+	private static bool TryGetSenderTeam(int sender, out Player player)
+	{
+		player = null!;
+		if (Main.netMode != NetmodeID.Server || sender is < 0 or >= Main.maxPlayers)
+			return false;
+
+		player = Main.player[sender];
+		return player.active && Teams.IsReal(player.team);
+	}
+
+	private static bool TryGetLivePool(int team, ushort eventId, int sender, out Pool pool)
+	{
+		pool = default;
+		if (!_armed || !Teams.IsReal(team))
+			return false;
+		if (!Pools.TryGetValue(team, out pool) || pool.Wiped)
+			return false;
+		if (eventId != 0 && !AcceptEvent(sender, eventId))
+			return false;
+		return true;
+	}
+
 	private static void ApplyDamage(int team, int amount, ushort eventId, int sender)
 	{
-		if (!_armed || !Teams.IsReal(team))
-			return;
-		if (!Pools.TryGetValue(team, out Pool pool) || pool.Wiped)
-			return;
-		if (eventId != 0 && !AcceptEvent(sender, eventId))
+		if (!TryGetLivePool(team, eventId, sender, out Pool pool))
 			return;
 
 		amount = Utils.Clamp(amount, 0, MaxDamageEvent);
@@ -432,37 +418,94 @@ public sealed class SharedHealthSystem : ModSystem
 		if (pool.Current <= 0)
 			BeginWipe(team, ignoreWhoAmI: sender, ackPlayer: sender, ackEventId: eventId);
 		else
-			BroadcastMetaAck(sender, eventId);
+			BroadcastMeta(sender, eventId);
 	}
 
 	private static void ApplyHeal(int team, int amount, SharedHealCause cause, ushort eventId, int sender)
 	{
-		if (!_armed || !Teams.IsReal(team))
-			return;
-		if (!Pools.TryGetValue(team, out Pool pool) || pool.Wiped)
-			return;
-		if (eventId != 0 && !AcceptEvent(sender, eventId))
+		if (!TryGetLivePool(team, eventId, sender, out Pool pool))
 			return;
 
 		amount = Utils.Clamp(amount, 0, MaxHealEvent);
-		int room = Math.Max(0, pool.Max - pool.Current);
-		int applied = Math.Min(amount, room);
+		int applied = Math.Min(amount, Math.Max(0, pool.Max - pool.Current));
 		if (applied > 0)
 		{
 			pool.Current += applied;
 			pool.Seq = NextPoolSeq();
 			Pools[team] = pool;
+
+			if (cause == SharedHealCause.Potion)
+				ScheduleTeamSick(team, sender);
 		}
-		else if (eventId != 0)
+
+		// Ack even when applied == 0 so client prediction clears (immediate — not coalesced).
+		BroadcastMeta(sender, eventId);
+	}
+
+	/// <summary>Average lifeRegen of living teammates → one organism rate (120 counts → ±1 HP).</summary>
+	private static void TickTeamRegen()
+	{
+		if (!_armed)
+			return;
+
+		for (int team = Teams.Min; team <= Teams.Max; team++)
 		{
+			if (!Pools.TryGetValue(team, out Pool pool) || pool.Wiped || pool.Max <= 0)
+			{
+				RegenCounts[team] = 0f;
+				continue;
+			}
+
+			int sum = 0;
+			int living = 0;
+			for (int i = 0; i < Main.maxPlayers; i++)
+			{
+				Player p = Main.player[i];
+				if (!IsLivingOnTeam(p, team))
+					continue;
+				sum += p.GetModPlayer<SharedHealthPlayer>().CapturedLifeRegen;
+				living++;
+			}
+
+			if (living <= 0)
+			{
+				RegenCounts[team] = 0f;
+				continue;
+			}
+
+			float avg = sum / (float)living;
+			if (avg == 0f)
+				continue;
+
+			float count = RegenCounts[team] + avg;
+			int before = pool.Current;
+
+			if (count >= RegenCountsPerHp || count <= -RegenCountsPerHp)
+			{
+				int steps = (int)(count / RegenCountsPerHp);
+				count -= steps * RegenCountsPerHp;
+				if (steps > 0)
+					pool.Current = Math.Min(pool.Max, pool.Current + steps);
+				else if (steps < 0)
+					pool.Current = Math.Max(0, pool.Current + steps);
+			}
+
+			RegenCounts[team] = count;
+
+			if (pool.Current == before)
+				continue;
+
+			if (pool.Current <= 0)
+			{
+				Pools[team] = pool;
+				BeginWipe(team, ignoreWhoAmI: -1);
+				continue;
+			}
+
 			pool.Seq = NextPoolSeq();
 			Pools[team] = pool;
+			_metaDirty = true;
 		}
-
-		if (cause == SharedHealCause.Potion && applied > 0)
-			ScheduleTeamSick(team, sender);
-
-		BroadcastMetaAck(sender, eventId);
 	}
 
 	private static void BeginWipe(int team, int ignoreWhoAmI, int ackPlayer = -1, ushort ackEventId = 0)
@@ -475,11 +518,14 @@ public sealed class SharedHealthSystem : ModSystem
 		pool.Seq = NextPoolSeq();
 		Pools[team] = pool;
 
-		// Meta before kills so clients set _clientWiped and do not PreKill-cancel DeathLink.
-		if (ackPlayer >= 0 && ackEventId != 0)
-			BroadcastMetaAck(ackPlayer, ackEventId);
+		// Meta before kills so clients set wiped and do not PreKill-cancel DeathLink.
+		if (ackEventId != 0)
+			BroadcastMeta(ackPlayer, ackEventId);
 		else
-			BroadcastMetaAll();
+		{
+			_metaDirty = false;
+			BroadcastMeta();
+		}
 
 		_wiping = true;
 		int prev = _wipeIgnoreWhoAmI;
@@ -515,9 +561,7 @@ public sealed class SharedHealthSystem : ModSystem
 		for (int i = 0; i < Main.maxPlayers; i++)
 		{
 			Player p = Main.player[i];
-			if (!p.active || p.dead || p.team != team)
-				continue;
-			if (p.whoAmI == _wipeIgnoreWhoAmI)
+			if (!IsLivingOnTeam(p, team) || p.whoAmI == _wipeIgnoreWhoAmI)
 				continue;
 
 			if (hardLock)
@@ -534,97 +578,90 @@ public sealed class SharedHealthSystem : ModSystem
 	{
 		_armed = true;
 		_heartbeat = 0;
-		float mult = Utils.Clamp(ServerConfig.Instance.SharedHealthMultiplier, 0.5f, 2f);
+		float mult = Multiplier;
 
 		for (int team = Teams.Min; team <= Teams.Max; team++)
 			TryArmTeam(team, mult, includeDeadContributors: false);
 
-		// Rosters may still be settling the same tick; sync max immediately.
-		for (int team = Teams.Min; team <= Teams.Max; team++)
-			SyncTeamMax(team, mult);
-
-		BroadcastMetaAll();
+		_metaDirty = true;
 	}
 
 	private static void RefreshRosters()
 	{
-		float mult = Utils.Clamp(ServerConfig.Instance.SharedHealthMultiplier, 0.5f, 2f);
-		bool changed = false;
+		float mult = Multiplier;
 		for (int team = Teams.Min; team <= Teams.Max; team++)
 		{
 			if (Pools.TryGetValue(team, out Pool existing))
 			{
 				if (existing.Wiped)
 				{
-					// Outside boss: first living respawn re-arms. Count dead teammates so duo
-					// stays at shared max (600) instead of snapping to solo natural.
-					if (!BossFightSystem.IsBossFightActive() && HasLivingMember(team))
+					// Outside boss: first living respawn re-arms. Count dead so duo keeps shared max.
+					if (!BossFightSystem.IsBossFightActive()
+					    && SumNaturalMax(team, out _, out int living, out _, includeDead: false) > 0
+					    && living > 0)
 					{
 						Pools.Remove(team);
 						if (TryArmTeam(team, mult, includeDeadContributors: true))
-							changed = true;
+							_metaDirty = true;
 					}
 
 					continue;
 				}
 
 				if (SyncTeamMax(team, mult))
-					changed = true;
+					_metaDirty = true;
 				continue;
 			}
 
 			if (TryArmTeam(team, mult, includeDeadContributors: false))
-				changed = true;
+				_metaDirty = true;
 		}
-
-		if (changed)
-			BroadcastMetaAll();
 	}
 
-	/// <summary>Returns true if a new pool was created.</summary>
 	private static bool TryArmTeam(int team, float mult, bool includeDeadContributors)
 	{
 		if (Pools.ContainsKey(team))
 			return false;
-		if (!HasLivingMember(team))
-			return false;
 
-		int sum = SumNaturalMax(team, out int mask, out int contributors, includeDeadContributors);
+		int sum = SumNaturalMax(team, out int mask, out int contributors, out _, includeDeadContributors);
 		if (sum <= 0 || contributors <= 0)
 			return false;
 
-		// Solo: full natural max (no mult). 2+: round(Σ natural × mult) e.g. (400+400)×0.75 = 600
+		// Dead-inclusive arm still needs at least one living body.
+		if (includeDeadContributors
+		    && (SumNaturalMax(team, out _, out int living, out _, includeDead: false) <= 0 || living <= 0))
+			return false;
+
 		int max = ComputePoolMax(sum, contributors, mult);
 		Pools[team] = new Pool
 		{
 			Current = max,
 			Max = max,
 			Wiped = false,
-			// Must advance global seq — re-arm after wipe must not reuse Seq=1 (clients ignore older seq).
 			Seq = NextPoolSeq(),
 			MemberMask = mask,
 		};
+		if (team >= 0 && team < RegenCounts.Length)
+			RegenCounts[team] = 0f;
 		return true;
 	}
 
 	/// <summary>
-	/// Keep Max = formula(living roster). Solo = full natural; 2+ = sum × mult.
-	/// Death does not shrink Max (organism stays sized). Join/leave/respawn recomputes —
-	/// so solo 400 + join 100 at 0.75 becomes 375, not stuck at 400.
+	/// Max = formula(living roster). Solo = full natural; 2+ = sum × mult.
+	/// Death freezes shrink; join/leave recomputes (solo 400 + join 100 @ 0.75 → 375).
 	/// </summary>
 	private static bool SyncTeamMax(int team, float mult)
 	{
 		if (!Pools.TryGetValue(team, out Pool pool) || pool.Wiped)
 			return false;
 
-		int sum = SumNaturalMax(team, out int mask, out int living, includeDead: false);
+		int sum = SumNaturalMax(team, out int mask, out int living, out bool hasDead, includeDead: false);
 		if (sum <= 0 || living <= 0)
 			return false;
 
 		int newMax = ComputePoolMax(sum, living, mult);
 
-		// Mid-fight death: keep Max/Current until wipe or roster truly changes without dead.
-		if (newMax < pool.Max && HasActiveDeadTeammate(team))
+		if (newMax < pool.Max && hasDead)
 		{
 			pool.MemberMask = mask;
 			Pools[team] = pool;
@@ -637,9 +674,7 @@ public sealed class SharedHealthSystem : ModSystem
 		int newCurrent = pool.Max > 0
 			? (int)Math.Round(pool.Current * (double)newMax / pool.Max)
 			: newMax;
-		newCurrent = Utils.Clamp(newCurrent, 0, newMax);
-
-		pool.Current = newCurrent;
+		pool.Current = Utils.Clamp(newCurrent, 0, newMax);
 		pool.Max = newMax;
 		pool.MemberMask = mask;
 		pool.Seq = NextPoolSeq();
@@ -647,45 +682,40 @@ public sealed class SharedHealthSystem : ModSystem
 		return true;
 	}
 
-	private static bool HasActiveDeadTeammate(int team)
-	{
-		for (int i = 0; i < Main.maxPlayers; i++)
-		{
-			Player p = Main.player[i];
-			if (p.active && p.dead && p.team == team)
-				return true;
-		}
-
-		return false;
-	}
-
 	private static uint NextPoolSeq() => ++_poolSeqCounter;
 
-	/// <summary>Solo living member → natural sum (mult ignored). 2+ → sum × mult, nearest multiple of 5.</summary>
+	/// <summary>Solo → natural (nearest 5). 2+ → sum × mult, nearest 5. Min 5.</summary>
 	private static int ComputePoolMax(int sumNatural, int livingCount, float mult)
 	{
 		if (sumNatural <= 0)
 			return 5;
-		if (livingCount <= 1)
-			return Math.Max(5, RoundToNearest5(sumNatural));
-		return Math.Max(5, RoundToNearest5((int)Math.Round(sumNatural * (double)mult)));
+		int raw = livingCount <= 1
+			? sumNatural
+			: (int)Math.Round(sumNatural * (double)mult);
+		return Math.Max(5, RoundToNearest5(raw));
 	}
 
 	private static int RoundToNearest5(int value) =>
 		(int)(Math.Round(value / 5.0) * 5);
 
-	private static int SumNaturalMax(int team, out int mask, out int contributorCount, bool includeDead)
+	private static int SumNaturalMax(int team, out int mask, out int contributorCount, out bool hasDead,
+		bool includeDead)
 	{
 		int sum = 0;
 		mask = 0;
 		contributorCount = 0;
+		hasDead = false;
 		for (int i = 0; i < Main.maxPlayers; i++)
 		{
 			Player p = Main.player[i];
 			if (!p.active || p.team != team)
 				continue;
-			if (p.dead && !includeDead)
-				continue;
+			if (p.dead)
+			{
+				hasDead = true;
+				if (!includeDead)
+					continue;
+			}
 
 			mask |= 1 << i;
 			contributorCount++;
@@ -695,27 +725,16 @@ public sealed class SharedHealthSystem : ModSystem
 		return sum;
 	}
 
-	/// <summary>True gear max — never the painted pool bar.</summary>
 	private static int GetNaturalMax(Player p)
 	{
-		SharedHealthPlayer sp = p.GetModPlayer<SharedHealthPlayer>();
-		if (sp.HasNatural && sp.NaturalMax > 0)
-			return sp.NaturalMax;
-		// Pre-snapshot fallback: base life crystals (statLifeMax2 may already be painted this tick).
+		int n = p.GetModPlayer<SharedHealthPlayer>().NaturalMax;
+		if (n > 0)
+			return n;
 		return Math.Max(1, p.statLifeMax);
 	}
 
-	private static bool HasLivingMember(int team)
-	{
-		for (int i = 0; i < Main.maxPlayers; i++)
-		{
-			Player p = Main.player[i];
-			if (p.active && !p.dead && p.team == team)
-				return true;
-		}
-
-		return false;
-	}
+	private static bool IsLivingOnTeam(Player p, int team) =>
+		p.active && !p.dead && p.team == team;
 
 	private static void DisarmAll()
 	{
@@ -726,10 +745,10 @@ public sealed class SharedHealthSystem : ModSystem
 				continue;
 
 			SharedHealthPlayer sp = p.GetModPlayer<SharedHealthPlayer>();
-			if (!sp.HasNatural)
+			if (sp.NaturalMax <= 0)
 				continue;
 
-			int restoreMax = Math.Max(1, sp.NaturalMax > 0 ? sp.NaturalMax : p.statLifeMax);
+			int restoreMax = Math.Max(1, sp.NaturalMax);
 			int life = p.statLife;
 			if (Teams.IsReal(p.team) && Pools.TryGetValue(p.team, out Pool pool) && pool.Max > 0 && !p.dead)
 				life = (int)Math.Round(restoreMax * (double)pool.Current / pool.Max);
@@ -757,13 +776,8 @@ public sealed class SharedHealthSystem : ModSystem
 
 	private static void DisarmClientOnly()
 	{
-		_clientArmed = false;
-		_clientWiped = false;
-		_serverCurrent = 0;
-		_serverMax = 0;
-		_lastSeq = 0;
-		_clientTeam = 0;
-		LocalPending.Clear();
+		_client.Clear();
+		ClearPending();
 		if (Main.LocalPlayer.active)
 			Main.LocalPlayer.GetModPlayer<SharedHealthPlayer>().ClearNatural();
 	}
@@ -783,11 +797,12 @@ public sealed class SharedHealthSystem : ModSystem
 	private static void ResetPoolState()
 	{
 		Pools.Clear();
+		Array.Clear(RegenCounts);
 		_armed = false;
 		_wiping = false;
+		_metaDirty = false;
 		_heartbeat = 0;
 		_wipeIgnoreWhoAmI = -1;
-		// Clients reset _lastSeq on disarm meta / ClearWorld; counter may restart with them.
 		_poolSeqCounter = 0;
 	}
 
@@ -804,19 +819,11 @@ public sealed class SharedHealthSystem : ModSystem
 			if (!Pools.TryGetValue(p.team, out Pool pool) || pool.Wiped || pool.Max <= 0)
 				continue;
 
-			// NaturalMax is snapshotted in PostUpdateEquips (pre-paint). Do not capture here.
-			// Local UI (SP / listen host): visual heart count. Remotes: real pool for sim.
-			bool localUi = Main.netMode == NetmodeID.SinglePlayer || p.whoAmI == Main.myPlayer;
-			if (localUi)
-			{
-				GetVisualLife(pool.Current, pool.Max, out int vCur, out int vMax);
-				p.GetModPlayer<SharedHealthPlayer>().ApplyVisualLifePaint(vCur, vMax);
-			}
-			else
-			{
-				p.statLifeMax2 = pool.Max;
-				p.statLife = Utils.Clamp(pool.Current, 0, pool.Max);
-			}
+			// Same fruit-split paint for local UI and remote sim copies.
+			int cur = Main.netMode == NetmodeID.SinglePlayer || p.whoAmI == Main.myPlayer
+				? GetDisplayCurrent(p.team)
+				: pool.Current;
+			p.GetModPlayer<SharedHealthPlayer>().ApplyPoolLifePaint(cur, pool.Max);
 		}
 	}
 
@@ -869,7 +876,7 @@ public sealed class SharedHealthSystem : ModSystem
 			if (i == skipWho)
 				continue;
 			Player p = Main.player[i];
-			if (!p.active || p.dead || p.team != team)
+			if (!IsLivingOnTeam(p, team))
 				continue;
 			if (Main.netMode == NetmodeID.MultiplayerClient && p.whoAmI != Main.myPlayer)
 				continue;
@@ -887,19 +894,15 @@ public sealed class SharedHealthSystem : ModSystem
 		packet.Send();
 	}
 
-	private static void BroadcastMetaAll()
+	private static void FlushMeta()
 	{
-		if (Main.netMode != NetmodeID.Server)
+		if (!_metaDirty)
 			return;
-
-		for (int target = 0; target < Main.maxPlayers; target++)
-		{
-			if (Main.player[target].active)
-				SendMetaTo(target, ackEventId: 0);
-		}
+		_metaDirty = false;
+		BroadcastMeta();
 	}
 
-	private static void BroadcastMetaAck(int ackPlayer, ushort ackEventId)
+	private static void BroadcastMeta(int ackPlayer = -1, ushort ackEventId = 0)
 	{
 		if (Main.netMode != NetmodeID.Server)
 			return;
@@ -918,9 +921,11 @@ public sealed class SharedHealthSystem : ModSystem
 		if (Main.netMode != NetmodeID.Server)
 			return;
 
-		ModPacket packet = Packets.Begin(Packets.SharedHealthMeta);
-		packet.Write((byte)0);
-		packet.Send();
+		for (int target = 0; target < Main.maxPlayers; target++)
+		{
+			if (Main.player[target].active)
+				SendMetaTo(target, ackEventId: 0);
+		}
 	}
 
 	private static void SendMetaTo(int toClient, ushort ackEventId)
@@ -973,6 +978,18 @@ public sealed class SharedHealthSystem : ModSystem
 		return id;
 	}
 
+	private static void PushPending(ushort id, int delta)
+	{
+		LocalPending.Add(new PendingEvent { Id = id, Delta = delta });
+		_pendingDelta += delta;
+	}
+
+	private static void ClearPending()
+	{
+		LocalPending.Clear();
+		_pendingDelta = 0;
+	}
+
 	private static bool AcceptEvent(int sender, ushort eventId)
 	{
 		if (sender is < 0 or >= Main.maxPlayers || eventId == 0)
@@ -998,8 +1015,10 @@ public sealed class SharedHealthSystem : ModSystem
 	{
 		for (int i = LocalPending.Count - 1; i >= 0; i--)
 		{
-			if (LocalPending[i].Id == ack || PendingIdLessOrEqual(LocalPending[i].Id, ack))
-				LocalPending.RemoveAt(i);
+			if (!PendingIdLessOrEqual(LocalPending[i].Id, ack))
+				continue;
+			_pendingDelta -= LocalPending[i].Delta;
+			LocalPending.RemoveAt(i);
 		}
 	}
 
@@ -1007,7 +1026,6 @@ public sealed class SharedHealthSystem : ModSystem
 	{
 		if (id == ack)
 			return true;
-		ushort forward = (ushort)(ack - id);
-		return forward < 32768;
+		return (ushort)(ack - id) < 32768;
 	}
 }

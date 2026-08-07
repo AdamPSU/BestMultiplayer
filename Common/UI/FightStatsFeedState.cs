@@ -1,6 +1,5 @@
 using System;
 using System.Collections.Generic;
-using DefinitiveMultiplayer.Common;
 using DefinitiveMultiplayer.Common.Systems;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
@@ -382,14 +381,8 @@ public sealed class FightStatsFeedState : UIState
 		Main.hoverItemName = label;
 	}
 
-	private static bool TrySharedPool(Player player, out int current, out int max)
-	{
-		current = 0;
-		max = 0;
-		if (!SharedHealthSystem.IsArmed() || !Teams.IsReal(player.team))
-			return false;
-		return SharedHealthSystem.TryGetPool(player.team, out current, out max) && max > 0;
-	}
+	private static bool TrySharedPool(Player player, out int current, out int max) =>
+		SharedHealthSystem.TryGetPoolForPlayer(player, out current, out max); // predicted for local
 
 	/// <summary>Alpha-only scale — keeps RGB (unlike Color * float).</summary>
 	private static Color WithAlpha(Color c, float a) =>

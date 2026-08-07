@@ -22,8 +22,8 @@ Challenge mode (**off by default**). Teamed players (1–5) share one absolute H
 - **Pool moves only via events:** `OnHurt` damage; potion consume / heart pickup heals. No min/max-of-bars sensing.
 - **Clients** send idempotent damage/heal packets (`eventId`); server acks via meta. Display = `clamp(server − unackedDmg + unackedHeal, 0, Max)`.
 - **Paint:** client paints **local** bar only; server paints living members for sim. No per-tick `PlayerLifeMana`.
-- **Hearts UI:** visual max = `min(20, poolMax/20) × 20` (never extra rows past 400). Fill % = real pool (`cur×visualMax/poolMax`). Hover/feed still show real pool cur/max.
-- **Regen:** `lifeRegen` zeroed while linked (potions/hearts are the heal path).
+- **Bar UI:** true pool current + max2; `statLifeMax = min(400, poolMax)` so vanilla fruit-split hearts deplete above 400. No custom overlay.
+- **Regen:** personal `lifeRegen` captured then zeroed; server applies **average** of living teammates once to the pool (vanilla 120-count → 1 HP). DoT included. Potions/hearts still event heals.
 - **Hearts:** heal pool, no team potion sickness.
 - **Potions:** heal pool; drinker vanilla sick; other living teammates get sick ~1s later **iff** server applied heal &gt; 0.
 - **Wipe:** `Current ≤ 0` → DeathLink; boss active → hard-lock (`RespawnGate.SharedHealthWipe`), **no boss-life spend**. Outside boss → normal respawn and re-arm.

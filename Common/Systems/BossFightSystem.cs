@@ -207,7 +207,7 @@ public sealed class BossFightSystem : ModSystem
 			return;
 
 		// Shared-health wipe deaths do not spend boss lives and stay hard-locked.
-		if (SharedHealthSystem.SuppressLivesSpend(player))
+		if (player.active && Teams.IsReal(player.team) && SharedHealthSystem.IsTeamWiped(player.team))
 		{
 			player.GetModPlayer<DefinitiveMultiplayerPlayer>().RespawnAllowedThisDeath = false;
 			return;

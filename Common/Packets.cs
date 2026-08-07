@@ -12,8 +12,7 @@ internal static class Packets
 	internal const byte FightStatsSnapshot = 3;
 	/// <summary>Client → server: dealt/taken delta (OnHitNPC/OnHurt are client-local only).</summary>
 	internal const byte FightStatsDelta = 4;
-	/// <summary>Client → server: potion used (team sick scheduled server-side with heal).</summary>
-	internal const byte SharedHealthPotionSick = 5;
+	// 5 reserved (removed unused SharedHealthPotionSick)
 	/// <summary>Server → clients: apply potion sickness to living team members.</summary>
 	internal const byte SharedHealthTeamSick = 6;
 	/// <summary>Client → server: damage event against shared pool.</summary>

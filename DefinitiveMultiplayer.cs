@@ -40,10 +40,6 @@ public sealed class DefinitiveMultiplayer : Mod
 				SharedHealthSystem.HandleMetaPacket(reader);
 				break;
 
-			case Packets.SharedHealthPotionSick:
-				SharedHealthSystem.HandlePotionSickRequest(reader, whoAmI);
-				break;
-
 			case Packets.SharedHealthTeamSick:
 				SharedHealthSystem.HandleTeamSickPacket(reader);
 				break;

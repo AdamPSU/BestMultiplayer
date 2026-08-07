@@ -24,7 +24,7 @@ public enum BossFightLivesMode
 }
 
 /// <summary>
-/// Shared multiplayer policy. Synced from the server; only the host may change it in-session.
+/// Shared multiplayer policy. Synced from the server; any client may save changes in-session.
 /// </summary>
 [BackgroundColor(ConfigUiStyle.PanelR, ConfigUiStyle.PanelG, ConfigUiStyle.PanelB, ConfigUiStyle.PanelA)]
 public sealed class ServerConfig : ModConfig
@@ -107,14 +107,7 @@ public sealed class ServerConfig : ModConfig
 	[DefaultValue(1.5f)]
 	public float SharedHealthMultiplier;
 
-	public override bool AcceptClientChanges(ModConfig pendingConfig, int whoAmI, ref NetworkText message)
-	{
-		if (!NetMessage.DoesPlayerSlotCountAsAHost(whoAmI))
-		{
-			message = NetworkText.FromKey("tModLoader.ModConfigRejectChangesNotHost");
-			return false;
-		}
-
-		return true;
-	}
+	// Cloud / dedicated hosts often have no in-game "host" player; allow any client to save.
+	public override bool AcceptClientChanges(ModConfig pendingConfig, int whoAmI, ref NetworkText message) =>
+		true;
 }

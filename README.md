@@ -29,7 +29,7 @@ wiki/                           design notes
 | Spectate prefs | `ClientConfig` | SpectatePlayer / death UI |
 | Custom packets | — | section load + preferred respawn target |
 
-Server config edits are host-only (`AcceptClientChanges`).
+Server config edits are allowed from any client (`AcceptClientChanges` always accepts) so cloud/dedicated hosts work without an in-game host.
 
 ## Status
 

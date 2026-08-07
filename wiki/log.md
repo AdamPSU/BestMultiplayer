@@ -1,5 +1,8 @@
 Chronological record of ingests, queries, and maintenance passes.
 
+## [2026-08-04] fix | Server config editable by any client
+- `AcceptClientChanges` always true (cloud/dedicated; no in-game host required)
+
 ## [2026-07-31] rebrand | The Definitive Multiplayer Mod
 
 - Internal slug: `DefinitiveMultiplayer` (was `BestMultiplayer`)

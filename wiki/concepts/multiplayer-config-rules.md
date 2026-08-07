@@ -1,6 +1,6 @@
 ---
 title: Multiplayer Config Rules
-description: Client vs server config scope, host-only edits, and when custom packets are allowed.
+description: Client vs server config scope, who may edit server config, and when custom packets are allowed.
 date: 2026-07-27
 tags: [multiplayer, networking, config, tmodloader]
 ---
@@ -11,7 +11,7 @@ Implemented as two `ModConfig` classes.[^1]
 |---|---|---|
 | Client presentation prefs | `ConfigScope.ClientSide` | `ClientConfig` |
 | Shared gameplay / server policy | `ConfigScope.ServerSide` | `ServerConfig` |
-| Who may edit server config in MP | Host only (`AcceptClientChanges`) | `ServerConfig` |
+| Who may edit server config in MP | Any client (`AcceptClientChanges` → true; cloud/dedicated friendly) | `ServerConfig` |
 | Custom network packets | Only for runtime state tModLoader does not already sync | — |
 | Load side | `side = Both` in `build.txt`[^2] | — |
 

@@ -12,7 +12,7 @@ Host-chosen team assigned **once** when a player enters the world. Players may c
 | | |
 |---|---|
 | Field | `ServerConfig.TeamToJoin` |
-| Scope | ServerSide (host-only edits) |
+| Scope | ServerSide (any client may edit) |
 | Options | `None`, `Red`, `Green`, `Blue`, `Yellow`, `Pink` |
 | Default | `Red` |
 | Off | `None` |

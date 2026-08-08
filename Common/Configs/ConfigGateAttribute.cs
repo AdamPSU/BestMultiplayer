@@ -39,6 +39,10 @@ internal static class ConfigVisibility
 	private static readonly Dictionary<MemberInfo, ConfigGateAttribute> GateCache = new();
 	private static readonly Dictionary<(Type, string), MemberInfo> MemberCache = new();
 
+	private static readonly MethodInfo GetTotalHeightMethod = typeof(UIList).GetMethod(
+		"GetTotalHeight",
+		BindingFlags.Instance | BindingFlags.Public | BindingFlags.NonPublic);
+
 	/// <summary>Prevents container.Recalculate → child.Recalculate → container.Recalculate loops.</summary>
 	private static int _syncDepth;
 
@@ -61,25 +65,23 @@ internal static class ConfigVisibility
 	}
 
 	/// <summary>Resolves gate visibility and applies height (reflows UIList when show state changes).</summary>
-	public static void Refresh(UIElement element, object item, MemberInfo gatedMember, ref bool? lastShown) =>
-		Apply(element, IsVisible(item, gatedMember), ref lastShown, reflow: true);
-
-	/// <summary>
-	/// Call at the start of gated-element <c>Recalculate</c> (before <c>base.Recalculate</c>)
-	/// so heights are correct when dimensions are computed.
-	/// </summary>
-	public static void PrepareRecalculate(UIElement element, object item, MemberInfo gatedMember)
+	public static void Refresh(UIElement element, object item, MemberInfo gatedMember, ref bool? lastShown)
 	{
-		if (item is null || gatedMember is null)
-			return;
+		bool show = IsVisible(item, gatedMember);
+		bool changed = lastShown != show;
+		lastShown = show;
 
-		ApplyHeights(element, IsVisible(item, gatedMember), syncContainerDimensions: _syncDepth == 0);
+		ApplyHeights(element, show, syncContainerDimensions: true);
+
+		if (changed)
+			ReflowContainingList(element);
 	}
 
 	/// <summary>
-	/// Re-pin after base recalculate for elements that reset Height during layout.
+	/// Pin gate heights around <c>base.Recalculate</c> (call before and after) so layout
+	/// sees the collapsed/expanded size instead of stock row height.
 	/// </summary>
-	public static void PinAfterRecalculate(UIElement element, object item, MemberInfo gatedMember)
+	public static void SyncRecalculateHeights(UIElement element, object item, MemberInfo gatedMember)
 	{
 		if (item is null || gatedMember is null)
 			return;
@@ -91,33 +93,51 @@ internal static class ConfigVisibility
 	public static bool IsCollapsed(UIElement element) =>
 		element.IgnoresMouseInteraction || element.Height.Pixels < 1f;
 
-	public static void Apply(UIElement element, bool show, ref bool? lastShown, bool reflow)
+	/// <summary>Always collapse a main-list placeholder row (and its WrapIt container).</summary>
+	public static void ForceCollapse(UIElement element) =>
+		ApplyHeights(element, show: false, syncContainerDimensions: _syncDepth == 0);
+
+	public static void ReflowContainingList(UIElement element)
 	{
-		bool changed = lastShown != show;
-		lastShown = show;
-
-		ApplyHeights(element, show, syncContainerDimensions: true);
-
-		if (!reflow || !changed)
-			return;
-
-		// Only reflow the list when visibility flips — not every frame.
 		for (UIElement walk = element.Parent; walk is not null; walk = walk.Parent)
 		{
 			if (walk is UIList list)
 			{
 				list.Recalculate();
-				break;
+				return;
 			}
 		}
+	}
+
+	public static float GetListContentHeight(UIList list)
+	{
+		if (GetTotalHeightMethod != null)
+			return Convert.ToSingle(GetTotalHeightMethod.Invoke(list, null));
+
+		float total = 0f;
+		foreach (UIElement el in list)
+			total += el.GetOuterDimensions().Height + list.ListPadding;
+		return Math.Max(0f, total - list.ListPadding);
+	}
+
+	public static MemberInfo ResolveMember(Type type, string name)
+	{
+		(Type, string) key = (type, name);
+		if (!MemberCache.TryGetValue(key, out MemberInfo member))
+		{
+			member = (MemberInfo)type.GetField(name, BindingFlags.Instance | BindingFlags.Public | BindingFlags.NonPublic)
+				?? type.GetProperty(name, BindingFlags.Instance | BindingFlags.Public | BindingFlags.NonPublic);
+			MemberCache[key] = member;
+		}
+
+		return member;
 	}
 
 	private static void ApplyHeights(UIElement element, bool show, bool syncContainerDimensions)
 	{
 		float h = show ? RowHeight : 0f;
-		float listPad = FindListPadding(element);
 		// Cancel UIList.ListPadding so collapsed rows contribute 0 total spacing.
-		float marginBottom = show ? 0f : -listPad;
+		float marginBottom = show ? 0f : -FindListPadding(element);
 
 		SetHeight(element, h, marginBottom);
 		element.IgnoresMouseInteraction = !show;
@@ -170,26 +190,11 @@ internal static class ConfigVisibility
 		}
 	}
 
-	/// <summary>Always collapse a main-list placeholder row (and its WrapIt container).</summary>
-	public static void ForceCollapse(UIElement element) =>
-		ApplyHeights(element, show: false, syncContainerDimensions: _syncDepth == 0);
-
-	private static object ReadMember(object item, string name)
-	{
-		Type type = item.GetType();
-		(Type, string) key = (type, name);
-		if (!MemberCache.TryGetValue(key, out MemberInfo member))
-		{
-			member = (MemberInfo)type.GetField(name, BindingFlags.Instance | BindingFlags.Public | BindingFlags.NonPublic)
-				?? type.GetProperty(name, BindingFlags.Instance | BindingFlags.Public | BindingFlags.NonPublic);
-			MemberCache[key] = member;
-		}
-
-		return member switch
+	private static object ReadMember(object item, string name) =>
+		ResolveMember(item.GetType(), name) switch
 		{
 			FieldInfo field => field.GetValue(item),
 			PropertyInfo prop => prop.GetValue(item),
 			_ => null,
 		};
-	}
 }

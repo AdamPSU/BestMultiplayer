@@ -19,10 +19,6 @@ namespace DefinitiveMultiplayer.Common.Configs;
 /// </summary>
 public sealed class ExpandableToggleElement : ConfigElement<bool>
 {
-	private static readonly MethodInfo GetTotalHeightMethod = typeof(UIList).GetMethod(
-		"GetTotalHeight",
-		BindingFlags.Instance | BindingFlags.Public | BindingFlags.NonPublic);
-
 	private Asset<Texture2D> _toggleTexture;
 	private UIList _dataList;
 	private bool _pending = true;
@@ -82,7 +78,7 @@ public sealed class ExpandableToggleElement : ConfigElement<bool>
 		}
 
 		SyncHeight();
-		ReflowParentList();
+		ConfigVisibility.ReflowContainingList(this);
 	}
 
 	private void SetupList()
@@ -96,23 +92,20 @@ public sealed class ExpandableToggleElement : ConfigElement<bool>
 			return;
 
 		Type itemType = Item.GetType();
-		int order = 0;
-		int top = 0;
 
 		foreach (string name in kids.MemberNames)
 		{
-			FieldInfo field = itemType.GetField(name, BindingFlags.Instance | BindingFlags.Public | BindingFlags.NonPublic);
-			PropertyInfo prop = field is null
-				? itemType.GetProperty(name, BindingFlags.Instance | BindingFlags.Public | BindingFlags.NonPublic)
-				: null;
-			if (field is null && prop is null)
+			MemberInfo member = ConfigVisibility.ResolveMember(itemType, name);
+			// tML exposes FieldInfo / PropertyInfo overloads, not MemberInfo.
+			PropertyFieldWrapper wrapper = member switch
+			{
+				FieldInfo field => new PropertyFieldWrapper(field),
+				PropertyInfo prop => new PropertyFieldWrapper(prop),
+				_ => null,
+			};
+			if (wrapper is null)
 				continue;
 
-			// tML exposes FieldInfo / PropertyInfo overloads, not MemberInfo.
-			var wrapper = field is not null
-				? new PropertyFieldWrapper(field)
-				: new PropertyFieldWrapper(prop);
-			// Build real controls (ignore NestedChildPlaceholder on the member).
 			UIElement el = CreateChildElement(wrapper);
 			if (el is null)
 				continue;
@@ -136,32 +129,18 @@ public sealed class ExpandableToggleElement : ConfigElement<bool>
 			el.Height.Set(elementHeight, 0f);
 			container.Append(el);
 			_dataList.Add(container);
-			top += (int)elementHeight + (int)_dataList.ListPadding;
-			order++;
 		}
-
-		_ = order;
-		_ = top;
 	}
 
 	private static UIElement CreateChildElement(PropertyFieldWrapper wrapper)
 	{
 		Type type = wrapper.Type;
-
 		if (type == typeof(bool))
-			return new InlineBooleanElement();
-
+			return new GatedBooleanElement();
 		if (type == typeof(int))
-		{
-			// Prefer slider when Range is present (our gated ints always have Range).
-			if (ConfigManager.GetCustomAttributeFromMemberThenMemberType<RangeAttribute>(wrapper, null, null) != null)
-				return new GatedIntElement();
 			return new GatedIntElement();
-		}
-
 		if (type == typeof(float))
 			return new GatedFloatElement();
-
 		return null;
 	}
 
@@ -177,7 +156,7 @@ public sealed class ExpandableToggleElement : ConfigElement<bool>
 		if (_dataList is not null && _dataList.Parent != null)
 		{
 			_dataList.Recalculate();
-			h += GetListContentHeight(_dataList) + _dataList.ListPadding;
+			h += ConfigVisibility.GetListContentHeight(_dataList) + _dataList.ListPadding;
 		}
 
 		Height.Set(h, 0f);
@@ -189,37 +168,11 @@ public sealed class ExpandableToggleElement : ConfigElement<bool>
 		}
 	}
 
-	private void ReflowParentList()
-	{
-		for (UIElement walk = Parent; walk is not null; walk = walk.Parent)
-		{
-			if (walk is UIList list)
-			{
-				list.Recalculate();
-				break;
-			}
-		}
-	}
-
-	private static float GetListContentHeight(UIList list)
-	{
-		if (GetTotalHeightMethod != null)
-			return Convert.ToSingle(GetTotalHeightMethod.Invoke(list, null));
-
-		float total = 0f;
-		foreach (UIElement el in list)
-			total += el.GetOuterDimensions().Height + list.ListPadding;
-		return Math.Max(0f, total - list.ListPadding);
-	}
-
 	protected override void DrawSelf(SpriteBatch spriteBatch)
 	{
-		// Draw only the header band (not the full expanded height panel).
 		CalculatedStyle dimensions = GetDimensions();
-		float headerH = ConfigVisibility.RowHeight;
-		var headerDims = new CalculatedStyle(dimensions.X, dimensions.Y, dimensions.Width, headerH);
+		var headerDims = new CalculatedStyle(dimensions.X, dimensions.Y, dimensions.Width, ConfigVisibility.RowHeight);
 
-		// Mirror ConfigElement panel draw for the header strip only.
 		base.DrawSelf(spriteBatch);
 
 		ChatManager.DrawColorCodedStringWithShadow(
@@ -236,38 +189,5 @@ public sealed class ExpandableToggleElement : ConfigElement<bool>
 		var source = new Rectangle(Value ? halfW + 2 : 0, 0, halfW, _toggleTexture.Height());
 		var drawPos = new Vector2(headerDims.X + headerDims.Width - source.Width - 10f, headerDims.Y + 8f);
 		spriteBatch.Draw(_toggleTexture.Value, drawPos, source, Color.White, 0f, Vector2.Zero, Vector2.One, SpriteEffects.None, 0f);
-	}
-
-	/// <summary>Bool toggle used inside expandable child lists (no gate).</summary>
-	private sealed class InlineBooleanElement : ConfigElement<bool>
-	{
-		private Asset<Texture2D> _toggleTexture;
-
-		public override void OnBind()
-		{
-			base.OnBind();
-			_toggleTexture = Main.Assets.Request<Texture2D>("Images/UI/Settings_Toggle");
-			OnLeftClick += (_, _) => Value = !Value;
-		}
-
-		protected override void DrawSelf(SpriteBatch spriteBatch)
-		{
-			base.DrawSelf(spriteBatch);
-			CalculatedStyle dimensions = GetDimensions();
-			ChatManager.DrawColorCodedStringWithShadow(
-				spriteBatch,
-				FontAssets.ItemStack.Value,
-				Value ? Lang.menu[126].Value : Lang.menu[124].Value,
-				new Vector2(dimensions.X + dimensions.Width - 60f, dimensions.Y + 8f),
-				Color.White,
-				0f,
-				Vector2.Zero,
-				new Vector2(0.8f));
-
-			int halfW = (_toggleTexture.Width() - 2) / 2;
-			var source = new Rectangle(Value ? halfW + 2 : 0, 0, halfW, _toggleTexture.Height());
-			var drawPos = new Vector2(dimensions.X + dimensions.Width - source.Width - 10f, dimensions.Y + 8f);
-			spriteBatch.Draw(_toggleTexture.Value, drawPos, source, Color.White, 0f, Vector2.Zero, Vector2.One, SpriteEffects.None, 0f);
-		}
 	}
 }

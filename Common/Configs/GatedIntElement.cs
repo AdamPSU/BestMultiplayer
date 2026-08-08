@@ -45,11 +45,12 @@ public class GatedIntElement : PrimitiveRangeElement<int>
 
 	public override void Recalculate()
 	{
-		if (MemberInfo != null)
-			ConfigVisibility.PrepareRecalculate(this, Item, MemberInfo.MemberInfo);
+		var member = MemberInfo?.MemberInfo;
+		if (member != null)
+			ConfigVisibility.SyncRecalculateHeights(this, Item, member);
 		base.Recalculate();
-		if (MemberInfo != null)
-			ConfigVisibility.PinAfterRecalculate(this, Item, MemberInfo.MemberInfo);
+		if (member != null)
+			ConfigVisibility.SyncRecalculateHeights(this, Item, member);
 	}
 
 	protected override void DrawSelf(SpriteBatch spriteBatch)

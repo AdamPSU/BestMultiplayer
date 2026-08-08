@@ -11,6 +11,8 @@ namespace DefinitiveMultiplayer.Common.Players;
 /// <summary>Speed bonus and orange glow for the hot-potato holder.</summary>
 public sealed class HotPotatoPlayer : ModPlayer
 {
+	private static readonly Color Orange = new(255, 170, 50);
+
 	public override void PostUpdateRunSpeeds()
 	{
 		if (!HotPotatoSystem.IsHolder(Player))
@@ -58,7 +60,7 @@ public sealed class HotPotatoPlayer : ModPlayer
 				0f,
 				0f,
 				100,
-				new Color(255, 170, 50),
+				Orange,
 				1.15f);
 			d.noGravity = true;
 			d.velocity *= 0.35f;
@@ -70,10 +72,9 @@ public sealed class HotPotatoPlayer : ModPlayer
 		if (drawInfo.shadow != 0f || !HotPotatoSystem.IsHolder(Player))
 			return;
 
-		Color orange = new(255, 170, 50);
-		drawInfo.colorArmorHead = Color.Lerp(drawInfo.colorArmorHead, orange, 0.35f);
-		drawInfo.colorArmorBody = Color.Lerp(drawInfo.colorArmorBody, orange, 0.35f);
-		drawInfo.colorArmorLegs = Color.Lerp(drawInfo.colorArmorLegs, orange, 0.35f);
-		drawInfo.colorHair = Color.Lerp(drawInfo.colorHair, orange, 0.25f);
+		drawInfo.colorArmorHead = Color.Lerp(drawInfo.colorArmorHead, Orange, 0.35f);
+		drawInfo.colorArmorBody = Color.Lerp(drawInfo.colorArmorBody, Orange, 0.35f);
+		drawInfo.colorArmorLegs = Color.Lerp(drawInfo.colorArmorLegs, Orange, 0.35f);
+		drawInfo.colorHair = Color.Lerp(drawInfo.colorHair, Orange, 0.25f);
 	}
 }

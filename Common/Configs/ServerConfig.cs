@@ -49,7 +49,7 @@ public sealed class ServerConfig : ModConfig
 	[DefaultValue(true)]
 	public bool BossFightStatsEnabled;
 
-	// --- Modes (shared health, player swap) ---
+	// --- Modes ---
 
 	[Header("Modes")]
 	[BackgroundColor(ConfigUiStyle.RowR, ConfigUiStyle.RowG, ConfigUiStyle.RowB, ConfigUiStyle.RowA)]

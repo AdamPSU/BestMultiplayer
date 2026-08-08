@@ -95,9 +95,7 @@ public sealed class HotPotatoSystem : ModSystem
 		{
 			_wasActive = true;
 			_lastIntervalSeconds = interval;
-			_ticksLeft = interval * TicksPerSecond;
-			_passBackBlockedWhoAmI = -1;
-			_passBackImmuneTicksLeft = 0;
+			RestartFuse(interval);
 			PickHolder(excludeWho: -1);
 			PublishStatus(force: true);
 			return;
@@ -105,22 +103,16 @@ public sealed class HotPotatoSystem : ModSystem
 
 		if (!_killingHolder && !IsValidLiving(_holderWhoAmI))
 		{
-			_ticksLeft = interval * TicksPerSecond;
+			RestartFuse(interval);
 			PickHolder(excludeWho: _holderWhoAmI);
-			_passBackBlockedWhoAmI = -1;
-			_passBackImmuneTicksLeft = 0;
 			PublishStatus(force: true);
 			return;
 		}
 
 		TryPassByTouch();
 
-		if (_passBackImmuneTicksLeft > 0)
-		{
-			_passBackImmuneTicksLeft--;
-			if (_passBackImmuneTicksLeft <= 0)
-				_passBackBlockedWhoAmI = -1;
-		}
+		if (_passBackImmuneTicksLeft > 0 && --_passBackImmuneTicksLeft == 0)
+			_passBackBlockedWhoAmI = -1;
 
 		_ticksLeft--;
 		if (_ticksLeft > 0)
@@ -131,9 +123,7 @@ public sealed class HotPotatoSystem : ModSystem
 
 		int exploded = _holderWhoAmI;
 		ExplodeHolder();
-		_ticksLeft = interval * TicksPerSecond;
-		_passBackBlockedWhoAmI = -1;
-		_passBackImmuneTicksLeft = 0;
+		RestartFuse(interval);
 		PickHolder(excludeWho: exploded);
 		PublishStatus(force: true);
 	}
@@ -175,8 +165,7 @@ public sealed class HotPotatoSystem : ModSystem
 		_wasActive = false;
 		_ticksLeft = -1;
 		_lastIntervalSeconds = -1;
-		_passBackBlockedWhoAmI = -1;
-		_passBackImmuneTicksLeft = 0;
+		ClearPassBackImmune();
 		SetHolder(-1);
 		PublishStatus(force: true, clear: true);
 	}
@@ -191,9 +180,20 @@ public sealed class HotPotatoSystem : ModSystem
 		_lastStatusSeconds = int.MinValue;
 		_displaySeconds = -1;
 		_lastSentWhoAmI = int.MinValue;
+		ClearPassBackImmune();
+		_killingHolder = false;
+	}
+
+	private static void ClearPassBackImmune()
+	{
 		_passBackBlockedWhoAmI = -1;
 		_passBackImmuneTicksLeft = 0;
-		_killingHolder = false;
+	}
+
+	private static void RestartFuse(int intervalSeconds)
+	{
+		_ticksLeft = intervalSeconds * TicksPerSecond;
+		ClearPassBackImmune();
 	}
 
 	private static int SnapIntervalSeconds(int raw)
@@ -228,21 +228,29 @@ public sealed class HotPotatoSystem : ModSystem
 	private static void CollectPool()
 	{
 		Pool.Clear();
+		bool teamOnly = ServerConfig.Instance.HotPotatoTeamOnly;
+		// Team-only with no holder: lock to first living real team so we don't mix colors.
+		int lockTeam = teamOnly && IsValidLiving(_holderWhoAmI)
+			? Main.player[_holderWhoAmI].team
+			: -1;
+
 		for (int i = 0; i < Main.maxPlayers; i++)
 		{
-			if (IsInPool(Main.player[i]))
-				Pool.Add(i);
-		}
+			Player p = Main.player[i];
+			if (p?.active != true || p.dead)
+				continue;
 
-		// Team-only with no holder: lock to one team so we don't mix colors.
-		if (ServerConfig.Instance.HotPotatoTeamOnly && Pool.Count > 0 && !IsValidLiving(_holderWhoAmI))
-		{
-			int team = Main.player[Pool[0]].team;
-			for (int i = Pool.Count - 1; i >= 0; i--)
+			if (teamOnly)
 			{
-				if (Main.player[Pool[i]].team != team)
-					Pool.RemoveAt(i);
+				if (!Teams.IsReal(p.team))
+					continue;
+				if (lockTeam < 0)
+					lockTeam = p.team;
+				else if (p.team != lockTeam)
+					continue;
 			}
+
+			Pool.Add(i);
 		}
 	}
 
@@ -326,14 +334,11 @@ public sealed class HotPotatoSystem : ModSystem
 			return;
 
 		_holderWhoAmI = whoAmI;
-		SendState(whoAmI, force: true);
+		SendState(whoAmI);
 	}
 
-	private static void SendState(int whoAmI, bool force = false)
+	private static void SendState(int whoAmI)
 	{
-		if (!force && _lastSentWhoAmI == whoAmI)
-			return;
-
 		_lastSentWhoAmI = whoAmI;
 
 		if (Main.netMode != NetmodeID.Server)
@@ -367,8 +372,9 @@ public sealed class HotPotatoSystem : ModSystem
 
 		if (Main.netMode == NetmodeID.Server)
 		{
+			// Late joiners pick up holder + countdown within one second change.
 			if (seconds >= 0)
-				SendState(_holderWhoAmI, force: true);
+				SendState(_holderWhoAmI);
 
 			ModPacket packet = Packets.Begin(Packets.HotPotatoCountdown);
 			packet.Write(seconds);

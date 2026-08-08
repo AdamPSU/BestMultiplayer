@@ -31,6 +31,5 @@ public sealed class NestedChildPlaceholderElement : ConfigElement
 
 	protected override void DrawSelf(SpriteBatch spriteBatch)
 	{
-		// Never draw — parent expandable owns the real control.
 	}
 }

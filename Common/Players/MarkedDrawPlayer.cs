@@ -10,12 +10,14 @@ namespace DefinitiveMultiplayer.Common.Players;
 /// <summary>Red glow, light, outline, and dust for the marked living player.</summary>
 public sealed class MarkedDrawPlayer : ModPlayer
 {
+	private static readonly Color DustTint = new(255, 40, 40);
+	private static readonly Color ArmorTint = new(255, 48, 48);
+
 	public override void FrameEffects()
 	{
 		if (!MarkedSystem.IsMarked(Player))
 			return;
 
-		// Vanilla outline path used by several set bonuses.
 		Player.armorEffectDrawOutlines = true;
 		Player.armorEffectDrawShadow = true;
 	}
@@ -25,7 +27,6 @@ public sealed class MarkedDrawPlayer : ModPlayer
 		if (drawInfo.shadow != 0f || !MarkedSystem.IsMarked(Player))
 			return;
 
-		// Pull tint toward red and keep the marked player readable.
 		r = MathHelper.Clamp(r * 0.35f + 1f, 0f, 1.5f);
 		g = MathHelper.Clamp(g * 0.35f, 0f, 1f);
 		b = MathHelper.Clamp(b * 0.35f, 0f, 1f);
@@ -44,7 +45,7 @@ public sealed class MarkedDrawPlayer : ModPlayer
 				0f,
 				0f,
 				120,
-				new Color(255, 40, 40),
+				DustTint,
 				1.1f);
 			d.noGravity = true;
 			d.velocity *= 0.3f;
@@ -56,11 +57,10 @@ public sealed class MarkedDrawPlayer : ModPlayer
 		if (drawInfo.shadow != 0f || !MarkedSystem.IsMarked(Player))
 			return;
 
-		Color red = new(255, 48, 48);
-		drawInfo.colorArmorHead = Color.Lerp(drawInfo.colorArmorHead, red, 0.35f);
-		drawInfo.colorArmorBody = Color.Lerp(drawInfo.colorArmorBody, red, 0.35f);
-		drawInfo.colorArmorLegs = Color.Lerp(drawInfo.colorArmorLegs, red, 0.35f);
-		drawInfo.colorHair = Color.Lerp(drawInfo.colorHair, red, 0.25f);
+		drawInfo.colorArmorHead = Color.Lerp(drawInfo.colorArmorHead, ArmorTint, 0.35f);
+		drawInfo.colorArmorBody = Color.Lerp(drawInfo.colorArmorBody, ArmorTint, 0.35f);
+		drawInfo.colorArmorLegs = Color.Lerp(drawInfo.colorArmorLegs, ArmorTint, 0.35f);
+		drawInfo.colorHair = Color.Lerp(drawInfo.colorHair, ArmorTint, 0.25f);
 		drawInfo.colorEyeWhites = Color.Lerp(drawInfo.colorEyeWhites, Color.White, 0.2f);
 	}
 }

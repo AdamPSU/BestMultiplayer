@@ -38,17 +38,20 @@ public sealed class MarkedSystem : ModSystem
 	private static FieldInfo _timeLeftField;
 	private static ChatMessageContainer _countdownLine;
 
-	/// <summary>Mirrored on clients via <see cref="Packets.MarkedState"/>.</summary>
-	internal static int MarkedWhoAmI => _markedWhoAmI;
+	internal static bool IsActive()
+	{
+		ServerConfig cfg = ServerConfig.Instance;
+		// Mutually exclusive with Hot Potato (shared in-place chat line).
+		return cfg.MarkedEnabled && !cfg.HotPotatoEnabled && BossFightSystem.IsBossFightActive();
+	}
 
 	internal static bool IsMarked(Player player) =>
 		player is not null
-		&& ServerConfig.Instance.MarkedEnabled
-		&& !ServerConfig.Instance.HotPotatoEnabled
-		&& BossFightSystem.IsBossFightActive()
+		&& player.whoAmI == _markedWhoAmI
+		&& _markedWhoAmI >= 0
+		&& IsActive()
 		&& player.active
-		&& !player.dead
-		&& player.whoAmI == _markedWhoAmI;
+		&& !player.dead;
 
 	public override void OnWorldLoad() => ResetAll();
 
@@ -63,10 +66,8 @@ public sealed class MarkedSystem : ModSystem
 		if (Main.netMode == NetmodeID.MultiplayerClient)
 			return;
 
-		ServerConfig cfg = ServerConfig.Instance;
-		// Mutually exclusive with Hot Potato (shared in-place chat line).
-		bool want = cfg.MarkedEnabled && !cfg.HotPotatoEnabled && BossFightSystem.IsBossFightActive();
-		int interval = SnapIntervalSeconds(cfg.MarkedIntervalSeconds);
+		bool want = IsActive();
+		int interval = SnapIntervalSeconds(ServerConfig.Instance.MarkedIntervalSeconds);
 
 		if (!want)
 		{
@@ -186,12 +187,6 @@ public sealed class MarkedSystem : ModSystem
 			return;
 		}
 
-		if (Living.Count == 1)
-		{
-			SetMark(Living[0]);
-			return;
-		}
-
 		// Prefer someone other than excludeWho when possible.
 		if (excludeWho >= 0)
 		{
@@ -210,7 +205,7 @@ public sealed class MarkedSystem : ModSystem
 
 		int prev = _markedWhoAmI;
 		_markedWhoAmI = whoAmI;
-		SendState(whoAmI, force: true);
+		SendState(whoAmI);
 
 		// SP / listen host (clients announce from MarkedState packet).
 		if (!Main.dedServ && whoAmI >= 0 && whoAmI != prev)
@@ -235,11 +230,8 @@ public sealed class MarkedSystem : ModSystem
 		Main.NewText(text);
 	}
 
-	private static void SendState(int whoAmI, bool force = false)
+	private static void SendState(int whoAmI)
 	{
-		if (!force && _lastSentWhoAmI == whoAmI)
-			return;
-
 		_lastSentWhoAmI = whoAmI;
 
 		if (Main.netMode != NetmodeID.Server)
@@ -267,7 +259,7 @@ public sealed class MarkedSystem : ModSystem
 		{
 			// Late joiners pick up mark + countdown within one second change.
 			if (seconds >= 0)
-				SendState(_markedWhoAmI, force: true);
+				SendState(_markedWhoAmI);
 
 			ModPacket packet = Packets.Begin(Packets.MarkedCountdown);
 			packet.Write(seconds);
@@ -312,9 +304,7 @@ public sealed class MarkedSystem : ModSystem
 
 		if (_countdownLine != null && messages.Contains(_countdownLine))
 		{
-			_countdownLine.OriginalText = text;
-			_countdownLine.MarkToNeedRefresh();
-			SetTimeLeft(_countdownLine, ChatLineLife);
+			WriteCountdownLine(_countdownLine, text, ChatLineLife);
 			return;
 		}
 
@@ -322,9 +312,7 @@ public sealed class MarkedSystem : ModSystem
 		if (messages.Count > 0)
 		{
 			_countdownLine = messages[0];
-			_countdownLine.OriginalText = text;
-			_countdownLine.MarkToNeedRefresh();
-			SetTimeLeft(_countdownLine, ChatLineLife);
+			WriteCountdownLine(_countdownLine, text, ChatLineLife);
 		}
 	}
 
@@ -334,13 +322,16 @@ public sealed class MarkedSystem : ModSystem
 			return;
 
 		if (TryGetMessages(out List<ChatMessageContainer> messages) && messages.Contains(_countdownLine))
-		{
-			_countdownLine.OriginalText = string.Empty;
-			_countdownLine.MarkToNeedRefresh();
-			SetTimeLeft(_countdownLine, 0);
-		}
+			WriteCountdownLine(_countdownLine, string.Empty, 0);
 
 		_countdownLine = null;
+	}
+
+	private static void WriteCountdownLine(ChatMessageContainer line, string text, int life)
+	{
+		line.OriginalText = text;
+		line.MarkToNeedRefresh();
+		SetTimeLeft(line, life);
 	}
 
 	private static bool TryGetMessages(out List<ChatMessageContainer> messages)

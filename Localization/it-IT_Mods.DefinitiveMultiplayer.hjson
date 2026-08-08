@@ -22,15 +22,33 @@ UI: {
 	}
 
 	PlayerSwap.Countdown: Teleporting players in {0}
-
-	Marked: {
-		Countdown: Mark rotates in {0}
-		Assigned: "{0} is marked!"
-	}
+	Marked.TransferPopup: Marked!
 
 	HotPotato: {
-		Status: "{0} has the potato! {1}"
 		Exploded: "{0} couldn't pass the potato..."
+		TransferPopup: Hot Potato!
+	}
+
+	Modes: {
+		SharedHealth: {
+			On: Shared Team Health is active
+			Off: Shared Team Health is off
+		}
+
+		PlayerSwap: {
+			On: Player Swap is active
+			Off: Player Swap is off
+		}
+
+		Marked: {
+			On: Marked mode is active
+			Off: Marked mode is off
+		}
+
+		HotPotato: {
+			On: Hot Potato is active
+			Off: Hot Potato is off
+		}
 	}
 }
 
@@ -57,7 +75,7 @@ Configs: {
 		}
 
 		BlockUnlimitedTeleportDuringBoss: {
-			Label: "[i:PortalGun] Block Free Teleport During Bosses"
+			Label: Block Free Teleport During Bosses
 			Tooltip: Disable free teammate teleport during boss fights.
 		}
 
@@ -67,12 +85,12 @@ Configs: {
 		}
 
 		SharedHealthBossesOnly: {
-			Label: "[i:SuspiciousLookingEye] Only During Boss Fights"
+			Label: Only During Boss Fights
 			Tooltip: Shared HP only while a boss is alive.
 		}
 
 		SharedHealthMultiplier: {
-			Label: "[i:LifeFruit] Team HP Multiplier"
+			Label: Team HP Multiplier
 			Tooltip: How large the shared HP bar is relative to the team.
 		}
 
@@ -82,53 +100,58 @@ Configs: {
 		}
 
 		PlayerSwapIntervalMinutes: {
-			Label: "[i:GoldWatch] Swap Every (Minutes)"
+			Label: Swap Every (Minutes)
 			Tooltip: How many minutes between teammate position swaps.
 		}
 
 		MarkedEnabled: {
 			Label: "[i:BattlePotion] Marked"
-			Tooltip: During bosses, one living player is marked on a timer. Cannot run with Hot Potato.
+			Tooltip: During bosses, one living player is marked on a timer.
 		}
 
 		MarkedIntervalSeconds: {
-			Label: "[i:CopperWatch] Mark Every (Seconds)"
-			Tooltip: How often the mark moves to another living player (15–120).
+			Label: Mark Every (Seconds)
+			Tooltip: How often the mark moves to another living player (15-120).
 		}
 
 		MarkedDamageTakenMult: {
-			Label: "[i:RedPotion] Marked Damage Taken"
+			Label: Marked Damage Taken
 			Tooltip: Extra damage the marked player takes on top of Boss Balance.
 		}
 
 		MarkedDamageDealtMult: {
-			Label: "[i:PsychoKnife] Marked Damage Dealt"
+			Label: Marked Damage Dealt
 			Tooltip: Extra damage the marked player deals on top of Boss Balance.
 		}
 
 		HotPotatoEnabled: {
 			Label: "[i:ExplosiveBunny] Hot Potato"
-			Tooltip: Pass the potato by touch or explode when the fuse hits zero. Cannot run with Marked.
+			Tooltip: Pass the potato by touch or explode when the fuse hits zero.
 		}
 
 		HotPotatoBossesOnly: {
-			Label: "[i:SlimeCrown] Only During Boss Fights"
+			Label: Only During Boss Fights
 			Tooltip: Hot Potato only while a boss is alive.
 		}
 
 		HotPotatoIntervalSeconds: {
-			Label: "[i:Timer1Second] Potato Fuse (Seconds)"
-			Tooltip: How long until the potato explodes (30–300).
+			Label: Potato Fuse (Seconds)
+			Tooltip: How long until the potato explodes (30-300).
 		}
 
 		HotPotatoSpeedBonusPercent: {
-			Label: "[i:HermesBoots] Potato Speed Bonus %"
+			Label: Potato Speed Bonus %
 			Tooltip: Extra movement speed for the player holding the potato.
 		}
 
 		HotPotatoTeamOnly: {
-			Label: "[i:TeamBlockRed] Same Team Only"
+			Label: Same Team Only
 			Tooltip: Only teammates can hold or receive the potato.
+		}
+
+		ModesExclusiveNote: {
+			Label: * Solo uno tra Scambio, Marchiato o Patata bollente.
+			// Tooltip: ""
 		}
 
 		BossFightStatsEnabled: {
@@ -192,22 +215,22 @@ Configs: {
 
 	RespawnTimerAdjustments: {
 		ExtraSecondsPerPlayer: {
-			Label: "[i:Mannequin] +Sec Per Extra Player"
+			Label: +Sec Per Extra Player
 			Tooltip: During bosses, add this many seconds for each extra player in the world.
 		}
 
 		BossMultiplier: {
-			Label: "[i:SlimeCrown] Boss Multiplier"
+			Label: Boss Multiplier
 			Tooltip: Make boss-fight respawns longer or shorter. 1 is unchanged.
 		}
 
 		EventMultiplier: {
-			Label: "[i:BloodMoonStarter] Event Multiplier"
+			Label: Event Multiplier
 			Tooltip: Make respawns longer or shorter during events. 1 is unchanged.
 		}
 
 		ExtraSecondsPerBossDeath: {
-			Label: "[i:Tombstone] +Sec Per Boss Death"
+			Label: +Sec Per Boss Death
 			Tooltip: During the same boss, each death makes your next wait this much longer.
 		}
 

@@ -1,4 +1,5 @@
 using System;
+using System.Collections.Generic;
 using System.Reflection;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
@@ -16,6 +17,7 @@ namespace DefinitiveMultiplayer.Common.Configs;
 /// <summary>
 /// Bool toggle that expands indented child config rows when On (Timer Add-ons style nesting).
 /// Children are listed via <see cref="ExpandableChildrenAttribute"/>.
+/// Supports <see cref="ExclusiveToggleGroupAttribute"/>: siblings gray out and cannot toggle while one is on.
 /// </summary>
 public sealed class ExpandableToggleElement : ConfigElement<bool>
 {
@@ -23,11 +25,15 @@ public sealed class ExpandableToggleElement : ConfigElement<bool>
 	private UIList _dataList;
 	private bool _pending = true;
 	private bool _listBuilt;
+	private bool _wasValue;
+	private MemberInfo[] _exclusiveSiblings = Array.Empty<MemberInfo>();
 
 	public override void OnBind()
 	{
 		base.OnBind();
 		_toggleTexture = Main.Assets.Request<Texture2D>("Images/UI/Settings_Toggle");
+		_wasValue = Value;
+		_exclusiveSiblings = ResolveExclusiveSiblings();
 
 		float header = ConfigVisibility.RowHeight;
 
@@ -44,7 +50,14 @@ public sealed class ExpandableToggleElement : ConfigElement<bool>
 			if (Main.mouseY > GetDimensions().Y + ConfigVisibility.RowHeight)
 				return;
 
+			if (IsLockedOut())
+				return;
+
+			if (!Value)
+				ClearExclusiveSiblings();
+
 			Value = !Value;
+			_wasValue = Value;
 			_pending = true;
 		};
 
@@ -55,6 +68,14 @@ public sealed class ExpandableToggleElement : ConfigElement<bool>
 	public override void Update(GameTime gameTime)
 	{
 		base.Update(gameTime);
+
+		// Sibling exclusive clear / load enforce can flip Value without our click handler.
+		if (Value != _wasValue)
+		{
+			_wasValue = Value;
+			_pending = true;
+		}
+
 		if (!_pending)
 		{
 			// Keep outer height in sync while expanded (child sliders can change list height).
@@ -168,19 +189,85 @@ public sealed class ExpandableToggleElement : ConfigElement<bool>
 		}
 	}
 
+	/// <summary>True when another exclusive-group sibling is on (this row stays Off and unclickable).</summary>
+	private bool IsLockedOut()
+	{
+		if (Value || Item is null || _exclusiveSiblings.Length == 0)
+			return false;
+
+		for (int i = 0; i < _exclusiveSiblings.Length; i++)
+		{
+			if (ConfigVisibility.TryReadBool(Item, _exclusiveSiblings[i], out bool on) && on)
+				return true;
+		}
+
+		return false;
+	}
+
+	private void ClearExclusiveSiblings()
+	{
+		if (Item is null)
+			return;
+
+		for (int i = 0; i < _exclusiveSiblings.Length; i++)
+			ConfigVisibility.WriteBool(Item, _exclusiveSiblings[i], false);
+	}
+
+	private MemberInfo[] ResolveExclusiveSiblings()
+	{
+		if (Item is null || MemberInfo?.MemberInfo is null)
+			return Array.Empty<MemberInfo>();
+
+		ExclusiveToggleGroupAttribute mine =
+			MemberInfo.MemberInfo.GetCustomAttribute<ExclusiveToggleGroupAttribute>(inherit: true);
+		if (mine is null)
+			return Array.Empty<MemberInfo>();
+
+		var list = new List<MemberInfo>(4);
+		foreach (MemberInfo sibling in Item.GetType().GetMembers(
+			         BindingFlags.Instance | BindingFlags.Public | BindingFlags.NonPublic))
+		{
+			if (sibling is not (FieldInfo or PropertyInfo))
+				continue;
+			if (sibling == MemberInfo.MemberInfo || sibling.Name == MemberInfo.Name)
+				continue;
+
+			ExclusiveToggleGroupAttribute theirs =
+				sibling.GetCustomAttribute<ExclusiveToggleGroupAttribute>(inherit: true);
+			if (theirs is null || theirs.GroupId != mine.GroupId)
+				continue;
+
+			list.Add(sibling);
+		}
+
+		return list.Count == 0 ? Array.Empty<MemberInfo>() : list.ToArray();
+	}
+
 	protected override void DrawSelf(SpriteBatch spriteBatch)
 	{
+		bool locked = IsLockedOut();
 		CalculatedStyle dimensions = GetDimensions();
 		var headerDims = new CalculatedStyle(dimensions.X, dimensions.Y, dimensions.Width, ConfigVisibility.RowHeight);
 
 		base.DrawSelf(spriteBatch);
+
+		if (locked)
+		{
+			Texture2D px = TextureAssets.MagicPixel.Value;
+			spriteBatch.Draw(
+				px,
+				new Rectangle((int)headerDims.X, (int)headerDims.Y, (int)headerDims.Width, (int)headerDims.Height),
+				Color.Black * 0.45f);
+		}
+
+		Color ui = locked ? Color.Gray * 0.75f : Color.White;
 
 		ChatManager.DrawColorCodedStringWithShadow(
 			spriteBatch,
 			FontAssets.ItemStack.Value,
 			Value ? Lang.menu[126].Value : Lang.menu[124].Value,
 			new Vector2(headerDims.X + headerDims.Width - 60f, headerDims.Y + 8f),
-			Color.White,
+			ui,
 			0f,
 			Vector2.Zero,
 			new Vector2(0.8f));
@@ -188,6 +275,6 @@ public sealed class ExpandableToggleElement : ConfigElement<bool>
 		int halfW = (_toggleTexture.Width() - 2) / 2;
 		var source = new Rectangle(Value ? halfW + 2 : 0, 0, halfW, _toggleTexture.Height());
 		var drawPos = new Vector2(headerDims.X + headerDims.Width - source.Width - 10f, headerDims.Y + 8f);
-		spriteBatch.Draw(_toggleTexture.Value, drawPos, source, Color.White, 0f, Vector2.Zero, Vector2.One, SpriteEffects.None, 0f);
+		spriteBatch.Draw(_toggleTexture.Value, drawPos, source, ui, 0f, Vector2.Zero, Vector2.One, SpriteEffects.None, 0f);
 	}
 }

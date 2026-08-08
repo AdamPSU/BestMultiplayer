@@ -133,6 +133,40 @@ internal static class ConfigVisibility
 		return member;
 	}
 
+	internal static object ReadMemberValue(object item, MemberInfo member) =>
+		member switch
+		{
+			FieldInfo field => field.GetValue(item),
+			PropertyInfo prop => prop.GetValue(item),
+			_ => null,
+		};
+
+	internal static bool TryReadBool(object item, MemberInfo member, out bool value)
+	{
+		object raw = ReadMemberValue(item, member);
+		if (raw is bool b)
+		{
+			value = b;
+			return true;
+		}
+
+		value = false;
+		return false;
+	}
+
+	internal static void WriteBool(object item, MemberInfo member, bool value)
+	{
+		switch (member)
+		{
+			case FieldInfo f when f.FieldType == typeof(bool):
+				f.SetValue(item, value);
+				break;
+			case PropertyInfo p when p.PropertyType == typeof(bool) && p.CanWrite:
+				p.SetValue(item, value);
+				break;
+		}
+	}
+
 	private static void ApplyHeights(UIElement element, bool show, bool syncContainerDimensions)
 	{
 		float h = show ? RowHeight : 0f;
@@ -190,11 +224,9 @@ internal static class ConfigVisibility
 		}
 	}
 
-	private static object ReadMember(object item, string name) =>
-		ResolveMember(item.GetType(), name) switch
-		{
-			FieldInfo field => field.GetValue(item),
-			PropertyInfo prop => prop.GetValue(item),
-			_ => null,
-		};
+	private static object ReadMember(object item, string name)
+	{
+		MemberInfo member = ResolveMember(item.GetType(), name);
+		return member is null ? null : ReadMemberValue(item, member);
+	}
 }

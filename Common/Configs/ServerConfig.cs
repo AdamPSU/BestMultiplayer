@@ -1,4 +1,6 @@
 using System.ComponentModel;
+using DefinitiveMultiplayer.Common.Systems;
+using Newtonsoft.Json;
 using Terraria;
 using Terraria.Localization;
 using Terraria.ModLoader;
@@ -74,6 +76,7 @@ public sealed class ServerConfig : ModConfig
 	public float SharedHealthMultiplier;
 
 	[BackgroundColor(ConfigUiStyle.RowR, ConfigUiStyle.RowG, ConfigUiStyle.RowB, ConfigUiStyle.RowA)]
+	[ExclusiveToggleGroup("Modes")]
 	[ExpandableChildren(nameof(PlayerSwapIntervalMinutes))]
 	[CustomModConfigItem(typeof(ExpandableToggleElement))]
 	[DefaultValue(false)]
@@ -90,6 +93,7 @@ public sealed class ServerConfig : ModConfig
 	public int PlayerSwapIntervalMinutes;
 
 	[BackgroundColor(ConfigUiStyle.RowR, ConfigUiStyle.RowG, ConfigUiStyle.RowB, ConfigUiStyle.RowA)]
+	[ExclusiveToggleGroup("Modes")]
 	[ExpandableChildren(nameof(MarkedIntervalSeconds), nameof(MarkedDamageTakenMult), nameof(MarkedDamageDealtMult))]
 	[CustomModConfigItem(typeof(ExpandableToggleElement))]
 	[DefaultValue(false)]
@@ -126,6 +130,7 @@ public sealed class ServerConfig : ModConfig
 	public float MarkedDamageDealtMult;
 
 	[BackgroundColor(ConfigUiStyle.RowR, ConfigUiStyle.RowG, ConfigUiStyle.RowB, ConfigUiStyle.RowA)]
+	[ExclusiveToggleGroup("Modes")]
 	[ExpandableChildren(
 		nameof(HotPotatoBossesOnly),
 		nameof(HotPotatoIntervalSeconds),
@@ -165,6 +170,13 @@ public sealed class ServerConfig : ModConfig
 	[CustomModConfigItem(typeof(NestedChildPlaceholderElement))]
 	[DefaultValue(true)]
 	public bool HotPotatoTeamOnly;
+
+	/// <summary>UI-only footnote under Modes (not a setting).</summary>
+	[JsonIgnore]
+	[ShowDespiteJsonIgnore]
+	[BackgroundColor(ConfigUiStyle.RowR, ConfigUiStyle.RowG, ConfigUiStyle.RowB, ConfigUiStyle.RowA)]
+	[CustomModConfigItem(typeof(ConfigNoteElement))]
+	public bool ModesExclusiveNote;
 
 	// --- Boss Lives (player and team limits can both be on; both must allow a respawn) ---
 	// Slider max = Vanilla (off). Lower values = fewer lives.
@@ -227,7 +239,7 @@ public sealed class ServerConfig : ModConfig
 	[BackgroundColor(ConfigUiStyle.RowR, ConfigUiStyle.RowG, ConfigUiStyle.RowB, ConfigUiStyle.RowA)]
 	[SliderColor(ConfigUiStyle.SliderR, ConfigUiStyle.SliderG, ConfigUiStyle.SliderB, ConfigUiStyle.SliderA)]
 	[Range(0.5f, 3f)]
-	[Increment(0.1f)]
+	[Increment(0.25f)]
 	[DrawTicks]
 	[DefaultValue(1f)]
 	public float BossFightBossHealthMultiplier;
@@ -276,7 +288,9 @@ public sealed class ServerConfig : ModConfig
 	public override bool AcceptClientChanges(ModConfig pendingConfig, int whoAmI, ref NetworkText message) =>
 		true;
 
-	// Track prior exclusive-mode flags so OnChanged can keep the toggle the user just enabled.
+	// Prior mode flags: exclusive last-wins + chat announce diffs.
+	private static bool _prevSharedHealthEnabled;
+	private static bool _prevPlayerSwapEnabled;
 	private static bool _prevMarkedEnabled;
 	private static bool _prevHotPotatoEnabled;
 
@@ -284,40 +298,83 @@ public sealed class ServerConfig : ModConfig
 	{
 		EnsureRespawnTimer();
 		ClampLivesSliders();
-		EnforceExclusiveChatModes(preferHotPotato: false);
-		_prevMarkedEnabled = MarkedEnabled;
-		_prevHotPotatoEnabled = HotPotatoEnabled;
+		EnforceExclusiveModes();
+		SnapshotModeFlags();
 	}
 
 	public override void OnChanged()
 	{
+		bool prevShared = _prevSharedHealthEnabled;
+		bool prevSwap = _prevPlayerSwapEnabled;
+		bool prevMarked = _prevMarkedEnabled;
+		bool prevPotato = _prevHotPotatoEnabled;
+
 		EnsureRespawnTimer();
 		ClampLivesSliders();
-		EnforceExclusiveChatModes(preferHotPotato: false);
+		EnforceExclusiveModes();
+		ConfigModeChatSystem.AnnounceModeDiffs(this, prevShared, prevSwap, prevMarked, prevPotato);
+		SnapshotModeFlags();
+	}
+
+	public override void HandleAcceptClientChangesReply(bool success, int player, NetworkText message)
+	{
+		if (success)
+			ConfigModeChatSystem.ArmSharedConfigStrip();
+	}
+
+	private void SnapshotModeFlags()
+	{
+		_prevSharedHealthEnabled = SharedHealthEnabled;
+		_prevPlayerSwapEnabled = PlayerSwapEnabled;
 		_prevMarkedEnabled = MarkedEnabled;
 		_prevHotPotatoEnabled = HotPotatoEnabled;
 	}
 
+	/// <summary>Player Swap is on and exclusive siblings are off.</summary>
+	internal bool PlayerSwapModeActive =>
+		PlayerSwapEnabled && !MarkedEnabled && !HotPotatoEnabled;
+
+	/// <summary>Marked is on and exclusive siblings are off.</summary>
+	internal bool MarkedModeActive =>
+		MarkedEnabled && !PlayerSwapEnabled && !HotPotatoEnabled;
+
+	/// <summary>Hot Potato is on and exclusive siblings are off.</summary>
+	internal bool HotPotatoModeActive =>
+		HotPotatoEnabled && !MarkedEnabled && !PlayerSwapEnabled;
+
 	/// <summary>
-	/// Marked and Hot Potato both own an in-place chat line — only one may be on.
-	/// Last-enabled wins when the user toggles; load/migrate with both on drops Hot Potato.
+	/// Player Swap, Marked, and Hot Potato are mutually exclusive.
+	/// Last-enabled wins when the user toggles; load/migrate with multiple on keeps Player Swap, else Marked, else Hot Potato.
 	/// </summary>
-	internal void EnforceExclusiveChatModes(bool preferHotPotato)
+	internal void EnforceExclusiveModes()
 	{
-		if (!MarkedEnabled || !HotPotatoEnabled)
+		int on = (PlayerSwapEnabled ? 1 : 0) + (MarkedEnabled ? 1 : 0) + (HotPotatoEnabled ? 1 : 0);
+		if (on <= 1)
 			return;
 
-		bool markedJustOn = MarkedEnabled && !_prevMarkedEnabled;
-		bool potatoJustOn = HotPotatoEnabled && !_prevHotPotatoEnabled;
+		bool swapJust = PlayerSwapEnabled && !_prevPlayerSwapEnabled;
+		bool markJust = MarkedEnabled && !_prevMarkedEnabled;
+		bool potJust = HotPotatoEnabled && !_prevHotPotatoEnabled;
+		int just = (swapJust ? 1 : 0) + (markJust ? 1 : 0) + (potJust ? 1 : 0);
 
-		if (markedJustOn && !potatoJustOn)
-			HotPotatoEnabled = false;
-		else if (potatoJustOn && !markedJustOn)
+		if (just == 1)
+		{
+			PlayerSwapEnabled = swapJust;
+			MarkedEnabled = markJust;
+			HotPotatoEnabled = potJust;
+			return;
+		}
+
+		// Load / multi-flip: priority Player Swap > Marked > Hot Potato.
+		if (PlayerSwapEnabled)
+		{
 			MarkedEnabled = false;
-		else if (preferHotPotato)
-			MarkedEnabled = false;
-		else
 			HotPotatoEnabled = false;
+		}
+		else if (MarkedEnabled)
+		{
+			HotPotatoEnabled = false;
+		}
 	}
 
 	internal void EnsureRespawnTimer()

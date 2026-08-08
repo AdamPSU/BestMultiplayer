@@ -299,6 +299,9 @@ public sealed class HotPotatoSystem : ModSystem
 		_killingHolder = true;
 		try
 		{
+			// Shared HP cancels personal KillMe while the pool is up; wipe teammates first.
+			SharedHealthSystem.PrepareScriptedTeamWipe(p);
+
 			PlayerDeathReason reason = PlayerDeathReason.ByCustomReason(
 				NetworkText.FromKey("Mods.DefinitiveMultiplayer.UI.HotPotato.Exploded", p.name));
 			p.statLife = 0;

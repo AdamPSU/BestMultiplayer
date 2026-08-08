@@ -291,6 +291,23 @@ public sealed class SharedHealthSystem : ModSystem
 		BeginWipe(player.team, player.whoAmI);
 	}
 
+	/// <summary>
+	/// Scripted lethal (Hot Potato fuse) that bypasses <c>OnHurt</c>.
+	/// Zeros the team pool and kills teammates first so PreKill will not cancel the caller's death.
+	/// Caller still <c>KillMe</c>s <paramref name="source"/> (custom death reason). Server/SP only.
+	/// </summary>
+	internal static void PrepareScriptedTeamWipe(Player source)
+	{
+		if (source is null || Main.netMode == NetmodeID.MultiplayerClient)
+			return;
+		if (!_armed || !Teams.IsReal(source.team))
+			return;
+		if (!Pools.TryGetValue(source.team, out Pool pool) || pool.Wiped || pool.Max <= 0)
+			return;
+
+		BeginWipe(source.team, ignoreWhoAmI: source.whoAmI);
+	}
+
 	internal static void HandleMetaPacket(BinaryReader reader)
 	{
 		if (Main.netMode != NetmodeID.MultiplayerClient)

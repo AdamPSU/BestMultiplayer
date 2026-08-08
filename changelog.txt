@@ -1,3 +1,6 @@
+v0.1.7
+- Workshop description and README polish
+
 v0.1.6
 - Hot Potato mode: touch-pass fuse (30–300s step 15, default 90s); holder +0–100% speed (default 25%); team-only or free-for-all; always or bosses-only; orange FX; live status line "{name} has the potato! {timer}"
 - Marked mode: boss-only living mark rotation (15–120s step 5, default 60s); deal/take mults stack on Boss Balance (1.15/1.5); red glow/outline; last-5s chat countdown

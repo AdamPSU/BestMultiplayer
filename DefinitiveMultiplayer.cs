@@ -1,5 +1,6 @@
 using System.IO;
 using DefinitiveMultiplayer.Common;
+using DefinitiveMultiplayer.Common.Drawing;
 using DefinitiveMultiplayer.Common.Players;
 using DefinitiveMultiplayer.Common.Systems;
 using Microsoft.Xna.Framework;
@@ -77,5 +78,6 @@ public sealed class DefinitiveMultiplayer : Mod
 	public override void Unload()
 	{
 		SpectatePlayer.Clear();
+		PlayerStatusOutline.Unload();
 	}
 }

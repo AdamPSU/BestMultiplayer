@@ -3,9 +3,9 @@ using System.IO;
 using System.Reflection;
 using DefinitiveMultiplayer.Common;
 using DefinitiveMultiplayer.Common.Configs;
+using DefinitiveMultiplayer.Common.Drawing;
 using Microsoft.Xna.Framework;
 using Terraria;
-using Terraria.GameContent.UI.Chat;
 using Terraria.ID;
 using Terraria.Localization;
 using Terraria.ModLoader;
@@ -37,7 +37,6 @@ public sealed class PlayerSwapSystem : ModSystem
 	private static readonly List<Vector2> Positions = new(Main.maxPlayers);
 	private static readonly int[] Perm = new int[Main.maxPlayers];
 
-	private static FieldInfo _messagesField;
 	private static FieldInfo _timeLeftField;
 	private static ChatMessageContainer _countdownLine;
 
@@ -55,7 +54,7 @@ public sealed class PlayerSwapSystem : ModSystem
 			return;
 
 		ServerConfig cfg = ServerConfig.Instance;
-		bool enabled = cfg.PlayerSwapEnabled;
+		bool enabled = cfg.PlayerSwapModeActive;
 		int interval = Utils.Clamp(cfg.PlayerSwapIntervalMinutes, MinIntervalMinutes, MaxIntervalMinutes);
 
 		if (!enabled)
@@ -96,7 +95,7 @@ public sealed class PlayerSwapSystem : ModSystem
 		if (Main.dedServ || _countdownLine == null)
 			return;
 
-		if (!TryGetMessages(out List<ChatMessageContainer> messages) || !messages.Contains(_countdownLine))
+		if (!ChatMonitorAccess.TryGetMessages(out List<ChatMessageContainer> messages) || !messages.Contains(_countdownLine))
 		{
 			_countdownLine = null;
 			return;
@@ -157,25 +156,15 @@ public sealed class PlayerSwapSystem : ModSystem
 			return;
 		}
 
-		string time = FormatTime(seconds);
+		string time = PlayerWorldTimer.FormatTime(seconds);
 		string colored = $"[c/{CountdownColorHex}:{time}]";
 		string text = Language.GetTextValue("Mods.DefinitiveMultiplayer.UI.PlayerSwap.Countdown", colored);
 		UpsertCountdownChat(text);
 	}
 
-	private static string FormatTime(int totalSeconds)
-	{
-		if (totalSeconds < 60)
-			return totalSeconds.ToString();
-
-		int m = totalSeconds / 60;
-		int s = totalSeconds % 60;
-		return $"{m}:{s:D2}";
-	}
-
 	private static void UpsertCountdownChat(string text)
 	{
-		if (!TryGetMessages(out List<ChatMessageContainer> messages))
+		if (!ChatMonitorAccess.TryGetMessages(out List<ChatMessageContainer> messages))
 		{
 			Main.NewText(text);
 			return;
@@ -204,7 +193,7 @@ public sealed class PlayerSwapSystem : ModSystem
 		if (_countdownLine == null)
 			return;
 
-		if (TryGetMessages(out List<ChatMessageContainer> messages) && messages.Contains(_countdownLine))
+		if (ChatMonitorAccess.TryGetMessages(out List<ChatMessageContainer> messages) && messages.Contains(_countdownLine))
 		{
 			_countdownLine.OriginalText = string.Empty;
 			_countdownLine.MarkToNeedRefresh();
@@ -212,20 +201,6 @@ public sealed class PlayerSwapSystem : ModSystem
 		}
 
 		_countdownLine = null;
-	}
-
-	private static bool TryGetMessages(out List<ChatMessageContainer> messages)
-	{
-		messages = null;
-		if (Main.chatMonitor is not RemadeChatMonitor monitor)
-			return false;
-
-		_messagesField ??= typeof(RemadeChatMonitor).GetField("_messages", BindingFlags.Instance | BindingFlags.NonPublic);
-		if (_messagesField?.GetValue(monitor) is not List<ChatMessageContainer> list)
-			return false;
-
-		messages = list;
-		return true;
 	}
 
 	private static void SetTimeLeft(ChatMessageContainer line, int ticks)

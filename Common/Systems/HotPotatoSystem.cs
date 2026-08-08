@@ -1,22 +1,19 @@
 using System.Collections.Generic;
 using System.IO;
-using System.Reflection;
 using DefinitiveMultiplayer.Common;
 using DefinitiveMultiplayer.Common.Configs;
 using Microsoft.Xna.Framework;
 using Terraria;
 using Terraria.DataStructures;
-using Terraria.GameContent.UI.Chat;
 using Terraria.ID;
 using Terraria.Localization;
 using Terraria.ModLoader;
-using Terraria.UI.Chat;
 
 namespace DefinitiveMultiplayer.Common.Systems;
 
 /// <summary>
 /// Hot Potato: timed holder among living players; touch-pass; fuse kill + reassign.
-/// Server/SP authoritative; clients mirror whoAmI + countdown chat.
+/// Server/SP authoritative; clients mirror whoAmI + fuse seconds (world timer).
 /// </summary>
 public sealed class HotPotatoSystem : ModSystem
 {
@@ -25,16 +22,16 @@ public sealed class HotPotatoSystem : ModSystem
 	private const int IntervalStepSeconds = 15;
 	private const int TicksPerSecond = 60;
 	private const int PassBackImmuneTicks = 120;
-	private const int ChatLineLife = 600;
-	private const string PotatoColorHex = "FFAA33";
+
+	/// <summary>Outline + transfer popup accent.</summary>
+	internal static readonly Color Accent = new(255, 220, 40);
 
 	private static int _holderWhoAmI = -1;
 	private static int _ticksLeft = -1;
 	private static bool _wasActive;
 	private static int _lastIntervalSeconds = -1;
-	private static int _lastStatusWhoAmI = int.MinValue;
 	private static int _lastStatusSeconds = int.MinValue;
-	private static int _displaySeconds = -1; // client-mirrored fuse seconds for status line
+	private static int _displaySeconds = -1; // client-mirrored fuse seconds for world timer / outline
 	private static int _lastSentWhoAmI = int.MinValue;
 	private static int _passBackBlockedWhoAmI = -1;
 	private static int _passBackImmuneTicksLeft;
@@ -42,18 +39,16 @@ public sealed class HotPotatoSystem : ModSystem
 
 	private static readonly List<int> Pool = new(Main.maxPlayers);
 
-	private static FieldInfo _messagesField;
-	private static FieldInfo _timeLeftField;
-	private static ChatMessageContainer _countdownLine;
-
 	/// <summary>Mirrored on clients via <see cref="Packets.HotPotatoState"/>.</summary>
 	internal static int HolderWhoAmI => _holderWhoAmI;
+
+	/// <summary>Mirrored fuse seconds (−1 inactive). World timer + outline urgency.</summary>
+	internal static int DisplaySeconds => _displaySeconds;
 
 	internal static bool IsActive()
 	{
 		ServerConfig cfg = ServerConfig.Instance;
-		// Mutually exclusive with Marked (shared in-place chat line).
-		if (!cfg.HotPotatoEnabled || cfg.MarkedEnabled)
+		if (!cfg.HotPotatoModeActive)
 			return false;
 		if (cfg.HotPotatoBossesOnly && !BossFightSystem.IsBossFightActive())
 			return false;
@@ -69,11 +64,7 @@ public sealed class HotPotatoSystem : ModSystem
 
 	public override void OnWorldLoad() => ResetAll();
 
-	public override void OnWorldUnload()
-	{
-		ClearCountdownChat();
-		ResetAll();
-	}
+	public override void OnWorldUnload() => ResetAll();
 
 	public override void PostUpdateWorld()
 	{
@@ -128,27 +119,21 @@ public sealed class HotPotatoSystem : ModSystem
 		PublishStatus(force: true);
 	}
 
-	public override void PostUpdateEverything()
-	{
-		if (Main.dedServ || _countdownLine == null)
-			return;
-
-		if (!TryGetMessages(out List<ChatMessageContainer> messages) || !messages.Contains(_countdownLine))
-		{
-			_countdownLine = null;
-			return;
-		}
-
-		SetTimeLeft(_countdownLine, ChatLineLife);
-	}
-
 	internal static void HandleStatePacket(BinaryReader reader)
 	{
 		if (Main.netMode == NetmodeID.Server)
 			return;
 
-		_holderWhoAmI = reader.ReadInt32();
-		ApplyStatusLine(_holderWhoAmI, _displaySeconds, force: true);
+		int who = reader.ReadInt32();
+		int prev = _holderWhoAmI;
+		_holderWhoAmI = who;
+		if (who >= 0 && who != prev && who < Main.maxPlayers)
+		{
+			TransferPopup.Show(
+				Main.player[who],
+				"Mods.DefinitiveMultiplayer.UI.HotPotato.TransferPopup",
+				Accent);
+		}
 	}
 
 	internal static void HandleCountdownPacket(BinaryReader reader)
@@ -157,7 +142,6 @@ public sealed class HotPotatoSystem : ModSystem
 			return;
 
 		_displaySeconds = reader.ReadInt32();
-		ApplyStatusLine(_holderWhoAmI, _displaySeconds);
 	}
 
 	private static void Deactivate()
@@ -176,10 +160,10 @@ public sealed class HotPotatoSystem : ModSystem
 		_ticksLeft = -1;
 		_wasActive = false;
 		_lastIntervalSeconds = -1;
-		_lastStatusWhoAmI = int.MinValue;
 		_lastStatusSeconds = int.MinValue;
 		_displaySeconds = -1;
 		_lastSentWhoAmI = int.MinValue;
+		TransferPopup.Clear();
 		ClearPassBackImmune();
 		_killingHolder = false;
 	}
@@ -333,8 +317,18 @@ public sealed class HotPotatoSystem : ModSystem
 		if (_holderWhoAmI == whoAmI && _lastSentWhoAmI == whoAmI)
 			return;
 
+		int prev = _holderWhoAmI;
 		_holderWhoAmI = whoAmI;
 		SendState(whoAmI);
+
+		// SP / listen host (clients popup from HotPotatoState packet).
+		if (!Main.dedServ && whoAmI >= 0 && whoAmI != prev && whoAmI < Main.maxPlayers)
+		{
+			TransferPopup.Show(
+				Main.player[whoAmI],
+				"Mods.DefinitiveMultiplayer.UI.HotPotato.TransferPopup",
+				Accent);
+		}
 	}
 
 	private static void SendState(int whoAmI)
@@ -352,23 +346,16 @@ public sealed class HotPotatoSystem : ModSystem
 	private static int SecondsFromTicks(int ticks) =>
 		ticks <= 0 ? 0 : (ticks + 59) / 60;
 
-	/// <summary>
-	/// Single in-place chat line: "{name} has the potato! {timer}" — always visible while active.
-	/// </summary>
+	/// <summary>Sync fuse seconds for world timer + outline (no chat).</summary>
 	private static void PublishStatus(bool force = false, bool clear = false)
 	{
 		int seconds = clear ? -1 : SecondsFromTicks(_ticksLeft);
-		int who = clear ? -1 : _holderWhoAmI;
 
-		if (!force && who == _lastStatusWhoAmI && seconds == _lastStatusSeconds)
+		if (!force && seconds == _lastStatusSeconds)
 			return;
 
-		_lastStatusWhoAmI = who;
 		_lastStatusSeconds = seconds;
 		_displaySeconds = seconds;
-
-		if (!Main.dedServ)
-			ApplyStatusLine(who, seconds, force: true);
 
 		if (Main.netMode == NetmodeID.Server)
 		{
@@ -380,102 +367,5 @@ public sealed class HotPotatoSystem : ModSystem
 			packet.Write(seconds);
 			packet.Send();
 		}
-	}
-
-	private static void ApplyStatusLine(int whoAmI, int seconds, bool force = false)
-	{
-		if (Main.dedServ)
-			return;
-
-		if (seconds < 0 || whoAmI < 0 || whoAmI >= Main.maxPlayers || !Main.player[whoAmI].active)
-		{
-			ClearCountdownChat();
-			_lastStatusWhoAmI = int.MinValue;
-			_lastStatusSeconds = int.MinValue;
-			return;
-		}
-
-		if (!force && whoAmI == _lastStatusWhoAmI && seconds == _lastStatusSeconds)
-			return;
-
-		_lastStatusWhoAmI = whoAmI;
-		_lastStatusSeconds = seconds;
-
-		Player p = Main.player[whoAmI];
-		string name = $"[c/{PotatoColorHex}:{p.name}]";
-		string time = $"[c/{PotatoColorHex}:{FormatTime(seconds)}]";
-		string text = Language.GetTextValue("Mods.DefinitiveMultiplayer.UI.HotPotato.Status", name, time);
-		UpsertCountdownChat(text);
-	}
-
-	private static string FormatTime(int totalSeconds)
-	{
-		if (totalSeconds < 60)
-			return totalSeconds.ToString();
-
-		int m = totalSeconds / 60;
-		int s = totalSeconds % 60;
-		return $"{m}:{s:D2}";
-	}
-
-	private static void UpsertCountdownChat(string text)
-	{
-		if (!TryGetMessages(out List<ChatMessageContainer> messages))
-		{
-			Main.NewText(text);
-			return;
-		}
-
-		if (_countdownLine != null && messages.Contains(_countdownLine))
-		{
-			_countdownLine.OriginalText = text;
-			_countdownLine.MarkToNeedRefresh();
-			SetTimeLeft(_countdownLine, ChatLineLife);
-			return;
-		}
-
-		Main.NewText(text);
-		if (messages.Count > 0)
-		{
-			_countdownLine = messages[0];
-			_countdownLine.OriginalText = text;
-			_countdownLine.MarkToNeedRefresh();
-			SetTimeLeft(_countdownLine, ChatLineLife);
-		}
-	}
-
-	private static void ClearCountdownChat()
-	{
-		if (_countdownLine == null)
-			return;
-
-		if (TryGetMessages(out List<ChatMessageContainer> messages) && messages.Contains(_countdownLine))
-		{
-			_countdownLine.OriginalText = string.Empty;
-			_countdownLine.MarkToNeedRefresh();
-			SetTimeLeft(_countdownLine, 0);
-		}
-
-		_countdownLine = null;
-	}
-
-	private static bool TryGetMessages(out List<ChatMessageContainer> messages)
-	{
-		messages = null;
-		if (Main.chatMonitor is not RemadeChatMonitor monitor)
-			return false;
-
-		_messagesField ??= typeof(RemadeChatMonitor).GetField("_messages", BindingFlags.Instance | BindingFlags.NonPublic);
-		if (_messagesField?.GetValue(monitor) is not List<ChatMessageContainer> list)
-			return false;
-
-		messages = list;
-		return true;
-	}
-
-	private static void SetTimeLeft(ChatMessageContainer line, int ticks)
-	{
-		_timeLeftField ??= typeof(ChatMessageContainer).GetField("_timeLeft", BindingFlags.Instance | BindingFlags.NonPublic);
-		_timeLeftField?.SetValue(line, ticks);
 	}
 }

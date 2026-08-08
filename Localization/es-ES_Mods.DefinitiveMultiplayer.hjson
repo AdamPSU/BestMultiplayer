@@ -29,26 +29,15 @@ UI: {
 		TransferPopup: Hot Potato!
 	}
 
-	Modes: {
-		SharedHealth: {
-			On: Shared Team Health is active
-			Off: Shared Team Health is off
-		}
-
-		PlayerSwap: {
-			On: Player Swap is active
-			Off: Player Swap is off
-		}
-
-		Marked: {
-			On: Marked mode is active
-			Off: Marked mode is off
-		}
-
-		HotPotato: {
-			On: Hot Potato is active
-			Off: Hot Potato is off
-		}
+	ModeChat: {
+		SharedHealthOn: Shared Team Health is active
+		SharedHealthOff: Shared Team Health is off
+		PlayerSwapOn: Player Swap is active
+		PlayerSwapOff: Player Swap is off
+		MarkedOn: Marked mode is active
+		MarkedOff: Marked mode is off
+		HotPotatoOn: Hot Potato is active
+		HotPotatoOff: Hot Potato is off
 	}
 }
 

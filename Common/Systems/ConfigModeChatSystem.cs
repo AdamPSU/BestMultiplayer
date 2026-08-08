@@ -1,6 +1,7 @@
 using DefinitiveMultiplayer.Common.Configs;
 using Microsoft.Xna.Framework;
 using Terraria;
+using Terraria.Chat;
 using Terraria.ID;
 using Terraria.Localization;
 using Terraria.ModLoader;
@@ -23,13 +24,14 @@ public sealed class ConfigModeChatSystem : ModSystem
 
 	internal static void AnnounceModeDiffs(ServerConfig cfg, bool prevShared, bool prevSwap, bool prevMarked, bool prevPotato)
 	{
-		if (Main.dedServ)
+		// Clients receive the server broadcast; avoid double lines on sync.
+		if (Main.netMode == NetmodeID.MultiplayerClient)
 			return;
 
-		Announce(cfg.SharedHealthEnabled, prevShared, "Mods.DefinitiveMultiplayer.UI.Modes.SharedHealth", SharedHealthColor);
-		Announce(cfg.PlayerSwapEnabled, prevSwap, "Mods.DefinitiveMultiplayer.UI.Modes.PlayerSwap", PlayerSwapColor);
-		Announce(cfg.MarkedEnabled, prevMarked, "Mods.DefinitiveMultiplayer.UI.Modes.Marked", MarkedSystem.Accent);
-		Announce(cfg.HotPotatoEnabled, prevPotato, "Mods.DefinitiveMultiplayer.UI.Modes.HotPotato", HotPotatoSystem.Accent);
+		Announce(cfg.SharedHealthEnabled, prevShared, "Mods.DefinitiveMultiplayer.UI.ModeChat.SharedHealth", SharedHealthColor);
+		Announce(cfg.PlayerSwapEnabled, prevSwap, "Mods.DefinitiveMultiplayer.UI.ModeChat.PlayerSwap", PlayerSwapColor);
+		Announce(cfg.MarkedEnabled, prevMarked, "Mods.DefinitiveMultiplayer.UI.ModeChat.Marked", MarkedSystem.Accent);
+		Announce(cfg.HotPotatoEnabled, prevPotato, "Mods.DefinitiveMultiplayer.UI.ModeChat.HotPotato", HotPotatoSystem.Accent);
 	}
 
 	private static void Announce(bool now, bool was, string keyBase, Color color)
@@ -37,12 +39,15 @@ public sealed class ConfigModeChatSystem : ModSystem
 		if (now == was)
 			return;
 
-		string key = now ? keyBase + ".On" : keyBase + ".Off";
+		string key = now ? keyBase + "On" : keyBase + "Off";
 		string text = Language.GetTextValue(key);
 		if (string.IsNullOrEmpty(text) || text == key)
 			return;
 
-		Main.NewText(text, color.R, color.G, color.B);
+		if (Main.netMode == NetmodeID.Server)
+			ChatHelper.BroadcastChatMessage(NetworkText.FromLiteral(text), color);
+		else
+			Main.NewText(text, color.R, color.G, color.B);
 	}
 
 	public override void PostUpdateEverything()
